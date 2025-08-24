@@ -52,8 +52,8 @@ const showingNavigationDropdown = ref(false);
                         </li>
                         <li>
                             <NavLink
-                                :href="route('dashboard')"
-                                :active="route().current('dashboard')"
+                                :href="route('Categories/Index')"
+                                :active="route().current('Categories/Index')"
                             >
                                 Categorías
                             </NavLink>

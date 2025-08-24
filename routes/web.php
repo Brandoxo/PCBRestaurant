@@ -16,6 +16,16 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
+
+//Categories
+Route::get('/Categories', [\App\Http\Controllers\CategoryController::class, 'index'])->name('Categories/Index') ->middleware(['auth', 'verified']);
+Route::get('/Categories/create', [\App\Http\Controllers\CategoryController::class, 'create'])->name('Categories/Create') ->middleware(['auth', 'verified']);
+Route::post('/Categories', [\App\Http\Controllers\CategoryController::class, 'store'])->name('Categories/Store') ->middleware(['auth', 'verified']);
+Route::get('/Categories/edit/{id}', [\App\Http\Controllers\CategoryController::class, 'edit'])->name('Categories/Edit') ->middleware(['auth', 'verified']);
+Route::put('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'update'])->name('Categories/Update') ->middleware(['auth', 'verified']);
+Route::delete('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'destroy'])->name('Categories/Delete') ->middleware(['auth', 'verified']);
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
