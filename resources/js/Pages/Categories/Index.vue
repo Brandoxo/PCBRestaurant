@@ -1,14 +1,15 @@
 <script setup>
 import { Link, Head } from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import Header from "@/Components/Header.vue";
 const props = defineProps({ categories: Object });
 </script>
 
 <template>
     <Head title="Categorías" />
     <AuthenticatedLayout>
+        <Header></Header>
         <div class="p-6 max-w-7xl ml-64">
-            <h1 class="text-xl font-bold mb-4">Categorías</h1>
             <Link
                 href="/categories/create"
                 class="bg-blue-600 text-white px-3 py-1 rounded"
