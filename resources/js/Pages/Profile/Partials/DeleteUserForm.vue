@@ -38,7 +38,7 @@ const closeModal = () => {
 };
 </script>
 <template>
-    <section class="space-y-6 max-w-xl ml-64">
+    <section class="space-y-6 mx-auto">
         <header>
             <h2 class="text-lg font-medium text-gray-900">Eliminar cuenta</h2>
 

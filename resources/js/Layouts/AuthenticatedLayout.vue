@@ -11,11 +11,9 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div class="min-h-screen flex bg-gray-100">
+    <div class="min-h-screen flex bg-tertiary">
         <!-- Sidebar -->
-        <aside
-            class="w-64 bg-secondary shadow border-r border-gray-200 flex flex-col fixed h-full"
-        >
+        <aside class="w-64 bg-secondary shadow flex flex-col fixed h-full">
             <div class="flex items-center mb-8 w-full bg-white py-4">
                 <Link :href="route('dashboard')">
                     <ApplicationLogo
@@ -30,14 +28,20 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('dashboard')"
-                            >
+                                ><svg
+                                    class="me-2 h-5 w-5 text-gray-400"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                ></svg>
                                 Dashboard
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
-                                :active="route().current('dashboard')"
+                                :active="route().current('Dashboard/Index')"
                             >
                                 Mesas
                             </NavLink>
@@ -45,7 +49,7 @@ const showingNavigationDropdown = ref(false);
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
-                                :active="route().current('dashboard')"
+                                :active="route().current('Sales/Index')"
                             >
                                 Ventas
                             </NavLink>

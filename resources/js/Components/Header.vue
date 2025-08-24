@@ -6,24 +6,25 @@ import { computed } from "vue";
 const page = usePage();
 
 const title = computed(() => {
-    if (page.url.startsWith("/categorias")) {
-        return "Categorías";
-    } else if (page.url.startsWith("/productos")) {
-        return "Productos";
-    } else if (page.url.startsWith("/ordenes")) {
-        return "Órdenes";
-    } else if (page.url.startsWith("/profile")) {
-        return "Perfil";
-    } else if (page.url.startsWith("/Categories")) {
-        return "Categorías";
-    } else {
-        return "Dashboard";
+    switch (page.component) {
+        case "Orders/Index":
+            return "Órdenes";
+        case "Categories/Index":
+            return "Categorías";
+        case "Products/Index":
+            return "Productos";
+        case "Users/Index":
+            return "Usuarios";
+        case "Profile/Edit":
+            return "Perfil";
+        default:
+            return "Dashboard";
     }
 });
 </script>
 
 <template>
-    <header class="bg-primary shadow">
+    <header class="bg-primary shadow-md">
         <div
             class="flex justify-between items-center mx-auto py-4 px-4 sm:px-6 lg:px-8 ml-64 gap-4"
         >

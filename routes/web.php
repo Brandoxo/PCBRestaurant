@@ -13,7 +13,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard/Index');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
@@ -25,6 +25,10 @@ Route::post('/Categories', [\App\Http\Controllers\CategoryController::class, 'st
 Route::get('/Categories/edit/{id}', [\App\Http\Controllers\CategoryController::class, 'edit'])->name('Categories/Edit') ->middleware(['auth', 'verified']);
 Route::put('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'update'])->name('Categories/Update') ->middleware(['auth', 'verified']);
 Route::delete('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'destroy'])->name('Categories/Delete') ->middleware(['auth', 'verified']);
+
+//Orders
+Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

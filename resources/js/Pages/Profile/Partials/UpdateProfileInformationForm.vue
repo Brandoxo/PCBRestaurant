@@ -22,7 +22,7 @@ const form = useForm({
 });
 </script>
 <template>
-    <section class="max-w-xl ml-64">
+    <section class="mx-auto">
         <header>
             <h2 class="text-lg font-medium text-gray-900">
                 Información del perfil
