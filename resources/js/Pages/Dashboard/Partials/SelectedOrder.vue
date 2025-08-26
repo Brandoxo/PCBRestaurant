@@ -3,10 +3,11 @@ import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 
 // const props = defineProps({ order: Object });
+
 </script>
 
 <template>
-    <div class="bg-white shadow-md rounded-lg p-2 w-3/4 mx-auto">
+    <div class="bg-white shadow-md rounded-lg p-2 w-3/4 mx-auto" v-if="order">
         <div class="md:flex justify-between items-center 2xl:gap-12 mx-auto">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
@@ -54,4 +55,23 @@ import StatusBadge from "@/Components/StatusBadge.vue";
             </button>
         </div>
     </div>
+
+
+    <!-- wait for order details -->
+    <div v-else class="mx-auto w-3/4 bg-white rounded-lg p-4">
+  <div class="flex animate-pulse space-x-4">
+    <div class="size-10 rounded-full bg-gray-200"></div>
+    <div class="flex-1 space-y-6 py-1">
+      <div class="h-2 rounded bg-gray-200"></div>
+      <div class="space-y-3">
+        <div class="grid grid-cols-3 gap-4">
+          <div class="col-span-2 h-2 rounded bg-gray-200"></div>
+          <div class="col-span-1 h-2 rounded bg-gray-200"></div>
+        </div>
+        <div class="h-2 rounded bg-gray-200"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
 </template>
