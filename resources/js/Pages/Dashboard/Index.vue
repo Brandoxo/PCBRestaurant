@@ -9,14 +9,19 @@ import { ref } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import AllOrders from "@/Pages/Dashboard/Partials/AllOrders.vue";
 import SelectedOrder from "@/Pages/Dashboard/Partials/SelectedOrder.vue";
+import OrderDetails from "./Partials/OrderDetails.vue";
 
 const isWelcomeVisible = ref(true);
 
-//only when the user is logged in for the first time
 const closeWelcome = () => {
     let count = 0;
     isWelcomeVisible.value = false;
     count++;
+};
+
+const selectedOrder = ref(null);
+const selectOrder = (order) => {
+    selectedOrder.value = order;
 };
 </script>
 
@@ -52,10 +57,11 @@ const closeWelcome = () => {
                 </div>
                 <div class="flex gap-4">
                     <div class="mt-6 w-1/3 h-screen overflow-y-auto max-w-3xl">
-                        <AllOrders :orders="allOrders" />
+                        <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
-                    <div class="mt-6 w-1/2 mx-auto max-w-4xl">
-                        <SelectedOrder />
+                    <div class="mt-6 w-3/4 mx-auto max-w-4xl flex flex-col gap-4">
+                        <SelectedOrder :order="selectedOrder" />
+                        <OrderDetails :order="selectedOrder" />
                     </div>
                 </div>
             </div>
