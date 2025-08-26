@@ -23,18 +23,12 @@ const showingNavigationDropdown = ref(false);
             </div>
             <div class="py-4 px-2">
                 <nav class="flex-1">
-                    <ul class="space-y-10">
+                    <ul class="space-y-4 2xl:space-y-8">
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('dashboard')"
-                                ><svg
-                                    class="me-2 h-5 w-5 text-gray-400"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                ></svg>
+                                ><img src="/assets/icons/svg/menu/home.svg" alt="Inicio" class="w-6" />
                                 Dashboard
                             </NavLink>
                         </li>
@@ -42,7 +36,7 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('Dashboard/Index')"
-                            >
+                            ><img src="/assets/icons/svg/menu/table.svg" alt="Inicio" class="w-6" />
                                 Mesas
                             </NavLink>
                         </li>
@@ -50,7 +44,7 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('Sales/Index')"
-                            >
+                            ><img src="/assets/icons/svg/menu/sales.svg" alt="Ventas" class="w-6" />
                                 Ventas
                             </NavLink>
                         </li>
@@ -58,7 +52,7 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('Categories/Index')"
                                 :active="route().current('Categories/Index')"
-                            >
+                            ><img src="/assets/icons/svg/menu/categories.svg" alt="Productos" class="w-6" />
                                 Categorías
                             </NavLink>
                         </li>
@@ -66,15 +60,15 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('dashboard')"
-                            >
-                                Ordenes
+                            ><img src="/assets/icons/svg/menu/orders.svg" alt="Órdenes" class="w-6" />
+                                Órdenes
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('dashboard')"
-                            >
+                            ><img src="/assets/icons/svg/menu/config.svg" alt="Configuración" class="w-6" />
                                 Configuración
                             </NavLink>
                         </li>
