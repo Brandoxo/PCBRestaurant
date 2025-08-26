@@ -44,17 +44,17 @@ const closeWelcome = () => {
                 </div>
 
                 <div
-                    class="md:flex justify-between gap-2 md:gap-8 lg:gap-14 2xl:gap-60 mt-6"
+                    class="md:flex justify-center gap-2 md:gap-8 lg:gap-14 2xl:gap-60 mt-6"
                 >
                     <TotalOrders :totalOrders="totalOrders" />
                     <TotalRevenue :totalRevenue="totalRevenue" />
                     <TotalCancelled :totalCancelled="totalCancelled" />
                 </div>
                 <div class="flex gap-4">
-                    <div class="mt-6 w-1/3 h-screen overflow-y-auto">
+                    <div class="mt-6 w-1/3 h-screen overflow-y-auto max-w-3xl">
                         <AllOrders :orders="allOrders" />
                     </div>
-                    <div class="mt-6 w-1/2 mx-auto">
+                    <div class="mt-6 w-1/2 mx-auto max-w-4xl">
                         <SelectedOrder />
                     </div>
                 </div>
