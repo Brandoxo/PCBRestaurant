@@ -58,16 +58,16 @@ const showingNavigationDropdown = ref(false);
                         </li>
                         <li>
                             <NavLink
-                                :href="route('dashboard')"
-                                :active="route().current('dashboard')"
+                                :href="route('Orders/Index')"
+                                :active="route().current('Orders/Index')"
                             ><img src="/assets/icons/svg/menu/orders.svg" alt="Órdenes" class="w-6" />
                                 Órdenes
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
-                                :href="route('dashboard')"
-                                :active="route().current('dashboard')"
+                                :href="route('Config/Index')"
+                                :active="route().current('Config/Index')"
                             ><img src="/assets/icons/svg/menu/config.svg" alt="Configuración" class="w-6" />
                                 Configuración
                             </NavLink>
