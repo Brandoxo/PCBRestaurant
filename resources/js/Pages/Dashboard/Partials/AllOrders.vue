@@ -4,7 +4,10 @@ import Orders from "@/Components/Orders.vue";
 
 <template>
     <div class="flex-1">
-        <h2 class="text-lg font-bold text-white text-center">Todas las órdenes</h2>
+        <h2 class="text-lg font-bold text-white text-center">
+            Todas las órdenes
+        </h2>
+        <Orders />
         <Orders />
     </div>
 </template>
