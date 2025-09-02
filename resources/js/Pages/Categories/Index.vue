@@ -9,7 +9,7 @@ const props = defineProps({ categories: Object });
     <Head title="Categorías" />
     <AuthenticatedLayout>
         <Header></Header>
-        <div class="p-6 max-w-7xl ml-64 py-24 h-screen overflow-y-auto">
+        <div class="p-6 max-w-7xl md:ml-64 py-24 h-screen overflow-y-auto">
             <Link
                 href="Categories/Create"
                 class="bg-blue-600 text-white px-3 py-1 rounded"

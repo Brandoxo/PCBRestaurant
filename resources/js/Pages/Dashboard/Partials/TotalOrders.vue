@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-    <div class="md:w-full max-w-md w-fit mx-auto">
+    <div class="max-w-md w-full mx-auto">
         <div
             class="bg-white rounded-3xl shadow p-6 flex gap-4 justify-center items-center w-full"
         >

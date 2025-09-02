@@ -13,7 +13,7 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div class="min-h-screen flex bg-tertiary">
         <!-- Sidebar -->
-        <aside class="w-64 bg-secondary shadow hidden md:flex flex-col fixed h-full">
+        <aside class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full">
             <div class="flex items-center mb-8 w-full bg-white py-4">
                 <Link :href="route('dashboard')">
                     <ApplicationLogo

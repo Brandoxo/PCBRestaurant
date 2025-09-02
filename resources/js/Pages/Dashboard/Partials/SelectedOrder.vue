@@ -8,7 +8,7 @@ import StatusBadge from "@/Components/StatusBadge.vue";
 
 <template>
     <div class="bg-white shadow-md rounded-lg p-2 w-3/4 mx-auto" v-if="order">
-        <div class="md:flex justify-between items-center 2xl:gap-12 mx-auto">
+        <div class="lg:flex justify-between items-center 2xl:gap-12 mx-auto">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
                 <span class="font-extrabold">ID #
