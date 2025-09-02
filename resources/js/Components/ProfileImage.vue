@@ -21,7 +21,7 @@ import DropdownLink from './DropdownLink.vue';
     </template>
     <template #content>
         <DropdownLink href="/profile">Perfil</DropdownLink>
-        <DropdownLink href="/logout">Cerrar Sesión</DropdownLink>
+        <DropdownLink href="/logout" method="post" as="button">Cerrar Sesión</DropdownLink>
     </template>
     </Dropdown>
 </template>
