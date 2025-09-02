@@ -25,14 +25,15 @@ const selectOrder = (order) => {
 };
 </script>
 
+
 <template>
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
         <Header></Header>
 
-        <div class="py-12">
-            <div class="mx-auto sm:px-6 lg:px-8 ml-64">
+        <div class="py-20 h-screen overflow-y-auto">
+            <div class="mx-auto sm:px-6 lg:px-8 ml-64 ">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-fit flex justify-between mx-auto"
                     v-if="isWelcomeVisible && count === 0"

@@ -21,7 +21,7 @@ Route::get('/dashboard', function () {
 
 //Categories
 Route::get('/Categories', [\App\Http\Controllers\CategoryController::class, 'index'])->name('Categories/Index') ->middleware(['auth', 'verified']);
-Route::get('/Categories/create', [\App\Http\Controllers\CategoryController::class, 'create'])->name('Categories/Create') ->middleware(['auth', 'verified']);
+Route::put('/Categories/Create', [\App\Http\Controllers\CategoryController::class, 'create'])->name('Categories/Create') ->middleware(['auth', 'verified']);
 Route::post('/Categories', [\App\Http\Controllers\CategoryController::class, 'store'])->name('Categories/Store') ->middleware(['auth', 'verified']);
 Route::get('/Categories/edit/{id}', [\App\Http\Controllers\CategoryController::class, 'edit'])->name('Categories/Edit') ->middleware(['auth', 'verified']);
 Route::put('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'update'])->name('Categories/Update') ->middleware(['auth', 'verified']);

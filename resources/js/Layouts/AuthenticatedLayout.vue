@@ -21,9 +21,9 @@ const showingNavigationDropdown = ref(false);
                     />
                 </Link>
             </div>
-            <div class="py-4 px-2">
+            <div class="py-4 px-2 h-full">
                 <nav class="flex-1">
-                    <ul class="space-y-4 2xl:space-y-8">
+                    <ul class="space-y-6 2xl:space-y-10">
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
