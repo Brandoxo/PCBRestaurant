@@ -24,9 +24,9 @@ const title = computed(() => {
 </script>
 
 <template>
-    <header class="bg-primary shadow-md h-[72px] fixed w-full ml-64 z-10">
+    <header class="bg-primary shadow-md h-[72px] fixed w-full md:ml-64 z-10">
         <div
-            class="flex justify-between py-[15px] px-4 sm:px-6 lg:px-8 gap-4 mr-64 "
+            class="flex justify-between py-[15px] px-4 sm:px-6 lg:px-8 gap-4 md:mr-64 "
         >
             <h1 class="text-2xl font-bold text-gray-900">{{ title }}</h1>
             <div class="flex gap-4 items-center justify-center">

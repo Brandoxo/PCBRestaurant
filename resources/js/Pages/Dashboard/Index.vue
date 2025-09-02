@@ -33,7 +33,7 @@ const selectOrder = (order) => {
         <Header></Header>
 
         <div class="py-20 h-screen overflow-y-auto">
-            <div class="mx-auto sm:px-6 lg:px-8 ml-64 ">
+            <div class="mx-auto sm:px-6 lg:px-8 md:ml-64 ">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-fit flex justify-between mx-auto"
                     v-if="isWelcomeVisible && count === 0"
@@ -51,10 +51,25 @@ const selectOrder = (order) => {
 
                 <div
                     class="md:flex justify-center gap-2 md:gap-8 lg:gap-14 2xl:gap-60 mt-6"
-                >
+                >   
+                    <div class="grid grid-cols-2 gap-2 md:hidden">
+                        <TotalOrders :totalOrders="totalOrders" />
+                        <TotalRevenue :totalRevenue="totalRevenue" />
+                    </div>
+                    <div class="hidden md:block w-full">
                     <TotalOrders :totalOrders="totalOrders" />
+                    </div>
+                    <div class="hidden md:block w-full">
                     <TotalRevenue :totalRevenue="totalRevenue" />
+                    </div>
+                    <div class="hidden md:block w-full">
                     <TotalCancelled :totalCancelled="totalCancelled" />
+                    </div>
+
+                    <div class="py-4 md:hidden">
+                    <TotalCancelled :totalCancelled="totalCancelled" />
+
+                    </div>
                 </div>
                 <div class="flex gap-4">
                     <div class="mt-6 w-1/3 h-screen overflow-y-auto max-w-3xl">
