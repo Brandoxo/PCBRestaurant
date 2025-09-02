@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Categories;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
     public function index() {
-        $categories = Category::paginate(10);
+        $categories = Categories::paginate(10);
         return Inertia::render('Categories/Index', [
             'categories' => $categories
         ]);
@@ -23,17 +23,17 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|unique:categories',
         ]);
-        Category::create($validated);
+        Categories::create($validated);
         return redirect()->route('categories.index');
     }
 
-    public function edit(Category $category) {
+    public function edit(Categories $category) {
         return Inertia::render('Categories/Edit', [
             'category' => $category
         ]);
     }
 
-    public function update(Request $request, Category $category) {
+    public function update(Request $request, Categories $category) {
         $validated = $request->validate([
             'name' => 'required|unique:categories,name,' . $category->id,
         ]);
@@ -41,7 +41,7 @@ class CategoryController extends Controller
         return redirect()->route('categories.index');
     }
 
-    public function destroy(Category $category) {
+    public function destroy(Categories $category) {
         $category->delete();
         return redirect()->route('categories.index');
     }

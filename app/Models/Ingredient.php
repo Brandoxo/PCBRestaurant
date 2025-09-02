@@ -9,5 +9,5 @@ class Ingredient extends Model
 {
     use HasFactory;
     protected $fillable = ['name','unit','cost','stock','min_stock','is_active'];
-    public function products(){ return $this->belongsToMany(Product::class)->withPivot(['qty','unit']); }
+    public function products(){ return $this->belongsToMany(Products::class)->withPivot(['qty','unit']); }
 }

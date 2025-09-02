@@ -9,6 +9,8 @@ const title = computed(() => {
     switch (page.component) {
         case "Orders/Index":
             return "Órdenes";
+        case "Tables/Index":
+            return "Mesas";
         case "Categories/Index":
             return "Categorías";
         case "Products/Index":

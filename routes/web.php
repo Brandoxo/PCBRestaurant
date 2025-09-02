@@ -27,6 +27,12 @@ Route::get('/Categories/edit/{id}', [\App\Http\Controllers\CategoryController::c
 Route::put('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'update'])->name('Categories/Update') ->middleware(['auth', 'verified']);
 Route::delete('/Categories/{id}', [\App\Http\Controllers\CategoryController::class, 'destroy'])->name('Categories/Delete') ->middleware(['auth', 'verified']);
 
+//Tables
+Route::get('/Tables', [\App\Http\Controllers\TableController::class, 'index'])->name('Tables/Index') ->middleware(['auth', 'verified']);
+Route::get('/Tables/Create', [\App\Http\Controllers\TableController::class, 'create'])->name('Tables/Create') ->middleware(['auth', 'verified']);
+Route::put('/Tables/Create', [\App\Http\Controllers\TableController::class, 'create'])->name('Tables/Create/new') ->middleware(['auth', 'verified']);
+Route::post('/Tables', [\App\Http\Controllers\TableController::class, 'store'])->name('Tables/Store') ->middleware(['auth', 'verified']);
+
 //Orders
 Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
 
