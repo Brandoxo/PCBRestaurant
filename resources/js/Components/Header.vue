@@ -24,12 +24,12 @@ const title = computed(() => {
 </script>
 
 <template>
-    <header class="bg-primary shadow-md">
+    <header class="bg-primary shadow-md h-[72px] ">
         <div
-            class="flex justify-between items-center mx-auto py-4 px-4 sm:px-6 lg:px-8 ml-64 gap-4"
+            class="flex justify-between items-center mx-auto py-[15px] px-4 sm:px-6 lg:px-8 ml-64 gap-4 "
         >
             <h1 class="text-2xl font-bold text-gray-900">{{ title }}</h1>
-            <div class="flex gap-4">
+            <div class="flex gap-4 items-center justify-center">
                 <form
                     v-if="title === 'Dashboard' || title === 'Órdenes'"
                     class="relative"
@@ -68,7 +68,7 @@ const title = computed(() => {
                         </svg>
                     </span>
                 </form>
-                <ProfileImage />
+                    <ProfileImage />
             </div>
         </div>
     </header>
