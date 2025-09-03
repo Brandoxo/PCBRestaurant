@@ -13,6 +13,7 @@ const title = computed(() => {
         case "Tables/Create":
             return "Mesas";
         case "Categories/Index":
+        case "Categories/Create":
             return "Categorías";
         case "Products/Index":
             return "Productos";

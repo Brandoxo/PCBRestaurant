@@ -16,15 +16,20 @@ class CategoryController extends Controller
     }
 
     public function create() {
-        return Inertia::render('Categories/Create');
+        $categories = Categories::all();
+        return Inertia::render('Categories/Create', [
+            'categories' => $categories
+        ]);
     }
 
     public function store(Request $request) {
-        $validated = $request->validate([
+        $request->validate([
             'name' => 'required|unique:categories',
+            'description' => 'required'
         ]);
-        Categories::create($validated);
-        return redirect()->route('categories.index');
+        Categories::create($request->all());
+        return redirect()->route('Categories/Index')
+        ->with('succes', 'Category created succesfully.');
     }
 
     public function edit(Categories $category) {
