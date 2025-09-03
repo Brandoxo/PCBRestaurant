@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mesas extends Model
 {
-    protected $fillable = ['id', 'name', 'status', 'capacity'];
+    protected $fillable = ['id', 'number', 'status', 'capacity'];
 }

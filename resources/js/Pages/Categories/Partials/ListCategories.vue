@@ -22,8 +22,8 @@ const props = defineProps({ categories: Object });
                     <td class="border p-2 text-center">{{ value.NAME }}</td>
                     <td class="border p-2 text-center">{{ value.DESCRIPTION }}</td>
                     <td class="border p-2 flex gap-2 justify-center">
-                        <button class="bg-blue-500 text-white p-1 rounded">Editar</button>
-                        <button class="bg-red-500 text-white p-1 rounded">Eliminar</button>
+                        <button class="bg-midBlue text-white p-1 rounded">Editar</button>
+                        <button class="bg-dangerRed text-white p-1 rounded">Eliminar</button>
                     </td>
                 </tr>
             </tbody>

@@ -14,21 +14,46 @@ class TableController extends Controller
         ]);
     }
 
+    public function create()
+    {
+
+        $mesas = Mesas::all();
+        return inertia('Tables/CreateTable', [
+            'mesas' => $mesas
+        ]);
+    }
+    
     public function store(Request $request)
   {
     $request->validate([
-      'name' => 'required|max:255',
       'number' => 'required|integer',
       'status' => 'required',
       'capacity' => 'required|integer',
     ]);
     Mesas::create($request->all());
-    return redirect()->route('tables.index')
+    return redirect()->route('Tables/Index')
       ->with('success', 'Table created successfully.');
   }
 
-    public function create()
+
+    public function destroy($id)
     {
-        return inertia('Tables/Create');
+        $mesa = Mesas::findOrFail($id);
+        $mesa->delete();
+        return redirect()->route('Tables/Index')
+            ->with('success', 'Table deleted successfully.');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'number' => 'required|integer',
+            'status' => 'required',
+            'capacity' => 'required|integer',
+        ]);
+        $mesa = Mesas::findOrFail($id);
+        $mesa->update($request->all());
+        return redirect()->route('Tables/Index')
+            ->with('success', 'Table updated successfully.');
     }
 }

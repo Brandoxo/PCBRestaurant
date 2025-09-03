@@ -20,8 +20,6 @@ defineProps({
     <Head title="Profile" />
 
     <AuthenticatedLayout>
-        <Header></Header>
-
         <div class="md:ml-64 items-center py-24 h-screen overflow-y-auto">
             <div class="mx-auto max-w-7xl space-y-6 px-6 lg:px-8">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">

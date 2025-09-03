@@ -9,7 +9,6 @@ const props = defineProps({ categories: Object });
 <template>
     <Head title="Categorías" />
     <AuthenticatedLayout>
-        <Header></Header>
         <section class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6">
             <div class="flex justify-between items-center">
                 <h2 class="text-white">Listado de Categorías</h2>

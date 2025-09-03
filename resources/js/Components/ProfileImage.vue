@@ -9,9 +9,9 @@ import DropdownLink from './DropdownLink.vue';
         <template #trigger>
             <button class="flex items-center">
                 <img
-                    src="/path/to/profile-image.jpg"
+                    src="assets/images/profile.png"
                     alt="Profile Image"
-                    class="h-10 w-10 rounded-full border-2 border-white"
+                    class="h-10 w-10 rounded-full border-2 border-gray-300 p-1"
         />
         
         <span

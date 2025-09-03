@@ -6,6 +6,7 @@ import DropdownLink from "@/Components/DropdownLink.vue";
 import NavLink from "@/Components/NavLink.vue";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 import { Link } from "@inertiajs/vue3";
+import Header from "@/Components/Header.vue";
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -35,7 +36,7 @@ const showingNavigationDropdown = ref(false);
                         <li>
                             <NavLink
                                 :href="route('Tables/Index')"
-                                :active="route().current('Tables/Index')"
+                                :active="route().current('Tables/Index') || route().current('Tables/CreateTable')"
                             ><img src="/assets/icons/svg/menu/table.svg" alt="Inicio" class="w-6" />
                                 Mesas
                             </NavLink>
@@ -76,6 +77,8 @@ const showingNavigationDropdown = ref(false);
                 </nav>
             </div>
         </aside>
+
+        <Header></Header>
 
         <!-- Main Content -->
         <div class="flex-1">

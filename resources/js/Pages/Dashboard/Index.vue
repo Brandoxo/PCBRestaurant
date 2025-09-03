@@ -30,8 +30,6 @@ const selectOrder = (order) => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <Header></Header>
-
         <div class="py-20 h-screen overflow-y-auto">
             <div class="mx-auto sm:px-6 lg:px-8 lg:ml-64 ">
                 <div
