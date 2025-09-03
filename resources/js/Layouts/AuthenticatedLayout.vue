@@ -36,7 +36,7 @@ const showingNavigationDropdown = ref(false);
                         <li>
                             <NavLink
                                 :href="route('Tables/Index')"
-                                :active="route().current('Tables/Index') || route().current('Tables/CreateTable')"
+                                :active="route().current('Tables/Index') || route().current('Tables/Create')"
                             ><img src="/assets/icons/svg/menu/table.svg" alt="Inicio" class="w-6" />
                                 Mesas
                             </NavLink>

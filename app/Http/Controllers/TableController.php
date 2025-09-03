@@ -18,7 +18,7 @@ class TableController extends Controller
     {
 
         $mesas = Mesas::all();
-        return inertia('Tables/CreateTable', [
+        return inertia('Tables/Create', [
             'mesas' => $mesas
         ]);
     }

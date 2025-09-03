@@ -29,7 +29,7 @@ Route::delete('/Categories/{id}', [\App\Http\Controllers\CategoryController::cla
 
 //Tables
 Route::get('/Tables', [\App\Http\Controllers\TableController::class, 'index'])->name('Tables/Index') ->middleware(['auth', 'verified']);
-Route::get('/Tables/CreateTable', [\App\Http\Controllers\TableController::class, 'create'])->name('Tables/CreateTable') ->middleware(['auth', 'verified']);
+Route::get('/Tables/Create', [\App\Http\Controllers\TableController::class, 'create'])->name('Tables/Create') ->middleware(['auth', 'verified']);
 Route::post('/Tables', [\App\Http\Controllers\TableController::class, 'store'])->name('Tables/Store') ->middleware(['auth', 'verified']);
 Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, 'update'])->name('Tables/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);

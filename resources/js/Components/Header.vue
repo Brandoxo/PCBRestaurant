@@ -10,7 +10,7 @@ const title = computed(() => {
         case "Orders/Index":
             return "Órdenes";
         case "Tables/Index":
-        case "Tables/CreateTable":
+        case "Tables/Create":
             return "Mesas";
         case "Categories/Index":
             return "Categorías";
