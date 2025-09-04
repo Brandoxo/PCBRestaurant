@@ -15,16 +15,16 @@ const showingNavigationDropdown = ref(false);
     <div class="min-h-screen flex bg-tertiary">
         <!-- Sidebar -->
         <aside class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full">
-            <div class="flex items-center mb-8 w-full bg-white py-4">
+            <div class="flex items-center w-full bg-white py-4">
                 <Link :href="route('dashboard')">
                     <ApplicationLogo
                         class="h-10 w-auto fill-current text-gray-800"
                     />
                 </Link>
             </div>
-            <div class="py-4 px-2 h-full">
+            <div class=" px-2 h-full flex flex-col">
                 <nav class="flex-1">
-                    <ul class="space-y-6 2xl:space-y-10">
+                    <ul class="flex flex-col h-full justify-evenly 2xl:justify-center 2xl:gap-10">
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
@@ -53,8 +53,16 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('Categories/Index')"
                                 :active="route().current('Categories/Index') || route().current('Categories/Create')"
-                            ><img src="/assets/icons/svg/menu/categories.svg" alt="Productos" class="w-6" />
+                            ><img src="/assets/icons/svg/menu/categories.svg" alt="Categorías" class="w-6" />
                                 Categorías
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
+                                :href="route('Categories/Index')"
+                                :active="route().current('Categories/Index') || route().current('Categories/Create')"
+                            ><img src="/assets/icons/svg/menu/products.svg" alt="Productos" class="w-6" />
+                                Menú
                             </NavLink>
                         </li>
                         <li>
