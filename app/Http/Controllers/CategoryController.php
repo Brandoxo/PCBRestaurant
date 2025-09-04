@@ -32,22 +32,26 @@ class CategoryController extends Controller
         ->with('succes', 'Category created succesfully.');
     }
 
-    public function edit(Categories $category) {
-        return Inertia::render('Categories/Edit', [
-            'category' => $category
-        ]);
-    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|max:255|unique:categories,name,' . $id,
+            'description' => 'required|max:255'
+    ]);
 
-    public function update(Request $request, Categories $category) {
-        $validated = $request->validate([
-            'name' => 'required|unique:categories,name,' . $category->id,
-        ]);
-        $category->update($validated);
-        return redirect()->route('categories.index');
-    }
+    $category = Categories::findOrFail($id);
+    $category->name = $request->name;
+    $category->description = $request->description;
+    $category->save();
 
-    public function destroy(Categories $category) {
+    return redirect()->route('Categories/Index')
+        ->with('success', 'Category updated successfully.');
+}
+
+    public function destroy($id) {
+        $category = Categories::findOrFail($id);
         $category->delete();
-        return redirect()->route('categories.index');
+        return redirect()->route('Categories/Index')
+            ->with('success', 'Category deleted successfully.');
     }
 }

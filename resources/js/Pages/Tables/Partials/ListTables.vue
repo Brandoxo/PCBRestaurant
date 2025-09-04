@@ -4,6 +4,12 @@ import { router } from '@inertiajs/vue3';
 import { useToast } from 'vue-toastification';
 import Modal from '@/Components/Modal.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
+import CancelButton from '@/Components/CancelButton.vue';
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import { useForm } from '@inertiajs/vue3';
+
+const form = ref({ errors: {} });
 
 const props = defineProps({ mesas: Object });
 const openModal = ref(false);
@@ -14,8 +20,11 @@ const closeModal = () => {
 };
 
 const showModal = (id) => {
+    const foundTable = props.mesas.data.find((table) => table.id === id);
+    currentTable.value = foundTable
+        ? { ...foundTable }
+        : { id, number: '', status: '', capacity: '' };
     openModal.value = true;
-    currentTable.value = props.mesas.data.find((table) => table.id === id);
 };
 
 const editTable = (id) => {
@@ -90,26 +99,37 @@ const searchTable = (query) => {
 
         <Modal v-model:show="openModal">
             <div class="p-6">
-                <h3 class="text-lg font-bold mb-4">Editar Mesa</h3>
+                <h3 class="text-lg font-bold mb-4">Editar Categoría</h3>
                 <form class="flex flex-col">
-                    <label class="block text-sm font-medium text-black mb-2">Número de mesa</label>
-                    <input v-model="currentTable.number" type="text" placeholder="Numero de Mesa" class="border p-2 rounded-lg mb-4" />
-                    <span class="text-red-500 hidden">Este número de mesa ya está en uso</span>
-                    <label class="block text-sm font-medium text-black mb-2">Estado</label>
+                    <div>
+                        <InputLabel for="number" value="Número de Mesa" class="mb-2"></InputLabel>
+                        <input v-model="currentTable.number" type="text" placeholder="Numero de Mesa" class="border p-2 rounded-lg mb-4 w-full" />
+                        <InputError :message="form.errors.number"></InputError>
+                        <span class="text-red-500 hidden">Este número de mesa ya está en uso.</span>
+                    </div>
+
+                    <div>
+                    <InputLabel class="block text-sm font-medium text-black mb-2">Estado</InputLabel>
                     <select v-model="currentTable.status" class="border p-2 rounded-lg mb-4">
                         <option value="" disabled selected>Selecciona un estado</option>
                         <option value="Libre">Libre</option>
                         <option value="Ocupada">Ocupada</option>
                         <option value="Reservada">Reservada</option>
                     </select>
-                    <label class="block text-sm font-medium text-black mb-2">Capacidad de Personas</label>
-                    <input v-model="currentTable.capacity" type="text" placeholder="Capacidad" class="border p-2 rounded-lg mb-4" />
+                    <InputError :message="form.errors.status"></InputError>
+                    </div>
+
+                    <div>
+                        <InputLabel for="capacity" value="Capacidad"></InputLabel>
+                        <input v-model="currentTable.capacity" type="text" placeholder="Capacidad" class="border p-2 rounded-lg mb-4" />
+                        <InputError :message="form.errors.capacity"></InputError>
+                    </div>
                     <div class="flex justify-between">
-                        <button @click="closeModal" class="bg-dangerRed hover:bg-red-700 text-white px-4 py-2 rounded-lg">Cancelar</button>
+                        <CancelButton @click="closeModal">Cancelar</CancelButton>
                         <button @click="editTable(currentTable.id)" type="button" class="bg-approveGreen hover:bg-green-600 text-white px-4 py-2 rounded-lg self-end">Guardar Cambios</button>
                     </div>
+                    
                 </form>
-                
             </div>
         </Modal>
 </template>
