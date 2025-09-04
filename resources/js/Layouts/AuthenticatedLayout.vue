@@ -24,7 +24,7 @@ const showingNavigationDropdown = ref(false);
             </div>
             <div class=" px-2 h-full flex flex-col">
                 <nav class="flex-1">
-                    <ul class="flex flex-col h-full justify-evenly 2xl:justify-center 2xl:gap-10">
+                    <ul class="flex flex-col h-full justify-evenly 2xl:justify-start 2xl:gap-8 2xl:mt-8">
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
@@ -60,7 +60,7 @@ const showingNavigationDropdown = ref(false);
                         <li>
                             <NavLink
                                 :href="route('Categories/Index')"
-                                :active="route().current('Categories/Index') || route().current('Categories/Create')"
+                                :active="route().current('Menu/Index') || route().current('Menu/Create')"
                             ><img src="/assets/icons/svg/menu/products.svg" alt="Productos" class="w-6" />
                                 Menú
                             </NavLink>
