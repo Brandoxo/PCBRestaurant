@@ -1,12 +1,11 @@
 <script setup>
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { useToast } from 'vue-toastification';
 import Modal from '@/Components/Modal.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
-import { Input } from 'postcss';
 import CancelButton from '@/Components/CancelButton.vue';
-import { useToast } from 'vue-toastification';
 
 const form = ref({ errors: {} })
 const currentCategory = ref({})

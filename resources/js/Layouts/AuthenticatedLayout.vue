@@ -59,7 +59,7 @@ const showingNavigationDropdown = ref(false);
                         </li>
                         <li>
                             <NavLink
-                                :href="route('Categories/Index')"
+                                :href="route('Menu/Index')"
                                 :active="route().current('Menu/Index') || route().current('Menu/Create')"
                             ><img src="/assets/icons/svg/menu/products.svg" alt="Productos" class="w-6" />
                                 Menú

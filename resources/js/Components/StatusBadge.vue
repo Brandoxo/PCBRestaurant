@@ -22,5 +22,7 @@ import { defineProps } from 'vue';
      'Reservada': 'bg-goodYellow text-white',
      'Cancelada': 'bg-red-500 text-white',
      'Ocupada': 'bg-dangerRed text-white',
+     '1': 'bg-approveGreen text-white' ,
+     '0': 'bg-dangerRed text-white'
  };
 </script>

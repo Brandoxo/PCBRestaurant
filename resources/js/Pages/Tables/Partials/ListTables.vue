@@ -7,7 +7,6 @@ import StatusBadge from '@/Components/StatusBadge.vue';
 import CancelButton from '@/Components/CancelButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import { useForm } from '@inertiajs/vue3';
 
 const form = ref({ errors: {} });
 

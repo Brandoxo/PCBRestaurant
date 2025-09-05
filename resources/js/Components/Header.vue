@@ -17,6 +17,9 @@ const title = computed(() => {
             return "Categorías";
         case "Products/Index":
             return "Productos";
+        case "Menu/Index":
+        case "Menu/Create":
+            return "Menú";
         case "Users/Index":
             return "Usuarios";
         case "Profile/Edit":

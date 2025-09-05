@@ -16,6 +16,7 @@ const newCategory = ref({
   update_at: ''
 })
 
+
 const createCategory = () =>{
   router.post('/Categories', newCategory.value, {
     onSuccess: () =>{

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Aoo\Http\Controllers\OrderController;
+use App\Http\Controllers\MenuController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,12 @@ Route::get('/Tables/Create', [\App\Http\Controllers\TableController::class, 'cre
 Route::post('/Tables', [\App\Http\Controllers\TableController::class, 'store'])->name('Tables/Store') ->middleware(['auth', 'verified']);
 Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, 'update'])->name('Tables/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);
+
+//Menu
+Route::get('/Menu', [\App\Http\Controllers\MenuController::class, 'index'])->name('Menu/Index') ->middleware(['auth', 'verified']);
+Route::get('/Menu/Create', [\App\Http\Controllers\MenuController::class, 'create'])->name('Menu/Create') ->middleware(['auth', 'verified']);
+Route::post('/Menu', [\App\Http\Controllers\MenuController::class, 'store'])->name('Menu/Store') ->middleware(['auth', 'verified']);
+Route::delete('/Menu/{id}', [\App\Http\Controllers\MenuController::class, 'destroy'])->name('Menu/Delete') ->middleware(['auth', 'verified']);
 
 //Orders
 Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
