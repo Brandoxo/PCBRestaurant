@@ -38,6 +38,7 @@ Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'de
 Route::get('/Menu', [\App\Http\Controllers\MenuController::class, 'index'])->name('Menu/Index') ->middleware(['auth', 'verified']);
 Route::get('/Menu/Create', [\App\Http\Controllers\MenuController::class, 'create'])->name('Menu/Create') ->middleware(['auth', 'verified']);
 Route::post('/Menu', [\App\Http\Controllers\MenuController::class, 'store'])->name('Menu/Store') ->middleware(['auth', 'verified']);
+Route::put('/Menu/edit/{id}', [\App\Http\Controllers\MenuController::class, 'update'])->name('Menu/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Menu/{id}', [\App\Http\Controllers\MenuController::class, 'destroy'])->name('Menu/Delete') ->middleware(['auth', 'verified']);
 
 //Orders

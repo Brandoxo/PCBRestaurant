@@ -49,6 +49,27 @@ class MenuController extends Controller
         return redirect()->route('Menu/Index')->with('success', 'Producto creado exitosamente.');
     }
 
+    public function update(Request $request, $id) {
+
+        $request->validate([
+            'category_id' => 'required',
+            'name' => 'required',
+            'sku' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+            'cost' => 'required',
+            'tax_rate' => 'nullable',
+            'is_active' => 'required',
+            'created_at' => 'nullable',
+            'updated_at' => 'nullable',
+        ]);
+
+        $products = Products::findOrFail($id);
+        $products->update($request->all());
+        return redirect()->route('Menu/Index')->with('success', 'Producto actualizado exitosamente.');
+
+    }
+
 
     public function destroy($id) {
 
