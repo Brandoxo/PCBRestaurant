@@ -9,8 +9,8 @@ console.log(props)
 
 const newTable = ref({
     number: '',
-    status: '',
-    capacity: '',
+    status: 'Libre',
+    capacity: '4',
     created_at: '',
     updated_at: ''
 });
@@ -25,7 +25,7 @@ const createTable = () => {
         onSuccess: () => {
             useToast().success('Mesa creada exitosamente');
             showModal.value = false;
-            newTable.value = { number: '', status: '', capacity: '' };
+            newTable.value = { number: '', status: '', capacity: '4' };
         },
         onError: (error) => {
             useToast().error('Error al crear la mesa');
@@ -48,11 +48,8 @@ const createTable = () => {
                 <select v-model="newTable.status" class="border p-2 rounded-lg">
                     <option value="" disabled selected>Selecciona un estado</option>
                     <option value="Libre">Libre</option>
-                    <option value="Ocupada">Ocupada</option>
                     <option value="Reservada">Reservada</option>
                 </select>
-                <label class="block text-sm font-medium text-black mb-2">Capacidad de Personas (?)</label>
-                <input v-model="newTable.capacity" type="number" class="border p-2 rounded-lg mb-4" />
                 <button type="submit" class="bg-approveGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg self-end">Guardar Mesa</button>
             </form>
             </div>

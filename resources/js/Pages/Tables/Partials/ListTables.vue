@@ -112,7 +112,6 @@ const searchTable = (query) => {
                     <select v-model="currentTable.status" class="border p-2 rounded-lg mb-4">
                         <option value="" disabled selected>Selecciona un estado</option>
                         <option value="Libre">Libre</option>
-                        <option value="Ocupada">Ocupada</option>
                         <option value="Reservada">Reservada</option>
                     </select>
                     <InputError :message="form.errors.status"></InputError>
