@@ -17,12 +17,14 @@ import { defineProps } from 'vue';
 
  const statusClasses = {
      'Libre': 'bg-approveGreen/70 text-white',
+     'Reservada': 'bg-goodYellow text-white',
+     'Ocupada': 'bg-dangerRed text-white',
      'Completada': 'bg-approveGreen/70 text-white',
      'En curso': 'bg-yellow-500 text-white',
-     'Reservada': 'bg-goodYellow text-white',
      'Cancelada': 'bg-red-500 text-white',
-     'Ocupada': 'bg-dangerRed text-white',
-     '1': 'bg-approveGreen text-white' ,
-     '0': 'bg-dangerRed text-white'
+     'Activo': 'bg-approveGreen text-white' ,
+     'Inactivo': 'bg-dangerRed text-white'
  };
+
+
 </script>

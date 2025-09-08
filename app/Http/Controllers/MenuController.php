@@ -39,12 +39,22 @@ class MenuController extends Controller
             'price' => 'required',
             'cost' => 'required',
             'tax_rate' => 'nullable',
-            'is_active' => 'required',
+            'is_active' => 'required|boolean',
             'created_at' => 'nullable',
             'updated_at' => 'nullable',
         ]);
 
-        Products::create($request->all());
+        $data = $request->all();
+
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $destinationPath = 'assets/uploads/';
+            $file->move($destinationPath, $filename);
+            $data['image'] = $destinationPath . $filename;
+        }
+
+        Products::create($data);
 
         return redirect()->route('Menu/Index')->with('success', 'Producto creado exitosamente.');
     }
@@ -59,13 +69,23 @@ class MenuController extends Controller
             'price' => 'required',
             'cost' => 'required',
             'tax_rate' => 'nullable',
-            'is_active' => 'required',
+            'is_active' => 'required|boolean',
             'created_at' => 'nullable',
             'updated_at' => 'nullable',
         ]);
 
+        $data = $request->all();
+
+        if($request->hasFile('image')){
+            $file = $request->file('image');
+            $filename = time().'_'.$file->getClientOriginalName();
+            $destinationPath = 'assets/uploads/';
+            $file->move($destinationPath, $filename);
+            $data['image'] = $destinationPath . $filename;
+        }
+
         $products = Products::findOrFail($id);
-        $products->update($request->all());
+        $products->update($data);
         return redirect()->route('Menu/Index')->with('success', 'Producto actualizado exitosamente.');
 
     }

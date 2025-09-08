@@ -8,7 +8,7 @@ class TableController extends Controller
 {
     public function index()
     {
-        $mesas = Mesas::paginate(10); // O Mesas::all()
+        $mesas = Mesas::paginate(30); // O Mesas::all()
         return inertia('Tables/Index', [
             'mesas' => $mesas
         ]);
