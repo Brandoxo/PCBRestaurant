@@ -41,6 +41,9 @@ Route::post('/Menu', [\App\Http\Controllers\MenuController::class, 'store'])->na
 Route::put('/Menu/edit/{id}', [\App\Http\Controllers\MenuController::class, 'update'])->name('Menu/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Menu/{id}', [\App\Http\Controllers\MenuController::class, 'destroy'])->name('Menu/Delete') ->middleware(['auth', 'verified']);
 
+// Products
+Route::get('/Products/get', [\App\Http\Controllers\Products\ProductController::class, 'index'])->name('products.get') ->middleware(['auth', 'verified']);
+
 //Orders
 Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
 
