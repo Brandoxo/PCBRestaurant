@@ -6,21 +6,32 @@ import { computed } from 'vue';
 const props = defineProps({
   tables: Object,
   orders: Object,
-  selectedTable: Object
+  selectedTable: Object,
+  currentOrder: Object
 });
 
-const emit = defineEmits(['closeOptions']);
+const emit = defineEmits(['closeOptions', 'order-saved']);
 function closeOptions() {
   emit('closeOptions');
+  resetOrder();
+  console.log('Close Options clicked, order reset to normal state:', props.currentOrder);
 }
 
+const saveOrder = () => {
+  emit('order-saved', { ...props.currentOrder });
+  resetOrder();
+  console.log('Order saved and reset to empty state:', props.currentOrder);
+};
+
+
+const resetOrder = () => {
+  props.currentOrder.mesa_id = null;
+  props.currentOrder.items = [];
+  console.log('Order reset to empty state:', props.currentOrder);
+};
 
 const products = ref([]);
 const showProducts = ref(false);
-const order = ref({
-  mesa_id: props.selectedTable?.number ? props.selectedTable.number : null,
-  items: []
-});
 
 const selectedCategory = ref('all');
 
@@ -43,35 +54,46 @@ const GetProducts = async () => {
   }
 };
 
-const saveOrder = () => {
-  console.log('Save Order clicked');
-
-};
 
 const AddToOrder = (product, _selectedTable) => {
-  if (!order.value.mesa_id) {
-    order.value.mesa_id = _selectedTable;
+  if (!props.currentOrder.mesa_id) {
+    props.currentOrder.mesa_id = _selectedTable;
   }
-  const existingItem = order.value.items.find(item => item.product_id === product.id);
+  const existingItem = props.currentOrder.items.find(item => item.product_id === product.id);
   if (existingItem) {
     existingItem.quantity += 1;
   } else {
-    order.value.items.push({
+    props.currentOrder.items.push({
       product_id: product.id,
       quantity: 1,
-      price: product.price
+      price: product.price,
+      product: product
     });
   }
   console.log('=========================================');
-  console.log('Current Order:', order.value);
+  console.log('Current Order:', props.currentOrder);
   console.log('Add to Order clicked');
   console.log('Product added to order:', product);
-  console.log('Current Order:', order.value);
+  console.log('Current Order:', props.currentOrder);
+};
+
+const RemoveToOrder = (productId) => {
+  const existingItemIndex = props.currentOrder.items.findIndex(item => item.product_id === productId);
+  if (existingItemIndex !== -1) {
+    if (props.currentOrder.items[existingItemIndex].quantity > 1) {
+      props.currentOrder.items[existingItemIndex].quantity -= 1;
+    } else {
+      props.currentOrder.items.splice(existingItemIndex, 1);
+    }
+  }
+  console.log('Remove from Order clicked');
+  console.log('Product removed from order:', productId);
+  console.log('Current Order:', props.currentOrder);
 };
 
 onMounted(() => {
 console.log('Selected Table Prop:', props.selectedTable);
-  order.value.mesa_id = props.selectedTable?.number ? props.selectedTable.number : null;
+  props.currentOrder.mesa_id = props.selectedTable?.number ? props.selectedTable.number : null;
   GetProducts();
   console.log('Component mounted.');
 
@@ -82,9 +104,8 @@ console.log(props)
 
 
 <template>
-    <div class="w-2/3 p-8" v-if="selectedTable">
-      <div class="bg-gray-100 p-8 rounded-xl shadow-lg ">
-        <h3 class="text-2xl font-bold mb-4">Orden para la Mesa #{{ selectedTable.number }}</h3>
+    <div class="w-full px-8" v-if="selectedTable">
+      <div class="bg-gray-100 p-8 rounded-xl shadow-lg hover:scale-[1.01] transform transition-transform duration-300 ease-in-out">
         <p class="text-center">Selecciona una categoría del Menú</p>
 
         <div v-if="showProducts" class="mt-4">
@@ -98,12 +119,16 @@ console.log(props)
 
           <div v-if="filteredProducts.length > 0" class="text-center text-gray-500">
             <h4 class="text-xl font-semibold mb-2">Productos Disponibles:</h4>
-            <ul class="list-disc list-inside max-h-64 overflow-y-auto grid grid-cols-4 gap-4">
+            <ul class="list-disc list-inside max-h-48 2xl:max-h-[30rem] overflow-y-auto grid grid-cols-4 2xl:grid-cols-6 gap-4">
               <li v-for="product in filteredProducts" :key="product.id" class="mb-1 flex flex-col">
                 <div class="bg-white rounded shadow flex justify-between items-center flex-col">
-                  <img :src="product.image" alt="Product Image" class="w-full h-32 object-cover mb-2" />
+                  <img :src="product.image" alt="Product Image" class="h-40 w-full 2xl:max-w-40 object-cover mb-2" />
                   <span class="font-bold">{{ product.name }}</span><span class="font-extrabold text-black text-lg mb-">${{ product.price }}</span>
-                  <button class="text-sm px-5 mb-2 py-2 uppercase font-extrabold bg-approveGreen/80 text-white hover:bg-approveGreen" @click="AddToOrder(product, selectedTable.number)">Agregar</button>
+                  <div class="flex justify-evenly w-full m-4 text-center items-center">
+                  <button class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-red-600/80 text-white hover:bg-red-600" @click="RemoveToOrder(product.id)">-</button>
+                  <span class="text-lg font-bold text-gray-700">{{ currentOrder.items.find(item => item.product_id === product.id)?.quantity || 0 }}</span>
+                  <button class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-approveGreen/80 text-white hover:bg-approveGreen" @click="AddToOrder(product, selectedTable.number)">+</button>
+                  </div>
                 </div>
               </li>
             </ul>

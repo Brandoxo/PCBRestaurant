@@ -13,7 +13,7 @@ class GetProducts {
         return Products::find($id);
     }
 
-    public static function WithPagination($perPage = 15) {
+    public static function WithPagination($perPage = 100) {
         return Products::paginate($perPage);
     }
 

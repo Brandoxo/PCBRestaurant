@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import GenerateOrderButton from '@/Components/GenerateOrderButton.vue';
 import StatusBadge from '@/Components/StatusBadge.vue';
 import { useToast } from 'vue-toastification';
@@ -7,27 +7,50 @@ import { useToast } from 'vue-toastification';
 const emit = defineEmits(['tableSelected']);
 const props = defineProps({
   tables: Object,
+  selectedTable: Object
 });
 
-// Define la función para emitir el evento
+
 function openOptions(table) {
   emit('tableSelected', table);
+  props.selectedTable = table;
   window.scrollTo({ top: '0%', behavior: 'smooth' });
   useToast().info(`Seleccionando orden para la Mesa #${table.number}`);
+  console.log('Tables data:', props.selectedTable);
 }
+
+const hiddeDiv = (div) => {
+  if(!props.selectedTable) {
+    return false; 
+  }
+  return props.selectedTable && props.selectedTable.id !== div.id; 
+};
+
+onMounted(() => {
+  console.log('Tables data:', props.tables);
+});
 </script>
 
 <template>
-  <div class="grid gap-6 overflow-y-auto max-h-full scrollbar-hide scroll-smooth w-1/3">
+  <div
+    :class="[ props.selectedTable ? 'animate-pulse pointer-events-none transition-transform duration-300 ease-in-out min-w-80 2xl:w-1/4' :
+      'grid grid-cols-3 2xl:grid-cols-5 gap-10 overflow-y-auto scrollbar-hide scroll-smooth w-full'
+    ]"
+  >
     <div
       v-for="value in tables.filter(t => t.status === 'Libre' || t.status === 'Reservada')"
+      :hidden="hiddeDiv(value)"
+      :block="!hiddeDiv(value)"
       :key="value.id"
-      class="bg-white rounded-xl items-center p-4 space-y-2 w-full"
+      :class="[
+        'bg-white rounded-xl items-center p-4 space-y-2 shadow-lg cursor-pointer hover:scale-[1.02] transform transition-transform duration-300 ease-in-out',
+        props.selectedTable && props.selectedTable.id === value.id ? 'pointer-events-auto' : ''
+      ]"
     >
       <div>
         <StatusBadge :status="value.status" />
       </div>
-      <div class="flex justify-evenly gap-8 items-center">
+      <div class="flex justify-between gap-8 items-center mb-4">
           <h2 class="text-xl uppercase font-black">Mesa</h2>
           <img src="/assets/icons/svg/menu/table.svg" alt="Mesa" class="w-16" />
         <span class="font-extrabold text-4xl text-red-900">#{{ value.number }}</span>
@@ -38,5 +61,9 @@ function openOptions(table) {
       </div>
       <GenerateOrderButton @click="openOptions(value)">Generar Orden</GenerateOrderButton>
     </div>
+
   </div>
+
+  
+
 </template>

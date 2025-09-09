@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useForm, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useToast } from 'vue-toastification';
+import ReturnButton from '@/Components/ReturnButton.vue';
 
 const props = defineProps({categories: Object})
 console.log(props)
@@ -48,9 +49,7 @@ const createCategory = () =>{
       <button type="submit" class="bg-green-600 text-white px-4 py-2 self-end rounded-lg">Guardar</button>
     </form>
     </div>
-    <div>
-      <Link href="/Categories" class="px-8 p-2 bg-dangerRed hover:bg-red-700 rounded-lg text-white"><svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 0l3-3m-3 3l3 3" /></svg>Volver Atrás</Link>
-    </div>
+<ReturnButton />
   </div>
   </AuthenticatedLayout>
 </template>
