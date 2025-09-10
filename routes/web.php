@@ -46,6 +46,7 @@ Route::get('/Products/get', [\App\Http\Controllers\Products\ProductController::c
 
 //Orders
 Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
+Route::post('/Orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('Orders/Store') ->middleware(['auth', 'verified']);
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);

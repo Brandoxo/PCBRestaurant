@@ -6,8 +6,8 @@ import TablesAvailables from "./Partials/TablesAvailables.vue";
 import MakeOrder from "./Partials/MakeOrder.vue";
 import OrderDetails from "./Partials/OrderDetails.vue";
 
-const selectedTable = ref(null);
 const { props } = usePage();
+const selectedTable = ref(null);
 const tables = ref(props.tables);
 
 const orders = ref(props.orders);

@@ -21,16 +21,16 @@ console.log('Current Order in OrderDetails:', props.currentOrder);
                 <h3 class="text-2xl font-bold mb-4 text-center">Orden #{{ currentOrder.id }}</h3>
             </div>
             <h5 class="text-lg font-semibold mb-2">Productos en la orden actual:</h5>
-            
-            <ul class="list-disc list-inside mb-2 text-gray-700 text-center ">
+
+            <ul class="list-disc list-inside mb-2 text-gray-700 text-center max-h-24  2xl:max-h-80 overflow-y-auto">
                 <li v-for="item in currentOrder.items" :key="item.product_id" class="mb-1 text-start ">
                     {{ item.product.name }} x{{ item.quantity }} <div class="flex justify-end"> <span class="font-extralight text-gray-500">${{ item.price * item.quantity }}</span></div>
                     <hr></hr>
                 </li>
-                <div class="flex justify-between mt-4 space-x-4 text-lg">
-                <span class="font-extrabold text-xl flex uppercase">Total:</span> <span class="font-black uppercase text-xl underline">${{ currentOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0) }}</span>
-                </div>
             </ul>
+            <div class="flex justify-between mt-4 space-x-4 text-lg">
+            <span class="font-extrabold text-xl flex uppercase underline">Total:</span> <span class="font-black uppercase text-xl ">${{ currentOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0) }}</span>
+            </div>
         </div>
 
         <div v-if="(!currentOrder || currentOrder.items.length === 0) && (!orders || orders.length === 0)" class="text-gray-500">

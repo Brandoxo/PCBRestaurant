@@ -9,7 +9,7 @@ use Inertia\Inertia;
 class CategoryController extends Controller
 {
     public function index() {
-        $categories = Categories::paginate(10);
+        $categories = Categories::paginate(100);
         return Inertia::render('Categories/Index', [
             'categories' => $categories
         ]);

@@ -2,6 +2,8 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { computed } from 'vue';
+import { useToast } from 'vue-toastification';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
   tables: Object,
@@ -10,15 +12,32 @@ const props = defineProps({
   currentOrder: Object
 });
 
-const emit = defineEmits(['closeOptions', 'order-saved']);
+const emit = defineEmits(['closeOptions']);
 function closeOptions() {
   emit('closeOptions');
   resetOrder();
   console.log('Close Options clicked, order reset to normal state:', props.currentOrder);
 }
 
+const toast = useToast();
+
 const saveOrder = () => {
-  emit('order-saved', { ...props.currentOrder });
+  if (!props.currentOrder.mesa_id || props.currentOrder.items.length === 0) {
+    toast.error('No se puede guardar una orden vacía');
+    return;
+  }else{ router.post('/Orders/Store', props.currentOrder, props.currentTable, {
+    onSuccess: (response) => {
+      props.currentTable.status = 'Ocupada';
+      toast.success('Orden guardada exitosamente');
+      emit('handleOrderSaved', response.props.order);
+      console.log('Order saved successfully:', response.props.order);
+    },
+    onError: (error) => {
+      toast.error('Error al guardar la orden');
+      console.error('Error saving order:', error);
+    }
+  });
+  }
   resetOrder();
   console.log('Order saved and reset to empty state:', props.currentOrder);
 };
@@ -137,8 +156,8 @@ console.log(props)
         </div>
 
         <div class="flex justify-between mt-6">
-        <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" @click="closeOptions">Cerrar</button>
-        <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" @click="saveOrder">Guardar orden</button>
+        <button class="mt-4 px-8 py-2 bg-dangerRed hover:bg-red-800 text-white rounded-lg transition-all duration-300 transform ease-in-out" @click="closeOptions">Cerrar</button>
+        <button class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg" @click="saveOrder">Guardar orden</button>
         </div>
       </div>
     </div>

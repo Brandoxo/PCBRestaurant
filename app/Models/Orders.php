@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class Orders extends Model
 {
-    
+    protected $fillable = ['id', 'mesa_id', 'date_time', 'status', 'total'];
 }
