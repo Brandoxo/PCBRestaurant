@@ -150,33 +150,41 @@ const filteredTables = computed(() => {
                     >
                 </div>
 
-                <div>
-                    <InputLabel
-                        class="block text-sm font-medium text-black mb-2"
-                        >Estado</InputLabel
-                    >
-                    <select
-                        v-model="currentTable.status"
-                        class="border p-2 rounded-lg mb-4"
-                    >
-                        <option value="" disabled selected>
-                            Selecciona un estado
-                        </option>
-                        <option value="Libre">Libre</option>
-                        <option value="Reservada">Reservada</option>
-                    </select>
-                    <InputError :message="form.errors.status"></InputError>
-                </div>
-
-                <div>
-                    <InputLabel for="capacity" value="Capacidad"></InputLabel>
-                    <input
-                        v-model="currentTable.capacity"
-                        type="text"
-                        placeholder="Capacidad"
-                        class="border p-2 rounded-lg mb-4"
-                    />
-                    <InputError :message="form.errors.capacity"></InputError>
+                <div class="flex justify-between">
+                    <div>
+                        <InputLabel
+                            for="status"
+                            value="Estado"
+                            class="m-2"
+                        ></InputLabel>
+                        <select
+                            v-model="currentTable.status"
+                            class="border p-2 rounded-lg mb-4"
+                        >
+                            <option value="" disabled selected>
+                                Selecciona un estado
+                            </option>
+                            <option value="Libre">Libre</option>
+                            <option value="Reservada">Reservada</option>
+                        </select>
+                        <InputError :message="form.errors.status"></InputError>
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="capacity"
+                            value="Capacidad"
+                            class="m-2"
+                        ></InputLabel>
+                        <input
+                            v-model="currentTable.capacity"
+                            type="text"
+                            placeholder="Capacidad"
+                            class="border p-2 rounded-lg mb-4"
+                        />
+                        <InputError
+                            :message="form.errors.capacity"
+                        ></InputError>
+                    </div>
                 </div>
                 <div class="flex justify-between">
                     <CancelButton @click="closeModal">Cancelar</CancelButton>

@@ -128,32 +128,35 @@ const filteredCategories = computed(() => {
         <div class="p-6">
             <h3 class="text-lg font-bold mb-4">Editar Categoría</h3>
             <form class="flex flex-col">
-                <div>
-                    <InputLabel for="name" value="Nombre"></InputLabel>
-                    <input
-                        v-model="currentCategory.name"
-                        type="text"
-                        placeholder="Nombre de Categoría"
-                        class="border p-2 rounded-lg mb-4"
-                    />
-                    <InputError :message="form.errors.name"></InputError>
-                    <span class="text-red-500 hidden"
-                        >Este nombre ya está en uso</span
-                    >
-                </div>
-
-                <div>
-                    <InputLabel
-                        for="description"
-                        value="Descripción"
-                    ></InputLabel>
-                    <input
-                        v-model="currentCategory.description"
-                        type="text"
-                        placeholder="Descripción"
-                        class="border p-2 rounded-lg mb-4"
-                    />
-                    <InputError :message="form.errors.description"></InputError>
+                <div class="flex justify-between">
+                    <div>
+                        <InputLabel for="name" value="Nombre"></InputLabel>
+                        <input
+                            v-model="currentCategory.name"
+                            type="text"
+                            placeholder="Nombre de Categoría"
+                            class="border p-2 rounded-lg mb-4 w-full"
+                        />
+                        <InputError :message="form.errors.name"></InputError>
+                        <span class="text-red-500 hidden"
+                            >Este nombre ya está en uso</span
+                        >
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="description"
+                            value="Descripción"
+                        ></InputLabel>
+                        <input
+                            v-model="currentCategory.description"
+                            type="text"
+                            placeholder="Descripción"
+                            class="border p-2 rounded-lg mb-4 w-full"
+                        />
+                        <InputError
+                            :message="form.errors.description"
+                        ></InputError>
+                    </div>
                 </div>
                 <div class="flex justify-between">
                     <button
