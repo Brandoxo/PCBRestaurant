@@ -44,7 +44,7 @@ const closeSidebar = () => {
             class="flex justify-between py-[15px] px-4 sm:px-6 lg:px-8 gap-4 lg:mr-64"
         >
             <!--hamburger menu-->
-            <div class="md:hidden flex items-center">
+            <div class="lg:hidden flex items-center">
                 <button @click="openSidebar">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

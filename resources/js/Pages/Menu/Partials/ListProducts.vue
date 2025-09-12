@@ -14,7 +14,7 @@ const currentProduct = ref({});
 const imageFile = ref(null);
 const handleImageUpdate = (event) => {
     imageFile.value = event.target.files[0];
-    console.log('Selected image file:', imageFile.value);
+    console.log("Selected image file:", imageFile.value);
 };
 
 function showModal(id) {
@@ -29,17 +29,17 @@ function closeModal() {
 }
 
 const editProduct = (id) => {
-        const formData = new FormData();
-    formData.append('category_id', currentProduct.value.category_id ?? '');
-    formData.append('name', currentProduct.value.name ?? '');
-    formData.append('sku', currentProduct.value.sku ?? '');
-    formData.append('description', currentProduct.value.description ?? '');
-    formData.append('price', currentProduct.value.price ?? '');
-    formData.append('cost', currentProduct.value.cost ?? '');
-    formData.append('tax', currentProduct.value.tax ?? '');
-    formData.append('is_active', currentProduct.value.is_active);
+    const formData = new FormData();
+    formData.append("category_id", currentProduct.value.category_id ?? "");
+    formData.append("name", currentProduct.value.name ?? "");
+    formData.append("sku", currentProduct.value.sku ?? "");
+    formData.append("description", currentProduct.value.description ?? "");
+    formData.append("price", currentProduct.value.price ?? "");
+    formData.append("cost", currentProduct.value.cost ?? "");
+    formData.append("tax", currentProduct.value.tax ?? "");
+    formData.append("is_active", currentProduct.value.is_active);
     if (imageFile.value) {
-        formData.append('image', imageFile.value);
+        formData.append("image", imageFile.value);
     }
     router.post(`/Menu/edit/${id}`, formData, {
         onSuccess: () => {
@@ -88,7 +88,7 @@ const deleteProduct = (id) => {
                     <th class="p-4">Precio</th>
                     <!-- <th class="p-4">Impuesto</th> -->
                     <th class="p-4">Disponible</th>
-                    <th class="p-4">Fecha de Creación</th>
+                    <th class="p-4 hidden lg:block">Fecha de Creación</th>
                     <th class="p-4">Fecha de Actualización</th>
                     <th class="p-4">Acciones</th>
                 </tr>
@@ -99,16 +99,24 @@ const deleteProduct = (id) => {
                         {{ value.category_id }}
                     </td>
                     <td class="border p-2 text-center">
-                        <img :src="value.image" alt="Product Image" class="w-16 h-16 object-cover mx-auto" />
+                        <img
+                            :src="value.image"
+                            alt="Product Image"
+                            class="w-16 h-16 object-cover mx-auto"
+                        />
                     </td>
                     <td class="border p-2 text-center">{{ value.name }}</td>
-                    <td class="border p-2 text-center">{{ value.sku.slice(4, 10) }}</td>
+                    <td class="border p-2 text-center">
+                        {{ value.sku.slice(4, 10) }}
+                    </td>
                     <td class="border p-2 text-center">$ {{ value.price }}</td>
                     <!-- <td class="border p-2 text-center">{{ value.tax }}</td> -->
                     <td class="border p-2 text-center">
-                        <StatusBadge :status="value.is_active ? 'Activo' : 'Inactivo'" />
+                        <StatusBadge
+                            :status="value.is_active ? 'Activo' : 'Inactivo'"
+                        />
                     </td>
-                    <td class="border p-2 text-center">
+                    <td class="border p-2 text-center hidden lg:block">
                         {{ value.created_at.slice(0, 10) }}
                     </td>
                     <td class="border p-2 text-center">
@@ -145,49 +153,59 @@ const deleteProduct = (id) => {
         <div class="p-6">
             <h3 class="text-lg font-bold mb-4">Editar Producto</h3>
             <form class="flex-col">
-                                <div class="text-center">
-                <InputLabel for="image" value="Imagen del Producto" />
-                <div class=" pr-4 border-r flex flex-col items-center justify-evenly border-dashed border-2 border-gray-300 self-center p-6">
-                    <input @change="handleImageUpdate" id="image" type="file" accept="image/png, image/jpeg" class="mt-2" />
-                </div>
-                <span class="text-sm text-gray-500 mt-2">(Solo archivos PNG o JPG)</span>
+                <div class="text-center">
+                    <InputLabel for="image" value="Imagen del Producto" />
+                    <div
+                        class="pr-4 border-r flex flex-col items-center justify-evenly border-dashed border-2 border-gray-300 self-center p-6"
+                    >
+                        <input
+                            @change="handleImageUpdate"
+                            id="image"
+                            type="file"
+                            accept="image/png, image/jpeg"
+                            class="mt-2"
+                        />
+                    </div>
+                    <span class="text-sm text-gray-500 mt-2"
+                        >(Solo archivos PNG o JPG)</span
+                    >
                 </div>
                 <div class="grid grid-cols-2 gap-4 mt-4">
-                <div>
-                    <InputLabel
-                        for="name"
-                        class="block text-sm font-medium text-black mb-2"
-                        >Nombre</InputLabel
-                    >
-                    <input
-                        v-model="currentProduct.name"
-                        type="text"
-                        placeholder="Nombre"
-                        class="border p-2 rounded-lg w-full mb-2"
-                    />
-                </div>
-                <div>
-                    <InputLabel
-                        for="categories"
-                        value="Categoría"
-                        class="mb-2"
-                    ></InputLabel>
-                    <select
-                        v-model="currentProduct.category_id"
-                        type="text"
-                        placeholder=""
-                        class="border rounded-lg mb-2 w-full"
-                    >
-                        <option value="">Selecciona un Categoría</option>
-                        <option
-                            v-for="category in props.categories"
-                            :key="category.id"
-                            :value="category.id"
+                    <div>
+                        <InputLabel
+                            for="name"
+                            class="block text-sm font-medium text-black mb-2"
+                            >Nombre</InputLabel
                         >
-                            {{ category.name }}
-                        </option>
-                    </select>
-                </div>
+                        <input
+                            v-model="currentProduct.name"
+                            type="text"
+                            placeholder="Nombre"
+                            class="border p-2 rounded-lg w-full mb-2"
+                        />
+                    </div>
+                    <div>
+                        <InputLabel
+                            for="categories"
+                            value="Categoría"
+                            class="mb-2"
+                        ></InputLabel>
+                        <select
+                            v-model="currentProduct.category_id"
+                            type="text"
+                            placeholder=""
+                            class="border rounded-lg mb-2 w-full"
+                        >
+                            <option value="">Selecciona un Categoría</option>
+                            <option
+                                v-for="category in props.categories"
+                                :key="category.id"
+                                :value="category.id"
+                            >
+                                {{ category.name }}
+                            </option>
+                        </select>
+                    </div>
                     <div>
                         <InputLabel
                             for="description"
@@ -200,62 +218,61 @@ const deleteProduct = (id) => {
                         ></textarea>
                     </div>
 
-                <div>
-                    <InputLabel for="sku" value="SKU"></InputLabel>
-                    <input
-                        v-model="currentProduct.sku"
-                        type="text"
-                        placeholder="SKU"
-                        class="border p-2 rounded-lg w-full mb-2"
-                    />
-                </div>
+                    <div>
+                        <InputLabel for="sku" value="SKU"></InputLabel>
+                        <input
+                            v-model="currentProduct.sku"
+                            type="text"
+                            placeholder="SKU"
+                            class="border p-2 rounded-lg w-full mb-2"
+                        />
+                    </div>
 
-                <div>
-                    <InputLabel for="price" value="Precio"></InputLabel>
-                    <input
-                        v-model="currentProduct.price"
-                        type="number"
-                        placeholder="Precio"
-                        class="border p-2 rounded-lg w-full mb-2"
-                    />
-                </div>
+                    <div>
+                        <InputLabel for="price" value="Precio"></InputLabel>
+                        <input
+                            v-model="currentProduct.price"
+                            type="number"
+                            placeholder="Precio"
+                            class="border p-2 rounded-lg w-full mb-2"
+                        />
+                    </div>
 
-                <div>
-                    <InputLabel for="cost" value="Costo"></InputLabel>
-                    <input
-                        v-model="currentProduct.cost"
-                        type="number"
-                        placeholder="Costo"
-                        class="border p-2 rounded-lg w-full mb-2"
-                    />
-                </div>
+                    <div>
+                        <InputLabel for="cost" value="Costo"></InputLabel>
+                        <input
+                            v-model="currentProduct.cost"
+                            type="number"
+                            placeholder="Costo"
+                            class="border p-2 rounded-lg w-full mb-2"
+                        />
+                    </div>
 
-                <div>
-                    <InputLabel
-                        class="block text-sm font-medium text-black"
-                        >Disponible</InputLabel
-                    >
-                    <select
-                        v-model="currentProduct.is_active"
-                        class="border p-2 rounded-lg w-full mb-2"
-                    >
-                        <option value="" disabled selected>
-                            Selecciona una opción
-                        </option>
-                        <option value="1">Sí</option>
-                        <option value="0">No</option>
-                    </select>
-                </div>
+                    <div>
+                        <InputLabel class="block text-sm font-medium text-black"
+                            >Disponible</InputLabel
+                        >
+                        <select
+                            v-model="currentProduct.is_active"
+                            class="border p-2 rounded-lg w-full mb-2"
+                        >
+                            <option value="" disabled selected>
+                                Selecciona una opción
+                            </option>
+                            <option value="1">Sí</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
 
-                <div>
-                    <InputLabel for="tax" value="Impuesto"></InputLabel>
-                    <input
-                        v-model="currentProduct.tax"
-                        type="number"
-                        placeholder="Impuesto"
-                        class="border p-2 rounded-lg w-full mb-2"
-                    />
-                </div>
+                    <div>
+                        <InputLabel for="tax" value="Impuesto"></InputLabel>
+                        <input
+                            v-model="currentProduct.tax"
+                            type="number"
+                            placeholder="Impuesto"
+                            class="border p-2 rounded-lg w-full mb-2"
+                        />
+                    </div>
                 </div>
                 <div class="flex justify-between mt-2">
                     <CancelButton @click="closeModal">Cancelar</CancelButton>
@@ -266,7 +283,7 @@ const deleteProduct = (id) => {
                     >
                         <img
                             src="/assets/icons/svg/actions/save.svg"
-                            class="w-8 inline-flex mr-2 "
+                            class="w-8 inline-flex mr-2"
                             alt="Guardar Cambios"
                         />Guardar Cambios
                     </button>
