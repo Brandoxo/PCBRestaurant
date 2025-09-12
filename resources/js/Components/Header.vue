@@ -158,7 +158,7 @@ const closeSidebar = () => {
                                 </li>
                                 <li>
                                     <a
-                                        class="relative hover:bg-gray-100 hover:text-primary text-gray-700 border-b border-gray-200 cursor-pointer transition-colors block"
+                                        class="relative hover:bg-gray-100 hover:text-primary text-gray-700 border-b border-gray-200 cursor-pointer transition-colors group text-lg font-light block"
                                         href="/Tables"
                                     >
                                         <p class="p-4">Mesas</p>
