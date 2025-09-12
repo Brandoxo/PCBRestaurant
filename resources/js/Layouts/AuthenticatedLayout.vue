@@ -14,7 +14,9 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div class="min-h-screen flex bg-tertiary">
         <!-- Sidebar -->
-        <aside class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full">
+        <aside
+            class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full"
+        >
             <div class="flex items-center w-full bg-white py-4">
                 <Link :href="route('dashboard')">
                     <ApplicationLogo
@@ -22,46 +24,77 @@ const showingNavigationDropdown = ref(false);
                     />
                 </Link>
             </div>
-            <div class=" px-2 h-full flex flex-col">
+            <div class="px-2 h-full flex flex-col">
                 <nav class="flex-1">
-                    <ul class="flex flex-col h-full justify-evenly 2xl:justify-start 2xl:gap-8 2xl:mt-8">
+                    <ul
+                        class="flex flex-col h-full justify-evenly 2xl:justify-start 2xl:gap-8 2xl:mt-8"
+                    >
                         <li>
                             <NavLink
                                 :href="route('dashboard')"
                                 :active="route().current('dashboard')"
-                                ><img src="/assets/icons/svg/menu/home.svg" alt="Inicio" class="w-6" />
+                                ><img
+                                    src="/assets/icons/svg/menu/home.svg"
+                                    alt="Inicio"
+                                    class="w-6"
+                                />
                                 Dashboard
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
                                 :href="route('Tables/Index')"
-                                :active="route().current('Tables/Index') || route().current('Tables/Create')"
-                            ><img src="/assets/icons/svg/menu/table.svg" alt="Inicio" class="w-6" />
+                                :active="
+                                    route().current('Tables/Index') ||
+                                    route().current('Tables/Create')
+                                "
+                                ><img
+                                    src="/assets/icons/svg/menu/table.svg"
+                                    alt="Inicio"
+                                    class="w-6"
+                                />
                                 Mesas
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
-                                :href="route('dashboard')"
+                                :href="route('Sales/Index')"
                                 :active="route().current('Sales/Index')"
-                            ><img src="/assets/icons/svg/menu/sales.svg" alt="Ventas" class="w-6" />
+                                ><img
+                                    src="/assets/icons/svg/menu/sales.svg"
+                                    alt="Ventas"
+                                    class="w-6"
+                                />
                                 Ventas
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
                                 :href="route('Categories/Index')"
-                                :active="route().current('Categories/Index') || route().current('Categories/Create')"
-                            ><img src="/assets/icons/svg/menu/categories.svg" alt="Categorías" class="w-6" />
+                                :active="
+                                    route().current('Categories/Index') ||
+                                    route().current('Categories/Create')
+                                "
+                                ><img
+                                    src="/assets/icons/svg/menu/categories.svg"
+                                    alt="Categorías"
+                                    class="w-6"
+                                />
                                 Categorías
                             </NavLink>
                         </li>
                         <li>
                             <NavLink
                                 :href="route('Menu/Index')"
-                                :active="route().current('Menu/Index') || route().current('Menu/Create')"
-                            ><img src="/assets/icons/svg/menu/products.svg" alt="Productos" class="w-6" />
+                                :active="
+                                    route().current('Menu/Index') ||
+                                    route().current('Menu/Create')
+                                "
+                                ><img
+                                    src="/assets/icons/svg/menu/products.svg"
+                                    alt="Productos"
+                                    class="w-6"
+                                />
                                 Menú
                             </NavLink>
                         </li>
@@ -69,7 +102,11 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('Orders/Index')"
                                 :active="route().current('Orders/Index')"
-                            ><img src="/assets/icons/svg/menu/orders.svg" alt="Órdenes" class="w-6" />
+                                ><img
+                                    src="/assets/icons/svg/menu/orders.svg"
+                                    alt="Órdenes"
+                                    class="w-6"
+                                />
                                 Órdenes
                             </NavLink>
                         </li>
@@ -77,7 +114,11 @@ const showingNavigationDropdown = ref(false);
                             <NavLink
                                 :href="route('Config/Index')"
                                 :active="route().current('Config/Index')"
-                            ><img src="/assets/icons/svg/menu/config.svg" alt="Configuración" class="w-6" />
+                                ><img
+                                    src="/assets/icons/svg/menu/config.svg"
+                                    alt="Configuración"
+                                    class="w-6"
+                                />
                                 Configuración
                             </NavLink>
                         </li>

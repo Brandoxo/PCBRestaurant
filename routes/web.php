@@ -34,6 +34,9 @@ Route::post('/Tables', [\App\Http\Controllers\TableController::class, 'store'])-
 Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, 'update'])->name('Tables/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);
 
+//Sales
+Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified']);
+
 //Menu
 Route::get('/Menu', [\App\Http\Controllers\MenuController::class, 'index'])->name('Menu/Index') ->middleware(['auth', 'verified']);
 Route::get('/Menu/Create', [\App\Http\Controllers\MenuController::class, 'create'])->name('Menu/Create') ->middleware(['auth', 'verified']);

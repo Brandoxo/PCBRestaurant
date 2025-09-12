@@ -24,6 +24,8 @@ const title = computed(() => {
             return "Usuarios";
         case "Profile/Edit":
             return "Perfil";
+        case "Sales/Index":
+            return "Ventas";
         default:
             return "Dashboard";
     }
