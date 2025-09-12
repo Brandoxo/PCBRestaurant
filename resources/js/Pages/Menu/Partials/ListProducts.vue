@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import Modal from "@/Components/Modal.vue";
@@ -67,12 +67,21 @@ const deleteProduct = (id) => {
         });
     }
 };
+
+const searchQuery = ref("");
+const filteredProducts = computed(() => {
+    if (!searchQuery.value) return props.products;
+    return props.products.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    );
+});
 </script>
 
 <template>
     <div class="bg-white p-4 rounded-2xl">
         <form @submit.prevent="searchTable">
             <input
+                v-model="searchQuery"
                 type="text"
                 placeholder="Buscar Producto..."
                 class="border p-2 rounded-lg w-full mb-4"
@@ -94,7 +103,7 @@ const deleteProduct = (id) => {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="value in props.products" :key="value.id">
+                <tr v-for="value in filteredProducts" :key="value.id">
                     <td class="border p-2 text-center">
                         {{ value.category_id }}
                     </td>
