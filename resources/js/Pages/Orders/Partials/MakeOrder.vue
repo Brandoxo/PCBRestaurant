@@ -22,10 +22,13 @@ function closeOptions() {
 const toast = useToast();
 
 const saveOrder = () => {
+
+  console.log('Save Order clicked with current order:', props.currentOrder);
+  // return toast.info('Guardando orden...');
   if (!props.currentOrder.mesa_id || props.currentOrder.items.length === 0) {
     toast.error('No se puede guardar una orden vacía');
     return;
-  }else{ router.post('/Orders/Store', props.currentOrder, props.currentTable, {
+  }else{ router.post('/Orders', props.currentOrder, props.currentTable, {
     onSuccess: (response) => {
       props.currentTable.status = 'Ocupada';
       toast.success('Orden guardada exitosamente');
@@ -35,6 +38,10 @@ const saveOrder = () => {
     onError: (error) => {
       toast.error('Error al guardar la orden');
       console.error('Error saving order:', error);
+    },
+    finally: () => {
+      toast.info('Save order request completed.');
+      console.log('Save order request completed.');
     }
   });
   }

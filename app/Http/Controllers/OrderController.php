@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Mesas;
 use App\Models\Orders;
+use App\Resources\Orders\PostOrder;
 use Illuminate\Http\Request;    
 
 class OrderController extends Controller
@@ -15,5 +16,14 @@ class OrderController extends Controller
             'orders' => $orders,
             'tables' => $tables
         ]);
+    }
+
+    public function store(Request $request)
+    {
+        $order = new PostOrder();
+
+        $order($request);
+
+        return redirect()->back()->with('success', 'Order created successfully.');
     }
 }
