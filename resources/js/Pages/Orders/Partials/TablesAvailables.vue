@@ -50,7 +50,7 @@ onMounted(() => {
             :class="[
                 'bg-white rounded-xl items-center p-4 space-y-2 shadow-lg',
                 value.status !== 'Libre' && value.status !== 'Reservada'
-                    ? 'opacity-50 pointer-events-none'
+                    ? 'opacity-50 pointer-events-none scale-90'
                     : 'cursor-pointer hover:scale-[1.02] pointer-events-auto',
                 props.selectedTable && props.selectedTable.id === value.id
                     ? 'pointer-events-auto'
