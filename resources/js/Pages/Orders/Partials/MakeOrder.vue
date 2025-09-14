@@ -171,7 +171,7 @@ console.log(props);
                         Productos Disponibles:
                     </h4>
                     <ul
-                        class="list-disc list-inside max-h-48 2xl:max-h-[30rem] overflow-y-auto grid grid-cols-4 2xl:grid-cols-6 gap-4"
+                        class="list-disc list-inside max-h-48 2xl:max-h-[30rem] overflow-y-auto grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4"
                     >
                         <li
                             v-for="product in filteredProducts"
