@@ -24,6 +24,6 @@ class OrderController extends Controller
 
         $order($request);
 
-        return redirect()->back()->with('success', 'Order created successfully.');
+    return redirect()->route('dashboard')->with('success', 'Order created successfully.');
     }
 }

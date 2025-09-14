@@ -11,11 +11,15 @@ const props = defineProps({
 });
 
 function openOptions(table) {
+    // Evitar seleccionar una mesa que ya tiene una orden activa
+    if (table.status !== "Libre" && table.status !== "Reservada") {
+        useToast().error("No puedes seleccionar una mesa ocupada.");
+        return;
+    }
     emit("tableSelected", table);
-    props.selectedTable = table;
     window.scrollTo({ top: "0%", behavior: "smooth" });
     useToast().info(`Seleccionando orden para la Mesa #${table.number}`);
-    console.log("Tables data:", props.selectedTable);
+    console.log("Tables data:", table);
 }
 
 const hiddeDiv = (div) => {
@@ -39,14 +43,15 @@ onMounted(() => {
         ]"
     >
         <div
-            v-for="value in tables.filter(
-                (t) => t.status === 'Libre' || t.status === 'Reservada'
-            )"
+            v-for="value in tables"
             :hidden="hiddeDiv(value)"
             :block="!hiddeDiv(value)"
             :key="value.id"
             :class="[
-                'bg-white rounded-xl items-center p-4 space-y-2 shadow-lg cursor-pointer hover:scale-[1.02] transform transition-transform duration-300 ease-in-out',
+                'bg-white rounded-xl items-center p-4 space-y-2 shadow-lg',
+                value.status !== 'Libre' && value.status !== 'Reservada'
+                    ? 'opacity-50 pointer-events-none'
+                    : 'cursor-pointer hover:scale-[1.02] pointer-events-auto',
                 props.selectedTable && props.selectedTable.id === value.id
                     ? 'pointer-events-auto'
                     : '',
@@ -80,9 +85,14 @@ onMounted(() => {
                     personas
                 </p>
             </div>
-            <GenerateOrderButton @click="openOptions(value)"
-                >Generar Orden</GenerateOrderButton
+            <GenerateOrderButton
+                @click="openOptions(value)"
+                :disabled="
+                    value.status !== 'Libre' && value.status !== 'Reservada'
+                "
             >
+                Generar Orden
+            </GenerateOrderButton>
         </div>
     </div>
 </template>

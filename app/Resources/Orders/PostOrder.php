@@ -17,6 +17,12 @@ class PostOrder
         ]);
 
         if($order){
+            $mesa = \App\Models\Mesas::find($request->input('mesa_id'));
+            if ($mesa) {
+                $mesa->status = 'Ocupada';
+                $mesa->save();
+            }
+
             error_log('Order created successfully with ID: ' . $order->id);
             foreach ($request->input('items') as $item) {
                 $order->orderDetails()->create([

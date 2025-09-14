@@ -26,6 +26,7 @@ function handleOrderSaved(newOrder) {
         mesa_id: null,
         items: [],
     };
+    selectedTable.value = null;
 }
 
 function tableSelected(table) {

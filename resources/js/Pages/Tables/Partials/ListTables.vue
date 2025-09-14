@@ -101,7 +101,13 @@ const filteredTables = computed(() => {
                     <td class="border p-2 text-center">
                         {{ value.capacity }} Personas
                     </td>
-                    <td class="border p-2 flex gap-2 justify-center">
+                    <td
+                        v-if="
+                            value.status === 'Libre' ||
+                            value.status === 'Reservada'
+                        "
+                        class="border p-2 flex gap-2 justify-center"
+                    >
                         <button
                             @click="showModal(value.id)"
                             class="bg-midBlue hover:bg-strongBlue text-white p-1 rounded"

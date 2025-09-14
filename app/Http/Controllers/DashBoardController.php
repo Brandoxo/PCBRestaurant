@@ -3,14 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Orders;
 class DashBoardController extends Controller
 {
     public function index() {
-    $totalProducts = \App\Models\Product::count();
-    $totalCategories = \App\Models\Category::count();
-    $totalUsers = \App\Models\User::count();
-    return inertia('Dashboard', compact('totalProducts','totalCategories','totalUsers'));
-}
+    $orders = Orders::with(['table', 'orderDetails.product'])->orderBy('date_time', 'desc')->get();
+        $totalProducts = \App\Models\Products::count();
+        $totalCategories = \App\Models\Categories::count();
+        $totalUsers = \App\Models\User::count();
+        $totalOrders = Orders::count();
+        return inertia('Dashboard/Index', [
+            'totalProducts' => $totalProducts,
+            'totalCategories' => $totalCategories,
+            'totalUsers' => $totalUsers,
+            'orders' => $orders,
+            'totalOrders' => $totalOrders
+        ]);
+    }
 
 }

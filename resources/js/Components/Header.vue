@@ -171,7 +171,7 @@ const closeSidebar = () => {
                                 >
                                     <a
                                         class="text-lg font-light block"
-                                        href="/sales"
+                                        href="/Sales"
                                         ><p class="p-4">Ventas</p></a
                                     >
                                 </li>

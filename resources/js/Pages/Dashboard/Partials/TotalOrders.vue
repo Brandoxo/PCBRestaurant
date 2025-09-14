@@ -1,7 +1,15 @@
-<script setup></script>
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps({
+    totalOrders: Number,
+});
+
+console.log(props.totalOrders);
+</script>
 
 <template>
-    <div class="max-w-md w-full mx-auto">
+    <div class="max-w-md w-full">
         <div
             class="bg-white rounded-3xl shadow p-6 flex gap-4 justify-center items-center w-full"
         >
@@ -17,7 +25,7 @@
             <div class="w-fit">
                 <h2 class="text-xl font-medium">Ordenes Totales</h2>
                 <p class="text-3xl font-bold text-gray-800">
-                    {{ totalOrders ?? 0 }}
+                    {{ props.totalOrders ?? 0 }}
                 </p>
             </div>
         </div>

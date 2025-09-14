@@ -5,11 +5,24 @@ import Header from "@/Components/Header.vue";
 import TotalOrders from "@/Pages/Dashboard/Partials/TotalOrders.vue";
 import TotalRevenue from "@/Pages/Dashboard/Partials/TotalRevenue.vue";
 import TotalCancelled from "@/Pages/Dashboard/Partials/TotalCancelled.vue";
-import { ref } from "vue";
+import { ref, watch, toRefs } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import AllOrders from "@/Pages/Dashboard/Partials/AllOrders.vue";
 import SelectedOrder from "@/Pages/Dashboard/Partials/SelectedOrder.vue";
 import OrderDetails from "./Partials/OrderDetails.vue";
+
+const props = defineProps({
+    totalProducts: Number,
+    totalCategories: Number,
+    totalUsers: Number,
+    totalOrders: Number,
+    orders: Array,
+});
+
+console.log("Total Orders:", props.totalOrders);
+
+const allOrders = props.orders;
+console.log(props.orders);
 
 const isWelcomeVisible = ref(true);
 
@@ -25,13 +38,12 @@ const selectOrder = (order) => {
 };
 </script>
 
-
 <template>
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
         <div class="py-20 h-screen overflow-y-auto">
-            <div class="mx-auto sm:px-6 lg:px-8 lg:ml-64 ">
+            <div class="mx-auto sm:px-6 lg:px-8 lg:ml-64">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-fit flex justify-between mx-auto"
                     v-if="isWelcomeVisible && count === 0"
@@ -49,31 +61,38 @@ const selectOrder = (order) => {
 
                 <div
                     class="lg:flex justify-center gap-2 lg:gap-8 2xl:gap-60 mt-6"
-                >   
+                >
                     <div class="grid grid-cols-2 gap-2 lg:hidden">
-                        <TotalOrders :totalOrders="totalOrders" />
-                        <TotalRevenue :totalRevenue="totalRevenue" />
+                        <TotalOrders :totalOrders="props.totalOrders" />
+                        <TotalRevenue :totalRevenue="props.totalRevenue" />
                     </div>
                     <div class="hidden lg:block w-full">
-                    <TotalOrders :totalOrders="totalOrders" />
+                        <TotalOrders :totalOrders="props.totalOrders" />
                     </div>
                     <div class="hidden lg:block w-full">
-                    <TotalRevenue :totalRevenue="totalRevenue" />
+                        <TotalRevenue :totalRevenue="props.totalRevenue" />
                     </div>
                     <div class="hidden lg:block w-full">
-                    <TotalCancelled :totalCancelled="totalCancelled" />
+                        <TotalCancelled
+                            :totalCancelled="props.totalCancelled"
+                        />
                     </div>
 
                     <div class="py-4 lg:hidden">
-                    <TotalCancelled :totalCancelled="totalCancelled" />
-
+                        <TotalCancelled
+                            :totalCancelled="props.totalCancelled"
+                        />
                     </div>
                 </div>
                 <div class="flex gap-4">
-                    <div class="mt-6 w-1/3 h-screen overflow-y-auto max-w-3xl">
+                    <div
+                        class="mt-6 w-full h-screen overflow-y-auto max-w-3xl mx-auto"
+                    >
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
-                    <div class="mt-6 w-3/4 mx-auto max-w-4xl flex flex-col gap-4">
+                    <div
+                        class="mt-6 w-full h-screen flex flex-col gap-4 mx-auto"
+                    >
                         <SelectedOrder :order="selectedOrder" />
                         <OrderDetails :order="selectedOrder" />
                     </div>
