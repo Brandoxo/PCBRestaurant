@@ -8,8 +8,11 @@ console.log("order in:", props.order);
 </script>
 
 <template>
-    <div class="bg-white shadow-md rounded-lg p-2 w-[80%] mx-auto" v-if="order">
-        <div class="lg:flex justify-between items-center 2xl:gap-12 mx-auto">
+    <div
+        class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full m-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        v-if="order"
+    >
+        <div class="lg:flex justify-between items-center mx-auto">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
                 <span class="font-extrabold"
@@ -34,7 +37,9 @@ console.log("order in:", props.order);
                     <p class="text-center text-secondary">
                         {{
                             order.date_time
-                                ? new Date(order.date_time).toLocaleTimeString()
+                                ? new Date(order.date_time)
+                                      .toLocaleTimeString()
+                                      .slice(0, -1)
                                 : "-"
                         }}
                     </p>

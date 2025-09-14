@@ -13,7 +13,7 @@ console.log("order details:", props.order);
         Detalles de la orden
     </h2>
     <div
-        class="bg-white p-6 rounded-lg shadow-md flex overflow-y-auto justify-between max-h-64"
+        class="bg-white p-6 rounded-lg shadow-md flex overflow-y-auto justify-between max-h-64 hover:scale-[1.02] transition-all transform ease-in-out duration-300"
     >
         <div class="flex flex-col gap-2">
             <template
@@ -67,10 +67,12 @@ console.log("order details:", props.order);
         >
     </div>
 
-    <div class="bg-white p-6 rounded-lg shadow-md flex h-fit justify-between">
+    <div
+        class="bg-white p-6 rounded-lg shadow-md flex h-fit justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+    >
         <h3 class="font-bold text-3xl">Total:</h3>
         <div class="flex items-center gap-4">
-            <span class="font-bold text-3xl">
+            <span class="font-bold text-2xl 2xl:text-3xl">
                 $ {{ props.order?.total ? props.order.total : "0.00" }}</span
             >
             <button

@@ -5,8 +5,8 @@ console.log("order:", props.order.order_details);
 </script>
 
 <template>
-    <div class="bg-white p-2 rounded-lg shadow-md mt-4 max-w-md mx-auto">
-        <div class="md:flex justify-evenly items-center">
+    <div class="bg-white p-2 rounded-lg shadow-md mt-4 max-w-md mx-auto w-full">
+        <div class="flex mb-4 justify-evenly items-center">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
                 <span class="font-extrabold">ID #{{ order.id ?? "0000" }}</span>
