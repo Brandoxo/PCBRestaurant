@@ -5,7 +5,7 @@ import Header from "@/Components/Header.vue";
 import TotalOrders from "@/Pages/Dashboard/Partials/TotalOrders.vue";
 import TotalRevenue from "@/Pages/Dashboard/Partials/TotalRevenue.vue";
 import TotalCancelled from "@/Pages/Dashboard/Partials/TotalCancelled.vue";
-import { ref, watch, toRefs } from "vue";
+import { ref, watch, toRefs, computed } from "vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import AllOrders from "@/Pages/Dashboard/Partials/AllOrders.vue";
 import SelectedOrder from "@/Pages/Dashboard/Partials/SelectedOrder.vue";
@@ -19,10 +19,12 @@ const props = defineProps({
     orders: Array,
 });
 
-console.log("Total Orders:", props.totalOrders);
+const totalCancelled = computed(() => {
+    return (props.orders || []).filter((order) => order.status === "Cancelada")
+        .length;
+});
 
 const allOrders = props.orders;
-console.log(props.orders);
 
 const isWelcomeVisible = ref(true);
 
@@ -73,15 +75,11 @@ const selectOrder = (order) => {
                         <TotalRevenue :totalRevenue="props.totalRevenue" />
                     </div>
                     <div class="hidden lg:block w-full">
-                        <TotalCancelled
-                            :totalCancelled="props.totalCancelled"
-                        />
+                        <TotalCancelled :totalCancelled="totalCancelled" />
                     </div>
 
                     <div class="py-4 lg:hidden">
-                        <TotalCancelled
-                            :totalCancelled="props.totalCancelled"
-                        />
+                        <TotalCancelled :totalCancelled="totalCancelled" />
                     </div>
                 </div>
                 <div class="hidden lg:flex gap-4">

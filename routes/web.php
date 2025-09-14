@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Aoo\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +50,7 @@ Route::get('/Products/get', [\App\Http\Controllers\Products\ProductController::c
 //Orders
 Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
 Route::post('/Orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('Orders/Store') ->middleware(['auth', 'verified']);
+Route::post('/orders/update/{id}', [\App\Http\Controllers\OrderController::class, 'update'])->name('Orders/Update') ;
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);

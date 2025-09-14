@@ -1,4 +1,12 @@
-<script setup></script>
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps({
+    totalCancelled: Number,
+});
+
+console.log("Total Canceladas:", props.totalCancelled);
+</script>
 
 <template>
     <div class="md:w-full max-w-md w-fit mx-auto">

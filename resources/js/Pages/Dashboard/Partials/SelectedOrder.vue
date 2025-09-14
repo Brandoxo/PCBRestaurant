@@ -2,12 +2,13 @@
 import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import Swal from "sweetalert2";
+import { router } from "@inertiajs/vue3";
 
 const props = defineProps({ order: Object });
 
 console.log("order in:", props.order);
 
-const cancelOrder = () => {
+const confirmCancelOrder = () => {
     Swal.fire({
         title: "¿Estás seguro?",
         text: "¡No podrás revertir esto!",
@@ -19,9 +20,31 @@ const cancelOrder = () => {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
+            cancelOrder();
             Swal.fire("¡Cancelada!", "La orden ha sido cancelada.", "success");
         }
     });
+};
+
+const cancelOrder = async () => {
+    try {
+        await router.post(
+            `/orders/update/${props.order.id}`,
+            { status: "Cancelada" },
+            {
+                preserveState: true,
+                onSuccess: () => {
+                    props.order.status = "Cancelada";
+                    console.log("Orden cancelada");
+                },
+                onError: (errors) => {
+                    console.error("Error al cancelar la orden:", errors);
+                },
+            }
+        );
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+    }
 };
 </script>
 
@@ -71,7 +94,8 @@ const cancelOrder = () => {
                 </div>
             </div>
             <button
-                @click="cancelOrder"
+                v-if="order.status === 'En curso'"
+                @click="confirmCancelOrder"
                 class="mt-4 bg-dangerRed/30 p-2 rounded-full text-dangerRed font-bold hover:bg-dangerRed/50 transition"
             >
                 Cancelar Orden

@@ -76,7 +76,9 @@ console.log("order details:", props.order);
                 $ {{ props.order?.total ? props.order.total : "0.00" }}</span
             >
             <button
-                v-if="props.order"
+                v-if="
+                    props.order?.status === 'En curso' ? props.order.status : ''
+                "
                 class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
             >
                 Cobrar
