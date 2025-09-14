@@ -5,12 +5,14 @@ import { computed } from "vue";
 import { useToast } from "vue-toastification";
 import { router } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
+import ReturnButton from "@/Components/ReturnButton.vue";
 
 const props = defineProps({
     tables: Object,
     orders: Object,
     selectedTable: Object,
     currentOrder: Object,
+    isEdit: Boolean,
 });
 
 const emit = defineEmits(["closeOptions"]);
@@ -153,6 +155,32 @@ onMounted(() => {
     console.log("Component mounted.");
 });
 
+const updateOrder = () => {
+    // Preparar el payload correcto
+    const payload = {
+        table_id: props.selectedTable?.number || props.currentOrder.table_id,
+        status: props.currentOrder.status || "En curso",
+        items: props.currentOrder.items,
+    };
+    router.put(`/Order/Update/${props.currentOrder.id}`, payload, {
+        onSuccess: (response) => {
+            toast.success("Orden actualizada exitosamente");
+            emit("handleOrderUpdated", response.props.order);
+            console.log("Order updated successfully:", response.props.order);
+        },
+        onError: (error) => {
+            toast.error("Error al actualizar la orden");
+            console.error("Error updating order:", error);
+        },
+        finally: () => {
+            toast.info("Update order request completed.");
+            console.log("Update order request completed.");
+        },
+    });
+    resetOrder();
+    console.log("Order updated and reset to empty state:", props.currentOrder);
+};
+
 console.log(props);
 </script>
 
@@ -248,16 +276,30 @@ console.log(props);
 
             <div class="flex justify-between mt-6">
                 <button
+                    v-if="!isEdit"
                     class="mt-4 px-8 py-2 bg-dangerRed hover:bg-red-800 text-white rounded-lg transition-all duration-300 transform ease-in-out"
                     @click="closeOptions"
                 >
                     Cerrar
                 </button>
                 <button
+                    v-if="!isEdit"
                     class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
                     @click="confirmSaveOrder"
                 >
                     Guardar orden
+                </button>
+                <ReturnButton
+                    v-if="isEdit"
+                    class="mt-4 px-8 py-2 bg-dangerRed hover:bg-red-800 text-white rounded-lg transition-all duration-300 transform ease-in-out"
+                    @click="closeOptions"
+                ></ReturnButton>
+                <button
+                    v-if="isEdit"
+                    class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
+                    @click="updateOrder"
+                >
+                    Actualizar orden
                 </button>
             </div>
         </div>

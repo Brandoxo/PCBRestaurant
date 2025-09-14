@@ -28,9 +28,9 @@ console.log('Current Order in OrderDetails:', props.currentOrder);
                     <hr></hr>
                 </li>
             </ul>
-            <div class="flex justify-between mt-4 space-x-4 text-lg">
-            <span class="font-extrabold text-xl flex uppercase underline">Total:</span> <span class="font-black uppercase text-xl ">${{ currentOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0) }}</span>
-            </div>
+        </div>
+        <div class="flex justify-between mt-4 space-x-4 text-lg">
+        <span class="font-extrabold text-xl flex uppercase underline">Total:</span> <span class="font-black uppercase text-xl ">${{ currentOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0) }}</span>
         </div>
 
         <div v-if="(!currentOrder || currentOrder.items.length === 0) && (!orders || orders.length === 0)" class="text-gray-500">

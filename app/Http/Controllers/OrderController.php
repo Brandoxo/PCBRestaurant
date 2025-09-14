@@ -28,24 +28,28 @@ class OrderController extends Controller
     return redirect()->route('dashboard')->with('success', 'Order created successfully.');
     }
 
-    public function update(Request $request, $id)
-    {
+     public function update(Request $request, $id) {
         $order = Orders::findOrFail($id);
-        $request->validate([
-            'status' => 'required|string',
-        ]);
-
-        $order->status = $request->input('status');
+        $order->mesa_id = $request->table_id;
+        $order->status = $request->status;
         $order->save();
 
-        if ($order->status === 'Cancelada') {
-            $table = method_exists($order, 'table') ? $order->table : Mesas::find($order->table_id);
-            if ($table) {
-                $table->status = 'Libre';
-                $table->save();
+        // Actualizar productos de la orden
+        if ($request->has('items')) {
+            // Eliminar detalles actuales
+            $order->orderDetails()->delete();
+            // Agregar los nuevos detalles
+            foreach ($request->items as $item) {
+                $order->orderDetails()->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $item['price'],
+                    'subtotal' => $item['price'] * $item['quantity'],
+                ]);
             }
         }
 
-        return redirect()->route('dashboard')->with('success', 'Order updated successfully.');
+        return redirect()->route('dashboard')->with('success', 'Orden actualizada correctamente');
     }
+
  }

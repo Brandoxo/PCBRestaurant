@@ -14,9 +14,18 @@ Route::get('/', function () {
     ]);
 });
 
+
+//Dashboard
 Route::get('/dashboard', [\App\Http\Controllers\DashBoardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+Route::post('/orders/update/{id}', [\App\Http\Controllers\DashBoardController::class, 'update'])->name('Orders/Update') ;
+
+Route::get('/Order/Edit/{id}', [\App\Http\Controllers\DashBoardController::class, 'edit'])
+    ->middleware(['auth', 'verified'])
+    ->name('Order/Edit');
+
+
 
 
 
@@ -50,7 +59,8 @@ Route::get('/Products/get', [\App\Http\Controllers\Products\ProductController::c
 //Orders
 Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('Orders/Index') ->middleware(['auth', 'verified']);
 Route::post('/Orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('Orders/Store') ->middleware(['auth', 'verified']);
-Route::post('/orders/update/{id}', [\App\Http\Controllers\OrderController::class, 'update'])->name('Orders/Update') ;
+Route::put('/Order/Update/{id}', [\App\Http\Controllers\OrderController::class, 'update'])->name('Order/Update');
+
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);

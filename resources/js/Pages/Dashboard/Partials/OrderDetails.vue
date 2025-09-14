@@ -66,7 +66,13 @@ console.log("order details:", props.order);
             >No hay detalles para esta orden.</span
         >
     </div>
-
+    <button
+        @click="$inertia.get(`/Order/Edit/${order.id}`)"
+        v-if="order?.status === 'En curso'"
+        class="bg-orangeYellow hover:bg-yellow-600 transform transition-all duration-300 ease-in-out text-white font-bold py-2 px-4 rounded"
+    >
+        Editar Orden
+    </button>
     <div
         class="bg-white p-6 rounded-lg shadow-md flex h-fit justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300"
     >
@@ -76,9 +82,7 @@ console.log("order details:", props.order);
                 $ {{ props.order?.total ? props.order.total : "0.00" }}</span
             >
             <button
-                v-if="
-                    props.order?.status === 'En curso' ? props.order.status : ''
-                "
+                v-if="props.order?.status === 'En curso'"
                 class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
             >
                 Cobrar
