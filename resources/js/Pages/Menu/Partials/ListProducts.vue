@@ -2,6 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
+import Swal from "sweetalert2";
 import Modal from "@/Components/Modal.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import InputLabel from "@/Components/InputLabel.vue";
@@ -55,17 +56,29 @@ const editProduct = (id) => {
 };
 
 const deleteProduct = (id) => {
-    if (confirm("Estás seguro que quieres Elimar este Producto?")) {
-        router.delete(`/Menu/${id}`, {
-            onSuccess: () => {
-                useToast().success("Producto Eliminado Correctamente.");
-            },
-            onError: (error) => {
-                useToast().error("El producto no se pudo eliminar");
-                console.error("El producto no se Eliminó. ", error);
-            },
-        });
-    }
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/Menu/${id}`, {
+                onSuccess: () => {
+                    useToast().success("Producto Eliminado Correctamente.");
+                    currentProduct.value = {};
+                },
+                onError: (error) => {
+                    useToast().error("El producto no se pudo eliminar");
+                    console.error("El producto no se Eliminó. ", error);
+                },
+            });
+        }
+    });
 };
 
 const searchQuery = ref("");

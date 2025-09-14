@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
+import Swal from "sweetalert2";
 import Modal from "@/Components/Modal.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import CancelButton from "@/Components/CancelButton.vue";
@@ -51,17 +52,28 @@ const editTable = (id) => {
 };
 
 const deleteTable = (id) => {
-    if (confirm("¿Estás seguro de que deseas eliminar esta mesa?")) {
-        router.delete(`/Tables/${id}`, {
-            onSuccess: () => {
-                useToast().success("Mesa eliminada exitosamente");
-            },
-            onError: (error) => {
-                useToast().error("Error al eliminar mesa");
-                console.error("Error al eliminar mesa:", error);
-            },
-        });
-    }
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar mesa",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/Tables/${id}`, {
+                onSuccess: () => {
+                    useToast().success("Mesa eliminada exitosamente");
+                },
+                onError: (error) => {
+                    useToast().error("Error al eliminar mesa");
+                    console.error("Error al eliminar mesa:", error);
+                },
+            });
+        }
+    });
 };
 
 const searchQuery = ref("");

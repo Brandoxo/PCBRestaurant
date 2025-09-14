@@ -2,6 +2,7 @@
 import { ref, computed, watch } from "vue";
 import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
+import Swal from "sweetalert2";
 import Modal from "@/Components/Modal.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
@@ -49,17 +50,28 @@ const editCategory = (id) => {
 };
 
 const deleteCategory = (id) => {
-    if (confirm("¿Estás seguro de que deseas eliminar esta categoría?")) {
-        router.delete(`/Categories/${id}`, {
-            onSuccess: () => {
-                useToast().success("Categoría eliminada exitosamente");
-            },
-            onError: (error) => {
-                useToast().error("Error al eliminar la categoría");
-                console.error("Error al eliminar categoría:", error);
-            },
-        });
-    }
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            router.delete(`/Categories/${id}`, {
+                onSuccess: () => {
+                    useToast().success("Categoría eliminada exitosamente");
+                },
+                onError: (error) => {
+                    useToast().error("Error al eliminar la categoría");
+                    console.error("Error al eliminar categoría:", error);
+                },
+            });
+        }
+    });
 };
 
 const searchQuery = ref("");

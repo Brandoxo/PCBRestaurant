@@ -1,10 +1,28 @@
 <script setup>
 import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
+import Swal from "sweetalert2";
 
 const props = defineProps({ order: Object });
 
 console.log("order in:", props.order);
+
+const cancelOrder = () => {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, cancelar orden",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire("¡Cancelada!", "La orden ha sido cancelada.", "success");
+        }
+    });
+};
 </script>
 
 <template>
@@ -53,6 +71,7 @@ console.log("order in:", props.order);
                 </div>
             </div>
             <button
+                @click="cancelOrder"
                 class="mt-4 bg-dangerRed/30 p-2 rounded-full text-dangerRed font-bold hover:bg-dangerRed/50 transition"
             >
                 Cancelar Orden

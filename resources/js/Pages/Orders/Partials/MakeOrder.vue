@@ -52,6 +52,24 @@ const saveOrder = () => {
     console.log("Order saved and reset to empty state:", props.currentOrder);
 };
 
+const confirmSaveOrder = () => {
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, Generar orden",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            saveOrder();
+            Swal.fire("¡Generada!", "La orden ha sido generada.", "success");
+        }
+    });
+};
+
 const resetOrder = () => {
     props.currentOrder.mesa_id = null;
     props.currentOrder.items = [];
@@ -237,7 +255,7 @@ console.log(props);
                 </button>
                 <button
                     class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
-                    @click="saveOrder"
+                    @click="confirmSaveOrder"
                 >
                     Guardar orden
                 </button>
