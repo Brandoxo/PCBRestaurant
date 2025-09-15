@@ -248,9 +248,14 @@ console.log(props);
                                 <div
                                     class="flex justify-evenly w-full m-4 text-center items-center"
                                 >
-                                    <button
+                                    <button v-if="!isEdit"
                                         class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-red-600/80 text-white hover:bg-red-600"
                                         @click="RemoveToOrder(product.id)"
+                                    >
+                                        -
+                                    </button>
+                                    <button v-if="isEdit" disabled
+                                        class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-gray-400/80 text-white cursor-not-allowed"                                        
                                     >
                                         -
                                     </button>
@@ -300,7 +305,6 @@ console.log(props);
                 <ReturnButton
                     v-if="isEdit"
                     class="mt-4 px-8 py-2 bg-dangerRed hover:bg-red-800 text-white rounded-lg transition-all duration-300 transform ease-in-out"
-                    @click="closeOptions"
                 ></ReturnButton>
                 <button
                     v-if="isEdit"
