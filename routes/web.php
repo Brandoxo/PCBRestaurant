@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MenuController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -74,3 +75,21 @@ Route::middleware('auth')->group(function () {
 
 
 require __DIR__.'/auth.php';
+
+Route::get('print-ticket/', function (Request $request) {
+    $ticketrequest = request()->all()['data'];
+    
+    // Convertir todos los datos a JSON string
+    $ticketData = json_encode($ticketrequest['ticketData']);
+    $ticketItems = json_encode($ticketrequest['ticketItems']); // Corregido: convertir a JSON string
+    $businessInfo = json_encode($ticketrequest['businessInfo']);
+    
+    // Concatenar las cadenas JSON con las barras
+    $printData = $ticketData . "|" . $ticketItems . "|" . $businessInfo;
+    
+    // Comprimir y codificar en Base64
+    $printData = base64_encode(gzdeflate($printData));
+
+    // Devolver la respuesta al cliente
+    return response()->json(['printData' => $printData]);
+})->name('print.ticket');

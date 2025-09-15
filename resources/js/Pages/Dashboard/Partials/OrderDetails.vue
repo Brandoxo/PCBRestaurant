@@ -1,5 +1,6 @@
 <script setup>
 import { router, usePage } from "@inertiajs/vue3";
+import axios from "axios";
 import Swal from "sweetalert2";
 
 const props = defineProps({
@@ -30,40 +31,6 @@ const createSale = () => {
             props.order.id &&
             props.order.order_details
         ) {
-            const ticketData = {
-                total: props.order.total,
-                items: props.order.order_details.length,
-                cash: props.order.total,
-                change: 0,
-                user_id: user.name,
-                update_at: new Date()
-                    .toISOString()
-                    .slice(0, 19)
-                    .replace("T", " "),
-                created_at: new Date()
-                    .toISOString()
-                    .slice(0, 19)
-                    .replace("T", " "),
-                id: props.order.id,
-                user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                },
-            };
-
-            const ticketItems = props.order.order_details.map((item) => ({
-                            price: item.unit_price ?? (item.product ? item.product.price : 0),
-                            quantity: item.quantity,
-                            name: item.product ? item.product.name : "",
-                        }));
-
-            const businessInfo = {
-                name: "Hotel Ronda Minerva",
-                address: "Av. Adolfo López Mateos Sur 265, Jardines del Bosque, 44520 Guadalajara, Jal.",
-                phone: "33 3121 4700",
-            };
 
             props.order.order_details.forEach((item) => {
                 router.post(
@@ -112,6 +79,68 @@ const createSale = () => {
             });
         }
     });
+};
+
+const PrintTicket = () => {
+    if (props.order && props.order.id) {
+        const ticketData = {
+            total: props.order.total,
+            items: props.order.order_details.length,
+            cash: props.order.total,
+            change: 0,
+            user_id: user.name,
+            updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+            created_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+            id: props.order.id,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        };
+
+        const ticketItems = props.order.order_details.map((item) => ({
+            price: item.unit_price ?? (item.product ? item.product.price : 0),
+            quantity: item.quantity,
+            name: item.product ? item.product.name : "",
+        }));
+
+        const businessInfo = {
+            name: "Hotel Ronda Minerva",
+            address: "Av. Adolfo López Mateos Sur 265, Jardines del Bosque, 44520 Guadalajara, Jal.",
+            phone: "33 3121 4700",
+        };
+
+        // Cambia `data` por `params` para una petición GET
+        axios.get('/print-ticket/', {
+            params: {
+                data: {
+                    ticketData: ticketData,
+                    ticketItems: ticketItems, // Envía el array directamente
+                    businessInfo: businessInfo,
+                },
+            },
+        })
+        .then(response => {
+            // Verifica que la respuesta contenga la URL
+            if (response.data && response.data.printData) {
+                const printUrl = 'print://' + response.data.printData;
+                console.clear();
+                console.log(printUrl);
+                
+                window.location.href = printUrl;
+                console.log("Ticket data sent successfully:", response.data);
+            } else {
+                console.error("No print data received from server.");
+            }
+        })
+        .catch(error => {
+            console.error("Error sending ticket data:", error);
+        });
+    } else {
+        console.error("No order data available to print ticket.");
+    }
 };
 </script>
 
@@ -194,6 +223,14 @@ const createSale = () => {
                 class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
             >
                 Cobrar
+            </button>
+
+            <button
+                @click="PrintTicket"
+                v-if="props.order?.status === 'En curso'"
+                class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
+            >
+                Imprimir Ticket
             </button>
         </div>
     </div>
