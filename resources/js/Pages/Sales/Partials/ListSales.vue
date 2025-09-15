@@ -1,7 +1,22 @@
 <script setup>
+import { ref, computed } from "vue";
+
+
 const props = defineProps({ sales: Array });
 
 console.log("props in <ListSales>: ", props.sales);
+
+const searchQuery = ref("");
+const filteredSales = computed(() => {
+    if (!searchQuery.value) {
+        return props.sales;
+    }
+    return props.sales.filter((sale) =>
+        sale.user.name
+            .toLowerCase()
+            .includes(searchQuery.value.toLowerCase())
+    );
+});
 </script>
 
 <template>
@@ -9,7 +24,7 @@ console.log("props in <ListSales>: ", props.sales);
         <input
             v-model="searchQuery"
             type="text"
-            placeholder="Buscar Venta Realizada Por..."
+            placeholder="Buscar Ventas Realizadas Por..."
             class="border p-2 rounded-lg w-full mb-4"
         />
         <table class="w-full mt-2 border">
@@ -22,11 +37,10 @@ console.log("props in <ListSales>: ", props.sales);
                     <th class="p-4">Producto</th>
                     <th class="p-4">Subtotal</th>
                     <th class="p-4">Total</th>
-                    <th class="p-4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="value in props.sales" :key="value.id">
+                <tr v-for="value in filteredSales" :key="value.id">
                     <td class="border p-2 text-center">{{ value.id }}</td>
                     <td class="border p-2 text-center">
                         {{ value.date_time }}
@@ -41,30 +55,7 @@ console.log("props in <ListSales>: ", props.sales);
                     </td>
                     <td class="border p-2 text-center">
                         ${{ value.quantity * value.unit_price }}
-                    </td>
-                    <td class="border p-2 flex gap-2 justify-center">
-                        <button
-                            @click="showModal(value.id)"
-                            class="bg-midBlue hover:bg-strongBlue text-white p-1 rounded"
-                        >
-                            <img
-                                src="/assets/icons/svg/actions/edit.svg"
-                                alt="Editar"
-                                class="w-6"
-                            />
-                        </button>
-                        <button
-                            @click="deleteTable(value.id)"
-                            class="bg-dangerRed hover:bg-red-700 text-white p-1 rounded"
-                        >
-                            <img
-                                src="/assets/icons/svg/actions/delete.svg"
-                                alt="Eliminar"
-                                class="w-6"
-                            />
-                        </button>
-                    </td>
-                </tr>
+                    </td>                </tr>
             </tbody>
         </table>
     </div>
