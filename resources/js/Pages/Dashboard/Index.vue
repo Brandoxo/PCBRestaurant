@@ -96,7 +96,9 @@ const selectOrder = (order) => {
                 <div class="hidden lg:flex gap-4">
                     <div
                         class="mt-6 min-w-96 overflow-y-auto h-[36rem] 2xl:h-screen mx-auto scrollbar-hide"
-                    >
+                    >          <h2 class="text-lg font-bold text-white text-center mb-2">
+                                    Todas las órdenes
+                                </h2>
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
                     <div class="mt-6 w-2/4 flex flex-col gap-4 mx-auto">
@@ -107,6 +109,9 @@ const selectOrder = (order) => {
                 <div class="flex flex-col lg:hidden gap-4">
                     <SelectedOrder :order="selectedOrder" />
                     <div class="overflow-y-auto h-96 scrollbar-hide">
+                            <h2 class="text-lg font-bold text-white text-center mb-2">
+                                Todas las órdenes
+                            </h2>
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
 

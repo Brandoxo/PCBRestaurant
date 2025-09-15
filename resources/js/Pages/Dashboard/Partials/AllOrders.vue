@@ -5,15 +5,13 @@ const emit = defineEmits(["select"]);
 </script>
 
 <template>
-    <h2 class="text-lg font-bold text-white text-center mb-2">
-        Todas las órdenes
-    </h2>
+
     <div class="grid 2xl:grid-cols-3 gap-4">
         <div
             v-if="!orders || orders.length === 0"
             v-for="n in 15"
             :key="n"
-            class="animate-pulse bg-gray-300 h-28 rounded-lg"
+            class="animate-pulse bg-gray-300 2xl:w-56 h-28 rounded-lg"
         ></div>
         <div
             v-for="order in orders"

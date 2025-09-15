@@ -16,7 +16,6 @@ const selectedTable = ref({
     mesa_id: props.order.table.id,
 });
 
-// Crear un ref reactivo para currentOrder
 const currentOrder = ref({
     id: props.order.id,
     items: props.order.order_details.map((detail) => ({
@@ -26,7 +25,8 @@ const currentOrder = ref({
         price: detail.product.price,
         subtotal: detail.quantity * detail.product.price,
     })),
-});
+}); 
+
 
 console.log("Current Orderssssss:", currentOrder.value);
 </script>
