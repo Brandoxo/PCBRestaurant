@@ -104,9 +104,9 @@ const filteredProducts = computed(() => {
             <thead>
                 <tr class="bg-gray-100">
                     <th class="p-4">Categoría</th>
-                    <th class="p-4">Imagen</th>
+                    <th class="p-4 hidden lg:block">Imagen</th>
                     <th class="p-4">Nombre</th>
-                    <th class="p-4">SKU</th>
+                    <th class="p-4 hidden lg:block">SKU</th>
                     <th class="p-4">Precio</th>
                     <!-- <th class="p-4">Impuesto</th> -->
                     <th class="p-4">Disponible</th>
@@ -120,7 +120,7 @@ const filteredProducts = computed(() => {
                     <td class="border p-2 text-center">
                         {{ value.category_id }}
                     </td>
-                    <td class="border p-2 text-center">
+                    <td class="border p-2 text-center hidden lg:block">
                         <img
                             :src="value.image"
                             alt="Product Image"
@@ -128,7 +128,7 @@ const filteredProducts = computed(() => {
                         />
                     </td>
                     <td class="border p-2 text-center">{{ value.name }}</td>
-                    <td class="border p-2 text-center">
+                    <td class="border p-2 text-center hidden lg:block">
                         {{ value.sku.slice(4, 10) }}
                     </td>
                     <td class="border p-2 text-center">$ {{ value.price }}</td>
