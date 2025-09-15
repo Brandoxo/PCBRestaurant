@@ -11,13 +11,15 @@ class DashBoardController extends Controller
         $totalProducts = \App\Models\Products::count();
         $totalCategories = \App\Models\Categories::count();
         $totalUsers = \App\Models\User::count();
+        $totalSales = \App\Models\Sales::all();
         $totalOrders = Orders::count();
         return inertia('Dashboard/Index', [
             'totalProducts' => $totalProducts,
             'totalCategories' => $totalCategories,
             'totalUsers' => $totalUsers,
             'orders' => $orders,
-            'totalOrders' => $totalOrders
+            'totalOrders' => $totalOrders,
+            'sales' => $totalSales
         ]);
     }
 

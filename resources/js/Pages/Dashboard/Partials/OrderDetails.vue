@@ -1,11 +1,83 @@
 <script setup>
+import { router, usePage } from "@inertiajs/vue3";
+import Swal from "sweetalert2";
+
 const props = defineProps({
     order: Object,
 });
 
+const user = usePage().props.auth.user;
+
+console.log("order prop in <OrderDetails>: ", props.order);
+
 const foodCategories = [1, 2, 3, 4, 6, 7, 8, 20];
 const drinkCategories = [5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
-console.log("order details:", props.order);
+
+const createSale = () => {
+    Swal.fire({
+        icon: "info",
+        title: "Estás segur@ de cobrar la orden?",
+        text: "Asegurate primero de haber cobrado el monto correcto.",
+        showCancelButton: true,
+        confirmButtonText: "Sí, cobrar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#d33",
+    }).then((result) => {
+        if (
+            result.isConfirmed &&
+            props.order &&
+            props.order.id &&
+            props.order.order_details
+        ) {
+            props.order.order_details.forEach((item) => {
+                router.post(
+                    `/Sales/Create`,
+                    {
+                        order_id: props.order.id,
+                        product_id: item.product_id,
+                        user_id: user.id,
+                        cash_audit_id: null,
+                        quantity: item.quantity,
+                        unit_price:
+                            item.unit_price ??
+                            (item.product ? item.product.price : 0),
+                        subtotal:
+                            item.total ??
+                            item.quantity *
+                                (item.unit_price ??
+                                    (item.product ? item.product.price : 0)),
+                        date_time: new Date()
+                            .toISOString()
+                            .slice(0, 19)
+                            .replace("T", " "),
+                    },
+                    {
+                        onSuccess: () => {
+                            console.log(
+                                "Sale created successfully for product",
+                                item.product_id
+                            );
+                        },
+                        onError: (errors) => {
+                            console.error(
+                                "Error creating sale for product",
+                                item.product_id,
+                                errors
+                            );
+                        },
+                    }
+                );
+            });
+            Swal.fire({
+                icon: "success",
+                title: "¡Venta creada exitosamente!",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+        }
+    });
+};
 </script>
 
 <template>
@@ -82,6 +154,7 @@ console.log("order details:", props.order);
                 $ {{ props.order?.total ? props.order.total : "0.00" }}</span
             >
             <button
+                @click="createSale"
                 v-if="props.order?.status === 'En curso'"
                 class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
             >

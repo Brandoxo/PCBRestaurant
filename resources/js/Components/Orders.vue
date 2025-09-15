@@ -8,7 +8,12 @@ console.log("order:", props.order.order_details);
     <div
         :class="[
             'bg-white p-2 rounded-lg shadow-md mt-4 max-w-md mx-auto w-full',
-            order.status === 'Cancelada' ? 'opacity-50' : '',
+            order.status === 'Cancelada'
+                ? 'opacity-50 border-2 border-red-500'
+                : '',
+            order.status === 'Completada'
+                ? 'border-2 border-green-500 opacity-50'
+                : '',
         ]"
     >
         <div class="flex mb- justify-evenly items-center">

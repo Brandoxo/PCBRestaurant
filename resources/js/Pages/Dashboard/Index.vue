@@ -16,8 +16,19 @@ const props = defineProps({
     totalCategories: Number,
     totalUsers: Number,
     totalOrders: Number,
+    sales: Array,
     orders: Array,
 });
+
+console.log("Sales prop in <Dashboard>: ", props.sales);
+
+const totalIncome = computed(() => {
+    return props.sales.reduce(
+        (sum, sale) => sum + parseFloat(sale.subtotal),
+        0
+    );
+});
+console.log("Total Income: ", totalIncome.value);
 
 const totalCancelled = computed(() => {
     return (props.orders || []).filter((order) => order.status === "Cancelada")
@@ -66,13 +77,13 @@ const selectOrder = (order) => {
                 >
                     <div class="grid grid-cols-2 gap-2 lg:hidden">
                         <TotalOrders :totalOrders="props.totalOrders" />
-                        <TotalRevenue :totalRevenue="props.totalRevenue" />
+                        <TotalRevenue :totalRevenue="totalIncome" />
                     </div>
                     <div class="hidden lg:block w-full">
                         <TotalOrders :totalOrders="props.totalOrders" />
                     </div>
                     <div class="hidden lg:block w-full">
-                        <TotalRevenue :totalRevenue="props.totalRevenue" />
+                        <TotalRevenue :totalRevenue="totalIncome" />
                     </div>
                     <div class="hidden lg:block w-full">
                         <TotalCancelled :totalCancelled="totalCancelled" />

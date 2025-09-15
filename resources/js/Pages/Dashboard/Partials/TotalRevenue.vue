@@ -1,4 +1,12 @@
-<script setup></script>
+<script setup>
+import { defineProps } from "vue";
+
+const props = defineProps({
+    totalRevenue: Number,
+});
+
+console.log("Total Revenue prop in <TotalRevenue>: ", props.totalRevenue);
+</script>
 
 <template>
     <div class="w-full max-w-md mx-auto">
