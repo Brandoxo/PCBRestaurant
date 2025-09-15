@@ -45,6 +45,7 @@ function getDefaultImageByCategory(categoryId) {
         "Mezcal",
         "Ginebra",
         "Vodka",
+        "Copas"
     ];
     if (drinkCategories.includes(category.name)) {
         return "/assets/uploads/default-drink.png";
