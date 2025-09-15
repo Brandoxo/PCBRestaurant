@@ -2,7 +2,9 @@
 import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import Swal from "sweetalert2";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
+
+const user = usePage().props.auth.user;
 
 const props = defineProps({ order: Object });
 
@@ -30,7 +32,7 @@ const cancelOrder = async () => {
     try {
         await router.post(
             `/orders/update/${props.order.id}`,
-            { status: "Cancelada" },
+            { status: "Cancelada",  user_name: user.name },
             {
                 preserveState: true,
                 onSuccess: () => {
@@ -66,6 +68,11 @@ const cancelOrder = async () => {
                     class="inline w-6 ml-2 cursor-pointer"
                 />
             </h2>
+           <div v-if="order.status === 'Cancelada'" class="fleex bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold w-fit mt-2 lg:mt-0">
+    Cancelada por {{ order.cancelled_by ?? "Admin" }}
+    <span>
+    </span>
+</div>
             <StatusBadge class="" />
         </div>
         <div class="flex items-center justify-between mt-4">

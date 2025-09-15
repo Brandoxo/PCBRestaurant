@@ -21,6 +21,9 @@ class DashBoardController extends Controller
             'totalOrders' => $totalOrders,
             'sales' => $totalSales
         ]);
+
+       
+        
     }
 
     public function edit($id) {
@@ -40,7 +43,18 @@ class DashBoardController extends Controller
         ]);
 
         $order->status = $request->input('status');
+
+          if ($order->status === 'Cancelada') {
+        $order->cancelled_by = $request->input('user_name');
+        $table = method_exists($order, 'table') ? $order->table : \App\Models\Mesas::find($order->table_id);
+        if ($table) {
+            $table->status = 'Libre';
+            $table->save();
+        }
+    }
         $order->save();
+
+        
 
         if ($order->status === 'Cancelada') {
             $table = method_exists($order, 'table') ? $order->table : Mesas::find($order->table_id);
