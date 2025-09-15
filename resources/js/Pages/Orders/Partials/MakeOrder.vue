@@ -155,15 +155,23 @@ onMounted(() => {
     console.log("Component mounted.");
 });
 
+const subtotal = computed(() => {
+    return props.currentOrder.items.reduce(
+        (acc, item) => acc + item.price * item.quantity,
+        0
+    );
+});
+
 const updateOrder = () => {
-    // Preparar el payload correcto
     const payload = {
         table_id: props.selectedTable?.number || props.currentOrder.table_id,
         status: props.currentOrder.status || "En curso",
         items: props.currentOrder.items,
+        subtotal: subtotal.value,
     };
     router.put(`/Order/Update/${props.currentOrder.id}`, payload, {
         onSuccess: (response) => {
+            console.log("Payload subtotal sent:", payload.subtotal);
             toast.success("Orden actualizada exitosamente");
             emit("handleOrderUpdated", response.props.order);
             console.log("Order updated successfully:", response.props.order);

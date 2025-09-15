@@ -24,8 +24,11 @@ const currentOrder = ref({
         product: detail.product,
         quantity: detail.quantity,
         price: detail.product.price,
+        subtotal: detail.quantity * detail.product.price,
     })),
 });
+
+console.log("Current Orderssssss:", currentOrder.value);
 </script>
 <template>
     <AuthenticatedLayout>

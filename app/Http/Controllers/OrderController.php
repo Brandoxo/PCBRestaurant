@@ -32,13 +32,11 @@ class OrderController extends Controller
         $order = Orders::findOrFail($id);
         $order->mesa_id = $request->table_id;
         $order->status = $request->status;
+        $order->total = $request->subtotal;
         $order->save();
 
-        // Actualizar productos de la orden
         if ($request->has('items')) {
-            // Eliminar detalles actuales
             $order->orderDetails()->delete();
-            // Agregar los nuevos detalles
             foreach ($request->items as $item) {
                 $order->orderDetails()->create([
                     'product_id' => $item['product_id'],
@@ -46,7 +44,9 @@ class OrderController extends Controller
                     'unit_price' => $item['price'],
                     'subtotal' => $item['price'] * $item['quantity'],
                 ]);
+                
             }
+            
         }
 
         return redirect()->route('dashboard')->with('success', 'Orden actualizada correctamente');
