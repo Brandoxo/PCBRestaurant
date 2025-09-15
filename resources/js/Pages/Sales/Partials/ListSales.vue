@@ -32,7 +32,7 @@ console.log("props in <ListSales>: ", props.sales);
                         {{ value.date_time }}
                     </td>
                     <td class="border p-2 text-center">{{ value.order_id }}</td>
-                    <td class="border p-2 text-center">{{ value.user_id }}</td>
+                    <td class="border p-2 text-center">{{ value.user.name }}</td>
                     <td class="border p-2 text-center">
                         {{ value.product_id }}
                     </td>

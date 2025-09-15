@@ -9,7 +9,7 @@ use Inertia\Inertia;
 class SalesController extends Controller
 {
     public function index() {
-        $sales = Sales::all();
+        $sales = Sales::with('user')->get();
         return Inertia::render('Sales/Index', [
             'sales' => $sales
         ]);
@@ -27,6 +27,9 @@ class SalesController extends Controller
         $sale->subtotal = $request->subtotal;
         $sale->date_time = $request->date_time;
         $sale->save();
+
+        $user = \App\Models\User::find($request->user_id);
+        $sale->user = $user ? $user->name : 'Desconocido';
 
         $order = \App\Models\Orders::find($request->order_id);
         if ($order) {

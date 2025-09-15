@@ -9,4 +9,9 @@ class Sales extends Model
     protected $fillable = ['id', 'order_id', 'product_id', 'user_id', 'cash_audit_id', 'quantity', 'unit_price', 'subtotal', 'date_time'];
 
     public $timestamps = false;
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
 }
