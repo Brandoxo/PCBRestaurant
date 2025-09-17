@@ -55,6 +55,16 @@ const cancelOrder = async () => {
         class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full m-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
         v-if="order"
     >
+    <div v-if="order.status === 'Cancelada'" class="flex bg-red-100 text-center text-red-600 py-1 rounded-full text-sm font-semibold w-full mt-2 lg:mt-0">
+        <span class="mx-auto">
+             Cancelada por {{ order.cancelled_by ?? "Admin" }}
+         </span>
+     </div>
+    <div v-if="order.status === 'Completada'" class="flex bg-approveGreen/30 text-center text-approveGreen py-1 rounded-full text-sm font-semibold w-full mt-2 lg:mt-0">
+        <span class="mx-auto">
+                Venta Finalizada
+         </span>
+     </div>
         <div class="lg:flex justify-between items-center mx-auto">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
@@ -68,11 +78,6 @@ const cancelOrder = async () => {
                     class="inline w-6 ml-2 cursor-pointer"
                 />
             </h2>
-           <div v-if="order.status === 'Cancelada'" class="fleex bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold w-fit mt-2 lg:mt-0">
-    Cancelada por {{ order.cancelled_by ?? "Admin" }}
-    <span>
-    </span>
-</div>
             <StatusBadge class="" />
         </div>
         <div class="flex items-center justify-between mt-4">
