@@ -10,7 +10,8 @@ class Orders extends Model
                             'mesa_id',
                             'date_time',
                             'status',
-                            'total'];
+                            'total',
+                            'tip'];
 
     // Remove created_at timestamp management
     public $timestamps = false;

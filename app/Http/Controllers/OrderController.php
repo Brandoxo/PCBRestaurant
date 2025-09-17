@@ -52,4 +52,15 @@ class OrderController extends Controller
         return redirect()->route('dashboard')->with('success', 'Orden actualizada correctamente');
     }
 
+    public function addTip(Request $request, $id)
+    {
+        $order = Orders::findOrFail($id);
+        $request->validate([
+            'tip' => 'required|numeric|min:0',
+        ]);
+        $order->tip = $request->tip;
+        $order->save();
+
+        return response()->json(['success' => true, 'message' => 'Tip added successfully', 'tip' => $order->tip]);
+    }
  }
