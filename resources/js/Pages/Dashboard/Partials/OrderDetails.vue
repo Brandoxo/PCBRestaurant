@@ -2,11 +2,26 @@
 import { router, usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { ref } from "vue";
+import Modal from "@/Components/Modal.vue";
 
 const props = defineProps({
     order: Object,
 });
 
+const openModal = ref(false);
+
+const showModal = () => {
+    openModal.value = true;
+};
+
+const closeModal = () => {
+    openModal.value = false;
+};
+
+const paymentMethod = ref("Efectivo");
+const tip = ref("0");
+const otherTip = ref("");
 const user = usePage().props.auth.user;
 
 console.log("order prop in <OrderDetails>: ", props.order);
@@ -15,6 +30,7 @@ const foodCategories = [1, 2, 3, 4, 6, 7, 8, 20];
 const drinkCategories = [5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
 const createSale = () => {
+    closeModal();
     Swal.fire({
         icon: "info",
         title: "Estás segur@ de cobrar la orden?",
@@ -31,6 +47,9 @@ const createSale = () => {
             props.order.id &&
             props.order.order_details
         ) {
+            router.get(`/Order/AddTip/${props.order.id}`, {
+                tip: tip.value === "Otro" ? parseFloat(otherTip.value) || 0 : parseFloat(tip.value) || 0,
+            });
 
             props.order.order_details.forEach((item) => {
                 router.post(
@@ -49,11 +68,13 @@ const createSale = () => {
                             item.quantity *
                                 (item.unit_price ??
                                     (item.product ? item.product.price : 0)),
+                        payment_method: paymentMethod.value,
                         date_time: new Date()
                             .toISOString()
                             .slice(0, 19)
                             .replace("T", " "),
-                    },
+                    }, 
+                    
                     {
                         onSuccess: () => {
                             console.log(
@@ -218,7 +239,7 @@ const PrintTicket = () => {
                 $ {{ props.order?.total ? props.order.total : "0.00" }}</span
             >
             <button
-                @click="createSale"
+                @click="openModal = true"
                 v-if="props.order?.status === 'En curso'"
                 class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
             >
@@ -233,5 +254,59 @@ const PrintTicket = () => {
                 Imprimir Ticket
             </button>
         </div>
+
+<Modal v-model:show="openModal" @close="openModal = false">
+    <div class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto">
+        <h3 class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2">
+            <svg class="w-7 h-7 text-approveGreen" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>
+            Cobrar Orden
+        </h3>
+        <p class="mb-6 text-gray-600 text-base">
+            ¿Cuál será el <span class="font-semibold text-approveGreen">método de pago</span> para esta orden?
+        </p>
+        <select v-model="paymentMethod" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+        </select>
+
+        <div v-if="paymentMethod === 'Tarjeta'" class="mb-4">
+            <label class="block text-gray-700 font-medium mb-2">El cliente gusta dejar propina de:</label>
+            <select v-model="tip" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-2">
+                <option value="0">No dejar propina</option>
+                <option value="5">5%</option>
+                <option value="10">10%</option>
+                <option value="15">15%</option>
+                <option value="20">20%</option>
+                <option value="otherTip">Otro</option>
+            </select>
+            <div v-if="tip === 'otherTip'" class="mt-2">
+                <label class="block text-gray-700 font-medium mb-1">Ingrese el monto de propina:</label>
+                <input
+                    v-model="customTip"
+                    type="number"
+                    min="0"
+                    class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
+                    placeholder="Monto de propina"
+                />
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-8">
+            <button
+                @click="openModal = false"
+                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
+            >
+                Cancelar
+            </button>
+            <button
+                @click="createSale"
+                class="bg-approveGreen hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
+            >
+                Sí, Cobrar
+            </button>
+        </div>
     </div>
+</Modal>
+    </div>
+
 </template>

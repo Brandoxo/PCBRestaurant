@@ -26,6 +26,7 @@ class SalesController extends Controller
         $sale->unit_price = $request->unit_price;
         $sale->subtotal = $request->subtotal;
         $sale->date_time = $request->date_time;
+        $sale->payment_method = $request->payment_method;
         $sale->save();
 
         $user = \App\Models\User::find($request->user_id);
