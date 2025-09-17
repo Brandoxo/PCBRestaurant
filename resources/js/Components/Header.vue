@@ -41,7 +41,7 @@ const closeSidebar = () => {
 </script>
 
 <template>
-    <header class="bg-primary shadow-md h-[72px] fixed w-full lg:ml-64 z-10">
+    <header class="bg-primary shadow-md h-[73px] fixed w-full lg:ml-64 z-10">
         <div
             class="flex justify-between py-[15px] px-4 sm:px-6 lg:px-8 gap-4 lg:mr-64"
         >

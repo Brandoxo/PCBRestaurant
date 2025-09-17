@@ -17,10 +17,10 @@ const showingNavigationDropdown = ref(false);
         <aside
             class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full"
         >
-            <div class="flex items-center w-full bg-white py-4">
+            <div class="flex items-center bg-white">
                 <Link :href="route('dashboard')">
                     <ApplicationLogo
-                        class="h-10 w-auto fill-current text-gray-800"
+                        class=""
                     />
                 </Link>
             </div>
