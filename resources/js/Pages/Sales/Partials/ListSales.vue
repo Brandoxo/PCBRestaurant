@@ -12,10 +12,11 @@ console.log("user in <ListSales>: ", user);
 
 const searchQuery = ref("");
 const filteredSales = computed(() => {
+    let ordered = [...props.sales].sort((a, b) => b.id - a.id);
     if (!searchQuery.value) {
-        return props.sales;
+        return ordered;
     }
-    return props.sales.filter((sale) =>
+    return ordered.filter((sale) =>
         sale.user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     );
 });
