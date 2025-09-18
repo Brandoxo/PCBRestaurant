@@ -22,12 +22,14 @@ const props = defineProps({
 
 console.log("Sales prop in <Dashboard>: ", props.sales);
 
+const date_today = new Date().toISOString().split("T")[0];
+
 const totalIncome = computed(() => {
-    return props.sales.reduce(
-        (sum, sale) => sum + parseFloat(sale.subtotal),
-        0
-    );
+    return props.sales
+        .filter(sale => new Date(sale.date_time).toISOString().split("T")[0] === date_today)
+        .reduce((sum, sale) => sum + parseFloat(sale.subtotal), 0);
 });
+
 console.log("Total Income: ", totalIncome.value);
 
 const totalCancelled = computed(() => {
