@@ -127,10 +127,10 @@ const GetProducts = async () => {
         console.error("There was an error fetching the products data!", error);
     }
 };
-
-const AddToOrder = (product, _selectedTable) => {
+    
+const AddToOrder = (product, tableId) => {
     if (!props.currentOrder.mesa_id) {
-        props.currentOrder.mesa_id = _selectedTable;
+        props.currentOrder.mesa_id = tableId;
     }
     const existingItem = props.currentOrder.items.find(
         (item) => item.product_id === product.id
@@ -170,8 +170,8 @@ const RemoveToOrder = (productId) => {
 
 onMounted(() => {
     console.log("Selected Table Prop:", props.selectedTable);
-    props.currentOrder.mesa_id = props.selectedTable?.number
-        ? props.selectedTable.number
+    props.currentOrder.mesa_id = props.selectedTable?.id
+        ? props.selectedTable.id
         : null;
     GetProducts();
     console.log("Component mounted.");
@@ -307,7 +307,7 @@ console.log(props);
                                         @click="
                                             AddToOrder(
                                                 product,
-                                                selectedTable.number
+                                                selectedTable.id
                                             )
                                         "
                                     >
