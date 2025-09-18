@@ -48,7 +48,10 @@ const createSale = () => {
             props.order.order_details
         ) {
             router.get(`/Order/AddTip/${props.order.id}`, {
-                tip: tip.value === "Otro" ? parseFloat(otherTip.value) || 0 : parseFloat(tip.value) || 0,
+                tip:
+                    tip.value === "Otro"
+                        ? parseFloat(otherTip.value) || 0
+                        : parseFloat(tip.value) || 0,
             });
 
             props.order.order_details.forEach((item) => {
@@ -73,8 +76,8 @@ const createSale = () => {
                             .toISOString()
                             .slice(0, 19)
                             .replace("T", " "),
-                    }, 
-                    
+                    },
+
                     {
                         onSuccess: () => {
                             console.log(
@@ -129,36 +132,41 @@ const PrintTicket = () => {
 
         const businessInfo = {
             name: "Hotel Ronda Minerva",
-            address: "Av. Adolfo López Mateos Sur 265, Jardines del Bosque, 44520 Guadalajara, Jal.",
+            address:
+                "Av. Adolfo López Mateos Sur 265, Jardines del Bosque, 44520 Guadalajara, Jal.",
             phone: "33 3121 4700",
         };
 
         // Cambia `data` por `params` para una petición GET
-        axios.get('/print-ticket/', {
-            params: {
-                data: {
-                    ticketData: ticketData,
-                    ticketItems: ticketItems, // Envía el array directamente
-                    businessInfo: businessInfo,
+        axios
+            .get("/print-ticket/", {
+                params: {
+                    data: {
+                        ticketData: ticketData,
+                        ticketItems: ticketItems, // Envía el array directamente
+                        businessInfo: businessInfo,
+                    },
                 },
-            },
-        })
-        .then(response => {
-            // Verifica que la respuesta contenga la URL
-            if (response.data && response.data.printData) {
-                const printUrl = 'print://' + response.data.printData;
-                console.clear();
-                console.log(printUrl);
-                
-                window.location.href = printUrl;
-                console.log("Ticket data sent successfully:", response.data);
-            } else {
-                console.error("No print data received from server.");
-            }
-        })
-        .catch(error => {
-            console.error("Error sending ticket data:", error);
-        });
+            })
+            .then((response) => {
+                // Verifica que la respuesta contenga la URL
+                if (response.data && response.data.printData) {
+                    const printUrl = "print://" + response.data.printData;
+                    console.clear();
+                    console.log(printUrl);
+
+                    window.location.href = printUrl;
+                    console.log(
+                        "Ticket data sent successfully:",
+                        response.data
+                    );
+                } else {
+                    console.error("No print data received from server.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error sending ticket data:", error);
+            });
     } else {
         console.error("No order data available to print ticket.");
     }
@@ -255,58 +263,84 @@ const PrintTicket = () => {
             </button>
         </div>
 
-<Modal v-model:show="openModal" @close="openModal = false">
-    <div class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto">
-        <h3 class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2">
-            <svg class="w-7 h-7 text-approveGreen" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"></path><circle cx="12" cy="12" r="10"></circle></svg>
-            Cobrar Orden
-        </h3>
-        <p class="mb-6 text-gray-600 text-base">
-            ¿Cuál será el <span class="font-semibold text-approveGreen">método de pago</span> para esta orden?
-        </p>
-        <select v-model="paymentMethod" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4">
-            <option value="Efectivo">Efectivo</option>
-            <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
-        </select>
+        <Modal v-model:show="openModal" @close="openModal = false">
+            <div
+                class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto"
+            >
+                <h3
+                    class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2"
+                >
+                    <svg
+                        class="w-7 h-7 text-approveGreen"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M12 8v4l3 3"></path>
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                    Cobrar Orden
+                </h3>
+                <p class="mb-6 text-gray-600 text-base">
+                    ¿Cuál será el
+                    <span class="font-semibold text-approveGreen"
+                        >método de pago</span
+                    >
+                    para esta orden?
+                </p>
+                <select
+                    v-model="paymentMethod"
+                    class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4"
+                >
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                </select>
 
-        <div v-if="paymentMethod === 'Tarjeta'" class="mb-4">
-            <label class="block text-gray-700 font-medium mb-2">El cliente gusta dejar propina de:</label>
-            <select v-model="tip" class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-2">
-                <option value="0">No dejar propina</option>
-                <option value="5">5%</option>
-                <option value="10">10%</option>
-                <option value="15">15%</option>
-                <option value="20">20%</option>
-                <option value="otherTip">Otro</option>
-            </select>
-            <div v-if="tip === 'otherTip'" class="mt-2">
-                <label class="block text-gray-700 font-medium mb-1">Ingrese el monto de propina:</label>
-                <input
-                    v-model="customTip"
-                    type="number"
-                    min="0"
-                    class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
-                    placeholder="Monto de propina"
-                />
+                <div v-if="paymentMethod === 'Tarjeta'" class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2"
+                        >El cliente gusta dejar propina de:</label
+                    >
+                    <select
+                        v-model="tip"
+                        class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-2"
+                    >
+                        <option value="0">No dejar propina</option>
+                        <option value="5">5%</option>
+                        <option value="10">10%</option>
+                        <option value="15">15%</option>
+                        <option value="20">20%</option>
+                        <option value="otherTip">Otro</option>
+                    </select>
+                    <div v-if="tip === 'otherTip'" class="mt-2">
+                        <label class="block text-gray-700 font-medium mb-1"
+                            >Ingrese el monto de propina:</label
+                        >
+                        <input
+                            v-model="customTip"
+                            type="number"
+                            min="0"
+                            class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
+                            placeholder="Monto de propina"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-8">
+                    <button
+                        @click="openModal = false"
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        @click="createSale"
+                        class="bg-approveGreen hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
+                    >
+                        Sí, Cobrar
+                    </button>
+                </div>
             </div>
-        </div>
-
-        <div class="flex justify-end gap-3 mt-8">
-            <button
-                @click="openModal = false"
-                class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
-            >
-                Cancelar
-            </button>
-            <button
-                @click="createSale"
-                class="bg-approveGreen hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
-            >
-                Sí, Cobrar
-            </button>
-        </div>
+        </Modal>
     </div>
-</Modal>
-    </div>
-
 </template>

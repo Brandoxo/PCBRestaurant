@@ -5,11 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Sales;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Carbon\Carbon;
 
 class SalesController extends Controller
 {
     public function index() {
-        $sales = Sales::with('user')->get();
+        $sales = Sales::with(['user', 'order'])->get();
         return Inertia::render('Sales/Index', [
             'sales' => $sales
         ]);
@@ -25,7 +26,7 @@ class SalesController extends Controller
         $sale->quantity = $request->quantity;
         $sale->unit_price = $request->unit_price;
         $sale->subtotal = $request->subtotal;
-        $sale->date_time = $request->date_time;
+        $sale->date_time = Carbon::now();
         $sale->payment_method = $request->payment_method;
         $sale->save();
 

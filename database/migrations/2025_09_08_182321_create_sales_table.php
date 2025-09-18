@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('unit_price', 10);
             $table->decimal('subtotal', 10);
-            $table->dateTime('date_time')->nullable()->useCurrent();
+            $table->timestamp('date_time')->nullable()->useCurrent();
         });
     }
 
