@@ -16,9 +16,10 @@ const filteredSales = computed(() => {
     if (!searchQuery.value) {
         return ordered;
     }
-    return ordered.filter((sale) =>
-        sale.user.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+    return ordered.filter((sale) => {
+        const saleDate = new Date(sale.date_time).toISOString().split("T")[0];
+        return saleDate === searchQuery.value;
+    });
 });
 
 const openModal = ref(false);
@@ -188,8 +189,8 @@ const generateCashAudit = async () => {
         <div class="flex gap-4 justify-between mx-auto">
             <input
                 v-model="searchQuery"
-                type="text"
-                placeholder="Buscar Ventas Realizadas Por..."
+                type="date"
+                placeholder="Buscar Ventas por fecha"
                 class="border p-2 rounded-lg w-full"
             />
             <button
