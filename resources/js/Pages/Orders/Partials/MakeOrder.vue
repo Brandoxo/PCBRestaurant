@@ -15,6 +15,28 @@ const props = defineProps({
     isEdit: Boolean,
 });
 
+const searchQuery = ref("");
+const filteredProductsCombined = computed(() => {
+    let filtered = products.value;
+    if (selectedCategory.value !== "all") {
+        filtered = filtered.filter(
+            (product) =>
+                product.category.name === selectedCategory.value &&
+                product.is_active
+        );
+    } else {
+        filtered = filtered.filter((product) => product.is_active);
+    }
+    if (searchQuery.value) {
+        filtered = filtered.filter((product) =>
+            product.name
+                .toLowerCase()
+                .includes(searchQuery.value.toLowerCase().trim())
+        );
+    }
+    return filtered;
+});
+
 const emit = defineEmits(["closeOptions"]);
 function closeOptions() {
     emit("closeOptions");
@@ -216,6 +238,12 @@ console.log(props);
                         {{ category }}
                     </option>
                 </select>
+                <input
+                    type="text"
+                    v-model="searchQuery"
+                    placeholder="Buscar producto..."
+                    class="border p-2 rounded-lg w-full mb-4"
+                />
 
                 <div
                     v-if="filteredProducts.length > 0"
@@ -228,7 +256,7 @@ console.log(props);
                         class="list-disc list-inside max-h-48 2xl:max-h-[30rem] overflow-y-auto grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4"
                     >
                         <li
-                            v-for="product in filteredProducts"
+                            v-for="product in filteredProductsCombined"
                             :key="product.id"
                             class="mb-1 flex flex-col"
                         >
@@ -240,22 +268,27 @@ console.log(props);
                                     alt="Product Image"
                                     class="h-40 w-full 2xl:max-w-40 object-cover mb-2"
                                 />
-                                <span class="font-bold">{{ product.name }}</span
-                                ><span
+                                <span class="font-bold">{{
+                                    product.name
+                                }}</span>
+                                <span
                                     class="font-extrabold text-black text-lg mb-"
                                     >${{ product.price }}</span
                                 >
                                 <div
                                     class="flex justify-evenly w-full m-4 text-center items-center"
                                 >
-                                    <button v-if="!isEdit"
+                                    <button
+                                        v-if="!isEdit"
                                         class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-red-600/80 text-white hover:bg-red-600"
                                         @click="RemoveToOrder(product.id)"
                                     >
                                         -
                                     </button>
-                                    <button v-if="isEdit" disabled
-                                        class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-gray-400/80 text-white cursor-not-allowed"                                        
+                                    <button
+                                        v-if="isEdit"
+                                        disabled
+                                        class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-gray-400/80 text-white cursor-not-allowed"
                                     >
                                         -
                                     </button>
