@@ -20,7 +20,7 @@ const closeModal = () => {
 };
 
 const paymentMethod = ref("Efectivo");
-const tip = ref("0");
+const tip_percent = ref("0");
 const otherTip = ref("");
 const user = usePage().props.auth.user;
 
@@ -47,11 +47,16 @@ const createSale = () => {
             props.order.id &&
             props.order.order_details
         ) {
-            router.get(`/Order/AddTip/${props.order.id}`, {
-                tip:
-                    tip.value === "Otro"
-                        ? parseFloat(otherTip.value) || 0
-                        : parseFloat(tip.value) || 0,
+            router.post(`/Order/AddTip/${props.order.id}`, {
+                tip_percent: tip_percent.value ? Number(tip_percent.value) : null,
+                tip: otherTip.value ? Number(otherTip.value) : null,
+            }, {
+                onSuccess: () => {
+                    console.log("Tip added successfully");
+                },
+                onError: (errors) => {
+                    console.error("Error adding tip", errors);
+                },
             });
 
             props.order.order_details.forEach((item) => {
@@ -302,7 +307,7 @@ const PrintTicket = () => {
                         >El cliente gusta dejar propina de:</label
                     >
                     <select
-                        v-model="tip"
+                        v-model="tip_percent"
                         class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-2"
                     >
                         <option value="0">No dejar propina</option>
@@ -312,12 +317,12 @@ const PrintTicket = () => {
                         <option value="20">20%</option>
                         <option value="otherTip">Otro</option>
                     </select>
-                    <div v-if="tip === 'otherTip'" class="mt-2">
+                    <div v-if="tip_percent === 'otherTip'" class="mt-2">
                         <label class="block text-gray-700 font-medium mb-1"
                             >Ingrese el monto de propina:</label
                         >
                         <input
-                            v-model="customTip"
+                            v-model="otherTip"
                             type="number"
                             min="0"
                             class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"

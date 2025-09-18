@@ -154,9 +154,18 @@ const generateCashAudit = async () => {
         0
     );
 
-    const totalTips = sales.reduce((sum, sale) => {
+    const totalTipsInt = sales.reduce((sum, sale) => {
+    let tipAmount = 0;
+        if (sale.order.tip !== null && sale.order.tip !== undefined && sale.order.tip !== "") {
+            tipAmount = parseFloat(sale.order.tip);
+
+        }
+        return sum + tipAmount;
+    }, 0);
+
+    const totalTipsPercent = sales.reduce((sum, sale) => {
         const tipPercent =
-            sale.order && sale.order.tip ? parseFloat(sale.order.tip) : 0;
+            sale.order && sale.order.tip_percent ? parseFloat(sale.order.tip_percent) : 0;
         return sum + sale.quantity * sale.unit_price * (tipPercent / 100);
     }, 0);
 
@@ -169,11 +178,11 @@ const generateCashAudit = async () => {
             initial_amount: 3500,
             total_amount: totalAmount,
             final_amount: 3500 + totalAmount,
-            total_tips: totalTips,
+            total_tips: totalTipsInt + totalTipsPercent,
         });
         console.log("Corte de caja guardado:", response.data);
         alert(
-            `Corte de caja generado y guardado exitosamente.\nPropinas: $${totalTips.toFixed(
+            `Corte de caja generado y guardado exitosamente.\nPropinas: $${(totalTipsInt + totalTipsPercent).toFixed(
                 2
             )}`
         );
@@ -210,6 +219,7 @@ const generateCashAudit = async () => {
                     <th class="p-4">Producto</th>
                     <th class="p-4">Subtotal</th>
                     <th class="p-4">Total</th>
+                    <th class="p-4">Método de Pago</th>
                 </tr>
             </thead>
             <tbody>
@@ -235,6 +245,9 @@ const generateCashAudit = async () => {
                     </td>
                     <td class="border p-2 text-center">
                         {{ formatTotal(value.quantity, value.unit_price) }}
+                    </td>
+                    <td class="border p-2 text-center">
+                        {{ value.payment_method }}
                     </td>
                 </tr>
             </tbody>

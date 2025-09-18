@@ -63,7 +63,7 @@ Route::get('/Orders', [\App\Http\Controllers\OrderController::class, 'index'])->
 Route::post('/Orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('Orders/Store') ->middleware(['auth', 'verified']);
 Route::put('/Order/Update/{id}', [\App\Http\Controllers\OrderController::class, 'update'])->name('Order/Update');
 
-Route::get('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class, 'addTip'])->name('Order/AddTip');
+Route::post('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class, 'addTip'])->name('Order/AddTip');
 
 //CashAudit
 Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified']);

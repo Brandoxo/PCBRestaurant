@@ -56,9 +56,15 @@ class OrderController extends Controller
     {
         $order = Orders::findOrFail($id);
         $request->validate([
-            'tip' => 'required|numeric|min:0',
+            'tip' => 'nullable|numeric|min:0',
+            'tip_percent' => 'nullable|numeric|min:0|max:100',
         ]);
-        $order->tip = $request->tip;
+        $order->tip = $request->tip !== null && $request->tip !== ''
+            ? floatval($request->tip)
+            : 0;
+        $order->tip_percent = $request->tip_percent !== null && $request->tip_percent !== ''
+            ? floatval($request->tip_percent)
+            : null;
         $order->save();
 
         return response()->json(['success' => true, 'message' => 'Tip added successfully', 'tip' => $order->tip]);

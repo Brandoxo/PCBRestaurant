@@ -35,7 +35,7 @@ const formatDate = (dateString) => {
                     <th class="p-4">#</th>
                     <th class="p-4">Fecha de Corte</th>
                     <th class="p-4">Turno</th>
-                    <th class="p-4">Fondo de Caja</th>
+                    <!-- <th class="p-4">Fondo de Caja</th> -->
                     <th class="p-4">Total de Ventas</th>
                     <th class="p-4">Monto Final Total</th>
                     <th class="p-4">Total de Propinas</th>
@@ -48,9 +48,9 @@ const formatDate = (dateString) => {
                         {{ formatDate(value.created_at) }}
                     </td>
                     <td class="border p-2 text-center">{{ value.shift }}</td>
-                    <td class="border p-2 text-center">
+                    <!-- <td class="border p-2 text-center">
                         ${{ (value.initial_amount) }}
-                    </td>
+                    </td> -->
                     <td class="border p-2 text-center">
                         ${{ (value.total_amount) }}
                     </td>
