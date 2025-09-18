@@ -6,6 +6,15 @@ use Illuminate\Http\Request;
 
 class CashAuditController extends Controller
 {
+
+    public function index()
+    {
+        $cashAudits = \App\Models\CashAudit::with('user')->orderBy('created_at', 'desc')->get();
+        return inertia('CashAudit/Index', [
+            'cashAudits' => $cashAudits
+        ]);
+    }
+
     public function store (Request $request)
     {
         $request->validate([

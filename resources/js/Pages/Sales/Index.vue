@@ -2,6 +2,7 @@
 import Header from "@/Components/Header.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import ListSales from "./Partials/ListSales.vue";
+import { Link } from "@inertiajs/vue3";
 
 const props = defineProps({
     sales: Object,
@@ -18,7 +19,7 @@ console.log(props.sales);
         >
             <div class="flex justify-between items-center">
                 <h2 class="text-white text-2xl font-bold">Listado de Ventas</h2>
-                <button class="bg-blue-500 text-white px-4 py-2 rounded">Ver lista de Cortes</button>
+                <Link :href="route('CashAudit/Index')" class="bg-blue-500 text-white px-4 py-2 rounded">Ver lista de Cortes</Link>
             </div>
 
             <ListSales :sales="sales" />

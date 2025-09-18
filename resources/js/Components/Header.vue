@@ -26,6 +26,8 @@ const title = computed(() => {
             return "Perfil";
         case "Sales/Index":
             return "Ventas";
+        case "CashAudit/Index":
+            return "Cortes de Caja";
         default:
             return "Dashboard";
     }
