@@ -10,7 +10,7 @@ use Carbon\Carbon;
 class SalesController extends Controller
 {
     public function index() {
-        $sales = Sales::with(['user', 'order'])->get();
+        $sales = Sales::with(['product', 'user', 'order'])->get();
         return Inertia::render('Sales/Index', [
             'sales' => $sales
         ]);

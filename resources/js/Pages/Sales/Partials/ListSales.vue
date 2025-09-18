@@ -223,7 +223,7 @@ const generateCashAudit = async () => {
                         {{ value.user.name }}
                     </td>
                     <td class="border p-2 text-center">
-                        {{ value.product_id }}
+                        {{ value.product ? value.product.name : value.product_id }}
                     </td>
                     <td class="border p-2 text-center">
                         {{

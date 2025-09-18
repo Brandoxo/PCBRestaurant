@@ -19,4 +19,9 @@ class Sales extends Model
     {
         return $this->belongsTo(\App\Models\Orders::class, 'order_id');
     }
+
+    public function product()
+    {
+        return $this->belongsTo(\App\Models\Products::class, 'product_id');
+    }
 }
