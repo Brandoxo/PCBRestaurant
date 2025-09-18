@@ -50,8 +50,8 @@ const shifts = {
 
 const getShift = (dateTime) => {
     const hour = new Date(dateTime).getHours();
-    if (hour >= 4 && hour < 14) return shifts.morning;
-    if (hour >= 14 && hour < 23) return shifts.afternoon;
+    if (hour >= 7 && hour < 15) return shifts.morning;
+    if (hour >= 15 && hour < 23) return shifts.afternoon;
     return "Fuera de turno";
 };
 
@@ -268,8 +268,8 @@ const generateCashAudit = async () => {
                 class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4"
             >
                 <option value="" disabled>Seleccione un turno</option>
-                <option value="Matutino">Mañana (4am - 2pm)</option>
-                <option value="Vespertino">Tarde (2pm - 11pm)</option>
+                <option value="Matutino">Mañana (7am - 3pm)</option>
+                <option value="Vespertino">Tarde (3pm - 11pm)</option>
             </select>
 
             <div
