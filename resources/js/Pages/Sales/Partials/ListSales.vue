@@ -118,9 +118,7 @@ function formatDateToMySQL(dateString) {
 const selectedDate = ref("");
 const selectedShift = ref("");
 
-const generateCashAudit = async () => {
-    const user_id = user.id;
-
+function getFilteredSales() {
     let sales = props.sales;
     if (selectedDate.value) {
         sales = sales.filter((sale) => {
@@ -137,52 +135,76 @@ const generateCashAudit = async () => {
         if (shiftName === "Otro") shiftName = "Fuera de turno";
         sales = sales.filter((sale) => getShift(sale.date_time) === shiftName);
     }
+    return sales;
+}
 
-    if (sales.length === 0) {
-        alert("No hay ventas para la fecha y turno seleccionados.");
-        return;
-    }
+function getFirstDate(sales) {
+    if (!sales.length) return null;
+    return new Date(Math.min(...sales.map((sale) => new Date(sale.date_time))));
+}
 
-    const firstDate = new Date(
-        Math.min(...sales.map((sale) => new Date(sale.date_time)))
-    );
-    const startDate = firstDate;
-    const endDate = firstDate;
-
-    const totalAmount = sales.reduce(
+function getTotalAmount(sales) {
+    return sales.reduce(
         (total, sale) => total + sale.quantity * sale.unit_price,
         0
     );
+}
 
-    const totalTipsInt = sales.reduce((sum, sale) => {
-    let tipAmount = 0;
-        if (sale.order.tip !== null && sale.order.tip !== undefined && sale.order.tip !== "") {
+function getTotalTipsInt(sales) {
+    return sales.reduce((sum, sale) => {
+        let tipAmount = 0;
+        if (
+            sale.order &&
+            sale.order.tip !== null &&
+            sale.order.tip !== undefined &&
+            sale.order.tip !== ""
+        ) {
             tipAmount = parseFloat(sale.order.tip);
-
         }
         return sum + tipAmount;
     }, 0);
+}
 
-    const totalTipsPercent = sales.reduce((sum, sale) => {
+function getTotalTipsPercent(sales) {
+    return sales.reduce((sum, sale) => {
         const tipPercent =
-            sale.order && sale.order.tip_percent ? parseFloat(sale.order.tip_percent) : 0;
+            sale.order && sale.order.tip_percent
+                ? parseFloat(sale.order.tip_percent)
+                : 0;
         return sum + sale.quantity * sale.unit_price * (tipPercent / 100);
     }, 0);
+}
 
+function buildCashAuditData() {
+    const sales = getFilteredSales();
+    if (!sales.length) return null;
+    const firstDate = getFirstDate(sales);
+    const totalAmount = getTotalAmount(sales);
+    const totalTipsInt = getTotalTipsInt(sales);
+    const totalTipsPercent = getTotalTipsPercent(sales);
+    return {
+        user_id: user.id,
+        start_date: formatDateToMySQL(firstDate),
+        end_date: formatDateToMySQL(firstDate),
+        shift: selectedShift.value,
+        initial_amount: 3500,
+        total_amount: totalAmount,
+        final_amount: 3500 + totalAmount,
+        total_tips: totalTipsInt + totalTipsPercent,
+    };
+}
+
+const generateCashAudit = async () => {
+    const cashAuditData = buildCashAuditData();
+    if (!cashAuditData) {
+        alert("No hay ventas para la fecha y turno seleccionados.");
+        return;
+    }
     try {
-        const response = await axios.post("/CashAudit", {
-            user_id,
-            start_date: formatDateToMySQL(startDate),
-            end_date: formatDateToMySQL(endDate),
-            shift: selectedShift.value,
-            initial_amount: 3500,
-            total_amount: totalAmount,
-            final_amount: 3500 + totalAmount,
-            total_tips: totalTipsInt + totalTipsPercent,
-        });
+        const response = await axios.post("/CashAudit", cashAuditData);
         console.log("Corte de caja guardado:", response.data);
         alert(
-            `Corte de caja generado y guardado exitosamente.\nPropinas: $${(totalTipsInt + totalTipsPercent).toFixed(
+            `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(
                 2
             )}`
         );
@@ -195,22 +217,25 @@ const generateCashAudit = async () => {
 const PrintCutOffTicket = () => {
     // Logica para obtener los datos de corte de caja
     const cutOffData = {
-        fecha: new Date().toISOString(),
-        turno: "Mañana",
-        totalVentas: 1500.50,
-        montoFinal: 1550.00,
-        totalPropinas: 49.50
+        fecha: selectedDate.value,
+        turno: selectedShift.value,
+        totalVentas: getTotalAmount(getFilteredSales()),
+        montoFinal: 3500 + getTotalAmount(getFilteredSales()),
+        totalPropinas:
+            getTotalTipsInt(getFilteredSales()) +
+            getTotalTipsPercent(getFilteredSales()),
     };
 
-    axios.get(route('print.cutOff'), {
-        params: { data: cutOffData }
-    })
-    .then(response => {
-        if (response.data && response.data.printData) {
-            const printUrl = 'print://' + response.data.printData;
-            window.location.href = printUrl;
-        }
-    });
+    axios
+        .get(route("print.cutOff"), {
+            params: { data: cutOffData },
+        })
+        .then((response) => {
+            if (response.data && response.data.printData) {
+                const printUrl = "print://" + response.data.printData;
+                window.location.href = printUrl;
+            }
+        });
 };
 </script>
 
@@ -254,7 +279,11 @@ const PrintCutOffTicket = () => {
                         {{ value.user.name }}
                     </td>
                     <td class="border p-2 text-center">
-                        {{ value.product ? value.product.name : value.product_id }}
+                        {{
+                            value.product
+                                ? value.product.name
+                                : value.product_id
+                        }}
                     </td>
                     <td class="border p-2 text-center">
                         {{
