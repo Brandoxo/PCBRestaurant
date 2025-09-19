@@ -99,3 +99,31 @@ Route::get('print-ticket/', function (Request $request) {
     // Devolver la respuesta al cliente
     return response()->json(['printData' => $printData]);
 })->name('print.ticket');
+
+Route::get('print-cut-off/', function (Request $request) {
+    // Aquí, los datos no necesitan ser concatenados con "|"
+    /*
+    $cutOffData = [
+        'fecha' => '19/09/2025',
+        'turno' => 'Mañana',
+        'totalVentas' => 1500.50,
+        'montoFinal' => 1550.00,
+        'totalPropinas' => 49.50
+    ];
+    */
+    // Obtener los datos del request
+    $cutOffData = request()->all()['data'];
+    // Llenar el objeto con los datos recibidos
+    $cutOffData = [
+        'fecha' => $request->input('fecha'),
+        'turno' => $request->input('turno'),
+        'totalVentas' => $request->input('totalVentas'),
+        'montoFinal' => $request->input('montoFinal'),
+        'totalPropinas' => $request->input('totalPropinas')
+    ];
+    // Convertir a JSON, comprimir y codificar en Base64
+    $printData = json_encode($cutOffData);
+    $printData = base64_encode(gzdeflate($printData));
+
+    return response()->json(['printData' => $printData]);
+})->name('print.cutOff');

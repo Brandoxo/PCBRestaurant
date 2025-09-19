@@ -160,6 +160,9 @@ const PrintTicket = () => {
                     console.clear();
                     console.log(printUrl);
 
+                    console.log("Print URL:", printUrl);
+                    //console.log("Ticket Data:", ticketData);
+                    //Imprime el ticket
                     window.location.href = printUrl;
                     console.log(
                         "Ticket data sent successfully:",

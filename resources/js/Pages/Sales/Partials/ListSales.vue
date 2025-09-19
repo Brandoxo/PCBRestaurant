@@ -191,6 +191,27 @@ const generateCashAudit = async () => {
         alert("Error al generar y guardar el corte de caja.");
     }
 };
+
+const PrintCutOffTicket = () => {
+    // Logica para obtener los datos de corte de caja
+    const cutOffData = {
+        fecha: new Date().toISOString(),
+        turno: "Mañana",
+        totalVentas: 1500.50,
+        montoFinal: 1550.00,
+        totalPropinas: 49.50
+    };
+
+    axios.get(route('print.cutOff'), {
+        params: { data: cutOffData }
+    })
+    .then(response => {
+        if (response.data && response.data.printData) {
+            const printUrl = 'print://' + response.data.printData;
+            window.location.href = printUrl;
+        }
+    });
+};
 </script>
 
 <template>
@@ -312,6 +333,7 @@ const generateCashAudit = async () => {
                     Cancelar
                 </button>
                 <button
+                    @click="PrintCutOffTicket"
                     class="bg-green-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
                 >
                     Imprimir
