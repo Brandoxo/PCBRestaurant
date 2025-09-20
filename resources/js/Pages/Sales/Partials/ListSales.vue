@@ -225,7 +225,7 @@ const PrintCutOffTicket = () => {
             getTotalTipsInt(getFilteredSales()) +
             getTotalTipsPercent(getFilteredSales()),
     };
-
+    
     axios
         .get(route("print.cutOff"), {
             params: { data: cutOffData },
