@@ -225,7 +225,7 @@ const PrintCutOffTicket = () => {
         totalVentas: getTotalAmount(getFilteredSales()),
         montoFinal: 3500 + getTotalAmount(getFilteredSales()),
         totalPropinas:
-            (getFilteredSales()) +
+            getTotalTipsIntByOrder(getFilteredSales()) +
             getTotalTipsPercent(getFilteredSales()),
     };
     
