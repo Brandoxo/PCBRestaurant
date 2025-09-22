@@ -29,9 +29,9 @@ console.log("order prop in <OrderDetails>: ", props.order);
 const foodCategories = [1, 2, 3, 4, 6, 7, 8, 20];
 const drinkCategories = [5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
 
-const createSale = () => {
+const createSale = async () => {
     closeModal();
-    Swal.fire({
+    const confirm = await Swal.fire({
         icon: "info",
         title: "Estás segur@ de cobrar la orden?",
         text: "Asegurate primero de haber cobrado el monto correcto.",
@@ -40,74 +40,40 @@ const createSale = () => {
         cancelButtonText: "Cancelar",
         confirmButtonColor: "#28a745",
         cancelButtonColor: "#d33",
-    }).then((result) => {
-        if (
-            result.isConfirmed &&
-            props.order &&
-            props.order.id &&
-            props.order.order_details
-        ) {
-            router.post(`/Order/AddTip/${props.order.id}`, {
-                tip_percent: tip_percent.value ? Number(tip_percent.value) : null,
-                tip: otherTip.value ? Number(otherTip.value) : null,
-            }, {
-                onSuccess: () => {
-                    console.log("Tip added successfully");
-                },
-                onError: (errors) => {
-                    console.error("Error adding tip", errors);
-                },
-            });
-
-            props.order.order_details.forEach((item) => {
-                router.post(
-                    `/Sales/Create`,
-                    {
-                        order_id: props.order.id,
-                        product_id: item.product_id,
-                        user_id: user.id,
-                        cash_audit_id: null,
-                        quantity: item.quantity,
-                        unit_price:
-                            item.unit_price ??
-                            (item.product ? item.product.price : 0),
-                        subtotal:
-                            item.total ??
-                            item.quantity *
-                                (item.unit_price ??
-                                    (item.product ? item.product.price : 0)),
-                        payment_method: paymentMethod.value,
-                        date_time: new Date()
-                            .toISOString()
-                            .slice(0, 19)
-                            .replace("T", " "),
-                    },
-
-                    {
-                        onSuccess: () => {
-                            console.log(
-                                "Sale created successfully for product",
-                                item.product_id
-                            );
-                        },
-                        onError: (errors) => {
-                            console.error(
-                                "Error creating sale for product",
-                                item.product_id,
-                                errors
-                            );
-                        },
-                    }
-                );
-            });
-            Swal.fire({
-                icon: "success",
-                title: "¡Venta creada exitosamente!",
-                showConfirmButton: false,
-                timer: 1500,
-            });
-        }
     });
+
+    if (
+        confirm.isConfirmed &&
+        props.order &&
+        props.order.id &&
+        props.order.order_details
+    ) {
+        await router.post(`/Order/AddTip/${props.order.id}`, {
+            tip_percent: tip_percent.value ? Number(tip_percent.value) : null,
+            tip: otherTip.value ? Number(otherTip.value) : null,
+        });
+
+        // Envía todas las ventas en una sola petición
+        await router.post(`/Sales/Create`, {
+            order_id: props.order.id,
+            user_id: user.id,
+            cash_audit_id: null,
+            payment_method: paymentMethod.value,
+            sales: props.order.order_details.map((item) => ({
+                product_id: item.product_id,
+                quantity: item.quantity,
+                unit_price: item.unit_price ?? (item.product ? item.product.price : 0),
+                subtotal: item.total ?? item.quantity * (item.unit_price ?? (item.product ? item.product.price : 0)),
+            })),
+        });
+
+        Swal.fire({
+            icon: "success",
+            title: "¡Venta creada exitosamente!",
+            showConfirmButton: false,
+            timer: 1500,
+        });
+    }
 };
 
 const PrintTicket = () => {
@@ -232,7 +198,7 @@ const PrintTicket = () => {
                     v-if="item.product && item.product.category_id === 2"
                 ></span>
 
-                $ {{ item.unit_price }}
+                $ {{ item.unit_price * item.quantity }} 
             </div>
         </div>
         <span v-else class="text-gray-400"
