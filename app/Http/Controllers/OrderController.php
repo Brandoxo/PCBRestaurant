@@ -59,12 +59,10 @@ class OrderController extends Controller
             'tip' => 'nullable|numeric|min:0',
             'tip_percent' => 'nullable|numeric|min:0|max:100',
         ]);
-        $order->tip = $request->tip !== null && $request->tip !== ''
-            ? floatval($request->tip)
-            : 0;
-        $order->tip_percent = $request->tip_percent !== null && $request->tip_percent !== ''
-            ? floatval($request->tip_percent)
-            : null;
+        $tip = $request->input('tip', 0);
+        $tipPercent = $request->input('tip_percent', 0);
+        $order->tip = $tip;
+        $order->tip_percent = $tipPercent;
         $order->save();
 
         return response()->json(['success' => true, 'message' => 'Tip added successfully', 'tip' => $order->tip]);

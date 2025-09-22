@@ -150,19 +150,22 @@ function getTotalAmount(sales) {
     );
 }
 
-function getTotalTipsInt(sales) {
-    return sales.reduce((sum, sale) => {
-        let tipAmount = 0;
+function getTotalTipsIntByOrder(sales) {
+    const orderIds = new Set();
+    let total = 0;
+    sales.forEach((sale) => {
         if (
             sale.order &&
+            !orderIds.has(sale.order.id) &&
             sale.order.tip !== null &&
             sale.order.tip !== undefined &&
             sale.order.tip !== ""
         ) {
-            tipAmount = parseFloat(sale.order.tip);
+            total += parseFloat(sale.order.tip);
+            orderIds.add(sale.order.id);
         }
-        return sum + tipAmount;
-    }, 0);
+    });
+    return total;
 }
 
 function getTotalTipsPercent(sales) {
@@ -180,7 +183,7 @@ function buildCashAuditData() {
     if (!sales.length) return null;
     const firstDate = getFirstDate(sales);
     const totalAmount = getTotalAmount(sales);
-    const totalTipsInt = getTotalTipsInt(sales);
+    const totalTipsInt = getTotalTipsIntByOrder(sales);
     const totalTipsPercent = getTotalTipsPercent(sales);
     return {
         user_id: user.id,
@@ -222,7 +225,7 @@ const PrintCutOffTicket = () => {
         totalVentas: getTotalAmount(getFilteredSales()),
         montoFinal: 3500 + getTotalAmount(getFilteredSales()),
         totalPropinas:
-            getTotalTipsInt(getFilteredSales()) +
+            getTotalTipsIntByOrder(getFilteredSales()) +
             getTotalTipsPercent(getFilteredSales()),
     };
     
