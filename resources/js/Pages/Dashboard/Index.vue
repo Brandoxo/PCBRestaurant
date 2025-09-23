@@ -26,9 +26,9 @@ const date_today = new Date().toISOString().split("T")[0];
 const shifts = ["Matutino", "Vespertino"];
 
 const totalIncome = computed(() => {
-    return props.orders
-        .filter(order => new Date(order.date_time).toISOString().split("T")[0] === date_today)
-        .reduce((sum, order) => sum + parseFloat(order.total), 0);
+    return props.sales
+        .filter(sales => new Date(sales.date_time).toISOString().split("T")[0] === date_today)
+        .reduce((sum, sales) => sum + parseFloat(sales.subtotal), 0);
 });
 
 console.log("Total Income: ", totalIncome.value);
