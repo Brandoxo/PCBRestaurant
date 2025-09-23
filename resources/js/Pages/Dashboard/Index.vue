@@ -98,7 +98,7 @@ const selectOrder = (order) => {
                 </div>
                 <div class="hidden lg:flex gap-4">
                     <div
-                        class="mt-6 min-w-96 overflow-y-auto h-[36rem] 2xl:h-screen mx-auto scrollbar-hide"
+                         class="mt-6 min-w-96 2xl:min-w-[900px] overflow-y-auto h-[36rem] 2xl:h-screen mx-auto scrollbar-hide"
                     >          <h2 class="text-lg font-bold text-white text-center mb-2">
                                     Todas las órdenes
                                 </h2>

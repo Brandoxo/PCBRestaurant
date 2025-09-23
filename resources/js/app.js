@@ -10,6 +10,8 @@ import "vue-toastification/dist/index.css";
 import Swal from "sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 window.Swal = Swal;
+import { GridStack } from 'gridstack';
+import 'gridstack/dist/gridstack.min.css';
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
