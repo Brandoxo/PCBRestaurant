@@ -17,7 +17,13 @@ const filteredSales = computed(() => {
         return ordered;
     }
     return ordered.filter((sale) => {
-        const saleDate = new Date(sale.date_time).toISOString().split("T")[0];
+        const d = new Date(sale.date_time);
+        const saleDate =
+            d.getFullYear() +
+            "-" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(d.getDate()).padStart(2, "0");
         return saleDate === searchQuery.value;
     });
 });
@@ -60,8 +66,14 @@ const getShift = (dateTime) => {
 const salesByDayAndShift = computed(() => {
     const grouped = {};
     props.sales.forEach((sale) => {
-        const date = new Date(sale.date_time).toISOString().split("T")[0];
+        const d = new Date(sale.date_time);
         const shift = getShift(sale.date_time);
+        const date =
+            d.getFullYear() +
+            "-" +
+            String(d.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(d.getDate()).padStart(2, "0");
         if (!grouped[date]) {
             grouped[date] = { morning: [], afternoon: [], other: [] };
         }
@@ -122,9 +134,13 @@ function getFilteredSales() {
     let sales = props.sales;
     if (selectedDate.value) {
         sales = sales.filter((sale) => {
-            const saleDate = new Date(sale.date_time)
-                .toISOString()
-                .split("T")[0];
+            const d = new Date(sale.date_time);
+            const saleDate =
+                d.getFullYear() +
+                "-" +
+                String(d.getMonth() + 1).padStart(2, "0") +
+                "-" +
+                String(d.getDate()).padStart(2, "0");
             return saleDate === selectedDate.value;
         });
     }
@@ -228,7 +244,7 @@ const PrintCutOffTicket = () => {
             getTotalTipsIntByOrder(getFilteredSales()) +
             getTotalTipsPercent(getFilteredSales()),
     };
-    
+
     axios
         .get(route("print.cutOff"), {
             params: { data: cutOffData },
