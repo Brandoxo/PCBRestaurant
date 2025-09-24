@@ -87,7 +87,7 @@ const cancelOrder = async () => {
                     {{ order.table.number ?? "7" }}
                 </h2>
                 <div class="flex text-sm mt-2">
-                    <p class="text-center text-secondary">
+                    <p class="text-center text-secondary mr-4">
                         {{
                             order.date_time
                                 ? new Date(order.date_time)
@@ -96,6 +96,7 @@ const cancelOrder = async () => {
                                 : "-"
                         }}
                     </p>
+                    
                     <p class="text-center text-secondary">
                         {{
                             order.date_time

@@ -22,12 +22,14 @@ const props = defineProps({
 
 console.log("Sales prop in <Dashboard>: ", props.sales);
 
-const date_today = new Date().toISOString().split("T")[0];
+const d = new Date();
+const date_today = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
 const shifts = ["Matutino", "Vespertino"];
+console.log("Today's date: ", date_today);
 
 const totalIncome = computed(() => {
     return props.sales
-        .filter(sales => new Date(sales.date_time).toISOString().split("T")[0] === date_today)
+        .filter(sales => new Date(sales.date_time).getFullYear() === d.getFullYear() && new Date(sales.date_time).getMonth() === d.getMonth() && new Date(sales.date_time).getDate() === d.getDate())
         .reduce((sum, sales) => sum + parseFloat(sales.subtotal), 0);
 });
 

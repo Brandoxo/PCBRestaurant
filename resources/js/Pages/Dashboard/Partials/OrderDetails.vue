@@ -84,8 +84,8 @@ const PrintTicket = () => {
             cash: props.order.total,
             change: 0,
             user_id: user.name,
-            updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
-            created_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+            updated_at: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " " + new Date().getHours() + ":" + new Date().getMinutes(),
+            created_at: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " " + new Date().getHours() + ":" + new Date().getMinutes(),
             id: props.order.id,
             user: {
                 id: user.id,
