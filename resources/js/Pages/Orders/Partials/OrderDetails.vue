@@ -1,4 +1,5 @@
 <script setup>
+import { formatter, formatterWithoutFraction } from '@/utils/currencyFormatter.js';
 const props = defineProps({
   selectedTable: Object,
   orders: Object,
@@ -24,13 +25,13 @@ console.log('Current Order in OrderDetails:', props.currentOrder);
 
             <ul class="list-disc list-inside mb-2 text-gray-700 text-center max-h-24  2xl:max-h-80 overflow-y-auto">
                 <li v-for="item in currentOrder.items" :key="item.product_id" class="mb-1 text-start ">
-                    {{ item.product.name }} x{{ item.quantity }} <div class="flex justify-end"> <span class="font-extralight text-gray-500">${{ item.price * item.quantity }}</span></div>
+                    {{ item.product.name }} x{{ item.quantity }} <div class="flex justify-end"> <span class="font-extralight text-gray-500">${{ formatterWithoutFraction.format(item.price * item.quantity) }}</span></div>
                     <hr></hr>
                 </li>
             </ul>
         </div>
         <div class="flex justify-between mt-4 space-x-4 text-lg">
-        <span class="font-extrabold text-xl flex uppercase underline">Total:</span> <span class="font-black uppercase text-xl ">${{ currentOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0) }}</span>
+        <span class="font-extrabold text-xl flex uppercase underline">Total:</span> <span class="font-black uppercase text-xl ">{{ formatter.format(currentOrder.items.reduce((total, item) => total + (item.price * item.quantity), 0)) }}</span>
         </div>
 
         <div v-if="(!currentOrder || currentOrder.items.length === 0) && (!orders || orders.length === 0)" class="text-gray-500">

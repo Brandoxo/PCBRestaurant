@@ -1,5 +1,6 @@
 <script setup>
 import { defineProps } from "vue";
+import { formatterWithoutFraction } from "@/utils/currencyFormatter.js";
 
 const props = defineProps({
     totalRevenue: Number,
@@ -25,7 +26,7 @@ console.log("Total Revenue prop in <TotalRevenue>: ", props.totalRevenue);
             <div class="w-fit">
                 <h2 class="text-xl font-medium">Ingresos Totales</h2>
                 <p class="text-3xl font-bold text-gray-800">
-                    <span>$ </span>{{ totalRevenue ?? 0 }}
+                    <span>$ </span>{{ formatterWithoutFraction.format(totalRevenue ?? 0) }}
                 </p>
             </div>
         </div>

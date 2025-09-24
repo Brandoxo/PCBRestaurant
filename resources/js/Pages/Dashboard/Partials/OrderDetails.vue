@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { ref } from "vue";
 import Modal from "@/Components/Modal.vue";
+import { formatter, formatterWithoutFraction } from "@/utils/currencyFormatter.js";
 
 const props = defineProps({
     order: Object,
@@ -199,7 +200,7 @@ const PrintTicket = () => {
                     v-if="item.product && item.product.category_id === 2"
                 ></span>
 
-                $ {{ item.unit_price * item.quantity }} 
+                ${{ formatterWithoutFraction.format(item.unit_price * item.quantity) }} 
             </div>
         </div>
         <span v-else class="text-gray-400"
@@ -214,12 +215,12 @@ const PrintTicket = () => {
         Editar Orden
     </button>
     <div
-        class="bg-white p-6 rounded-lg shadow-md flex h-fit justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        class="bg-white p-6 rounded-lg shadow-md flex h-fit justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300 items-center gap-2"
     >
         <h3 class="font-bold text-3xl">Total:</h3>
         <div class="flex items-center gap-4">
             <span class="font-bold text-2xl 2xl:text-3xl">
-                $ {{ props.order?.total ? props.order.total : "0.00" }}</span
+                {{ formatter.format(props.order?.total ? props.order.total : 0) }}</span
             >
             <button
                 @click="openModal = true"
