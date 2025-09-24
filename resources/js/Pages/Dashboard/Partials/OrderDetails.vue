@@ -93,6 +93,7 @@ const PrintTicket = () => {
                 email: user.email,
                 role: user.role,
             },
+            table: props.order.table ? { number: props.order.table.number } : null,
         };
 
         const ticketItems = props.order.order_details.map((item) => ({
