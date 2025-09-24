@@ -15,7 +15,6 @@ const props = defineProps({
     totalProducts: Number,
     totalCategories: Number,
     totalUsers: Number,
-    totalOrders: Number,
     sales: Array,
     orders: Array,
 });
@@ -27,16 +26,23 @@ const date_today = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(
 const shifts = ["Matutino", "Vespertino"];
 console.log("Today's date: ", date_today);
 
-const totalIncome = computed(() => {
+const totalIncomeToday = computed(() => {
     return props.sales
         .filter(sales => new Date(sales.date_time).getFullYear() === d.getFullYear() && new Date(sales.date_time).getMonth() === d.getMonth() && new Date(sales.date_time).getDate() === d.getDate())
         .reduce((sum, sales) => sum + parseFloat(sales.subtotal), 0);
 });
 
-console.log("Total Income: ", totalIncome.value);
+console.log("Total Income: ", totalIncomeToday.value);
 
-const totalCancelled = computed(() => {
-    return (props.orders || []).filter((order) => order.status === "Cancelada")
+const totalOrdersToday = computed(() => {
+    return props.orders
+        .filter(order => new Date(order.date_time).getFullYear() === d.getFullYear() && new Date(order.date_time).getMonth() === d.getMonth() && new Date(order.date_time).getDate() === d.getDate())
+        .length;
+});
+
+const totalCancelledToday = computed(() => {
+    return props.orders
+        .filter(order => new Date(order.date_time).getFullYear() === d.getFullYear() && new Date(order.date_time).getMonth() === d.getMonth() && new Date(order.date_time).getDate() === d.getDate() && order.status === "Cancelada")
         .length;
 });
 
@@ -81,21 +87,21 @@ const selectOrder = (order) => {
                     class="lg:flex justify-center gap-2 lg:gap-8 2xl:gap-60 mt-6"
                 >
                     <div class="grid grid-cols-2 gap-2 lg:hidden">
-                        <TotalOrders :totalOrders="props.totalOrders" />
-                        <TotalRevenue :totalRevenue="totalIncome" />
+                        <TotalOrders :totalOrders="totalOrdersToday" />
+                        <TotalRevenue :totalRevenue="totalIncomeToday" />
                     </div>
                     <div class="hidden lg:block w-full">
-                        <TotalOrders :totalOrders="props.totalOrders" />
+                        <TotalOrders :totalOrders="totalOrdersToday" />
                     </div>
                     <div class="hidden lg:block w-full">
-                        <TotalRevenue :totalRevenue="totalIncome" />
+                        <TotalRevenue :totalRevenue="totalIncomeToday" />
                     </div>
                     <div class="hidden lg:block w-full">
-                        <TotalCancelled :totalCancelled="totalCancelled" />
+                        <TotalCancelled :totalCancelled="totalCancelledToday" />
                     </div>
 
                     <div class="py-4 lg:hidden">
-                        <TotalCancelled :totalCancelled="totalCancelled" />
+                        <TotalCancelled :totalCancelled="totalCancelledToday" />
                     </div>
                 </div>
                 <div class="hidden lg:flex gap-4">
