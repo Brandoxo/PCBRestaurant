@@ -103,9 +103,12 @@ Route::get('print-ticket/', function (Request $request) {
 Route::get('print-cut-off/', function (Request $request) {
     // Obtener los datos del request
     $cutOffData = request()->all()['data'];
+    // Convertir las claves numéricas a cadenas de texto 99 a "99.99"
+    $cutOffData['totalVentas'] = number_format((float)$cutOffData['totalVentas'], 2, '.', '');
+    $cutOffData['montoFinal'] = number_format((float)$cutOffData['montoFinal'], 2, '.', '');
     // Convertir a JSON, comprimir y codificar en Base64
     $printData = json_encode($cutOffData);
     $printData = base64_encode(gzdeflate($printData));
 
-    return response()->json(['printData' => $printData]);
+    return response()->json(['printData' => $printData, 'rawData' => $cutOffData]);
 })->name('print.cutOff');

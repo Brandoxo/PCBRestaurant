@@ -252,6 +252,10 @@ const PrintCutOffTicket = () => {
         .then((response) => {
             if (response.data && response.data.printData) {
                 const printUrl = "print://" + response.data.printData;
+                
+                console.log("Print URL:", printUrl);
+                console.log("Raw Cut-Off Data:", response.data);
+                
                 window.location.href = printUrl;
             }
         });
