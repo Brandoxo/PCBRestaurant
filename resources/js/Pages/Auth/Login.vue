@@ -30,14 +30,18 @@ const submit = () => {
 </script>
 
 <template>
+    <div class="fixed inset-0 -z-10">
+        <img src="/assets/images/fondo.png" alt="Fondo" class="object-cover w-full h-full" />
+    </div>
+    <div class="fixed inset-0 bg-black/20 z-0"></div>
     <GuestLayout>
         <Head title="Iniciar Sesión" />
-
-        <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
+        <div class="flex items-center justify-center bg-white/90 rounded-lg shadow-lg p-8 border-8 border-gray-200 z-20">
+            <div class="w-full max-w-md bg-white/90 rounded-lg shadow-lg p-8 border border-black z-20">
+                <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
+                    {{ status }}
+                </div>
+                <form @submit.prevent="submit">
             <div>
                 <InputLabel for="email" value="Email" />
 
@@ -89,10 +93,12 @@ const submit = () => {
                     class="ms-4"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
-                >
+                    >
                     Iniciar Sesión
                 </PrimaryButton>
             </div>
         </form>
+            </div>
+        </div>
     </GuestLayout>
 </template>
