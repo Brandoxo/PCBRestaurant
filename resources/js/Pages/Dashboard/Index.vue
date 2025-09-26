@@ -22,28 +22,42 @@ const props = defineProps({
 console.log("Sales prop in <Dashboard>: ", props.sales);
 
 const d = new Date();
-const date_today = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+const date_today =
+    d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
 const shifts = ["Matutino", "Vespertino"];
 console.log("Today's date: ", date_today);
 
 const totalIncomeToday = computed(() => {
     return props.sales
-        .filter(sales => new Date(sales.date_time).getFullYear() === d.getFullYear() && new Date(sales.date_time).getMonth() === d.getMonth() && new Date(sales.date_time).getDate() === d.getDate())
-        .reduce((sum, sales) => sum + parseFloat(sales.subtotal), 0);
+        .filter(
+            (sale) =>
+                sale.is_courtesy === 0 &&
+                new Date(sale.date_time).getFullYear() === d.getFullYear() &&
+                new Date(sale.date_time).getMonth() === d.getMonth() &&
+                new Date(sale.date_time).getDate() === d.getDate()
+        )
+        .reduce((sum, sale) => sum + parseFloat(sale.subtotal), 0);
 });
 
 console.log("Total Income: ", totalIncomeToday.value);
 
 const totalOrdersToday = computed(() => {
-    return props.orders
-        .filter(order => new Date(order.date_time).getFullYear() === d.getFullYear() && new Date(order.date_time).getMonth() === d.getMonth() && new Date(order.date_time).getDate() === d.getDate())
-        .length;
+    return props.orders.filter(
+        (order) =>
+            new Date(order.date_time).getFullYear() === d.getFullYear() &&
+            new Date(order.date_time).getMonth() === d.getMonth() &&
+            new Date(order.date_time).getDate() === d.getDate()
+    ).length;
 });
 
 const totalCancelledToday = computed(() => {
-    return props.orders
-        .filter(order => new Date(order.date_time).getFullYear() === d.getFullYear() && new Date(order.date_time).getMonth() === d.getMonth() && new Date(order.date_time).getDate() === d.getDate() && order.status === "Cancelada")
-        .length;
+    return props.orders.filter(
+        (order) =>
+            new Date(order.date_time).getFullYear() === d.getFullYear() &&
+            new Date(order.date_time).getMonth() === d.getMonth() &&
+            new Date(order.date_time).getDate() === d.getDate() &&
+            order.status === "Cancelada"
+    ).length;
 });
 
 const allOrders = props.orders;
@@ -106,10 +120,13 @@ const selectOrder = (order) => {
                 </div>
                 <div class="hidden lg:flex gap-4">
                     <div
-                         class="mt-6 min-w-96 2xl:min-w-[900px] overflow-y-auto h-[36rem] 2xl:h-screen mx-auto scrollbar-hide"
-                    >          <h2 class="text-lg font-bold text-white text-center mb-2">
-                                    Todas las órdenes
-                                </h2>
+                        class="mt-6 min-w-96 2xl:min-w-[900px] overflow-y-auto h-[36rem] 2xl:h-screen mx-auto scrollbar-hide"
+                    >
+                        <h2
+                            class="text-lg font-bold text-white text-center mb-2"
+                        >
+                            Todas las órdenes
+                        </h2>
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
                     <div class="mt-6 w-2/4 flex flex-col gap-4 mx-auto">
@@ -120,9 +137,11 @@ const selectOrder = (order) => {
                 <div class="flex flex-col lg:hidden gap-4">
                     <SelectedOrder :order="selectedOrder" />
                     <div class="overflow-y-auto h-96 scrollbar-hide">
-                            <h2 class="text-lg font-bold text-white text-center mb-2">
-                                Todas las órdenes
-                            </h2>
+                        <h2
+                            class="text-lg font-bold text-white text-center mb-2"
+                        >
+                            Todas las órdenes
+                        </h2>
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
 

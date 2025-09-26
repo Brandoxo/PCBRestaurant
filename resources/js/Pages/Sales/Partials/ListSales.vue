@@ -151,6 +151,9 @@ function getFilteredSales() {
         if (shiftName === "Otro") shiftName = "Fuera de turno";
         sales = sales.filter((sale) => getShift(sale.date_time) === shiftName);
     }
+    if (!sales.is_courtesy) {
+        sales = sales.filter((sale) => sale.is_courtesy === 0);
+    }
     return sales;
 }
 
@@ -252,10 +255,10 @@ const PrintCutOffTicket = () => {
         .then((response) => {
             if (response.data && response.data.printData) {
                 const printUrl = "print://" + response.data.printData;
-                
+
                 console.log("Print URL:", printUrl);
                 console.log("Raw Cut-Off Data:", response.data);
-                
+
                 window.location.href = printUrl;
             }
         });

@@ -30,6 +30,7 @@ public function store(Request $request) {
         $sale->subtotal = $item['subtotal'];
         $sale->date_time = Carbon::now();
         $sale->payment_method = $request->payment_method;
+        $sale->is_courtesy = isset($item['is_courtesy']) ? $item['is_courtesy'] : 0;
         $sale->save();
     }
 

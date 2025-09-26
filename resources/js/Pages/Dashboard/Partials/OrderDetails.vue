@@ -4,7 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { ref } from "vue";
 import Modal from "@/Components/Modal.vue";
-import { formatter, formatterWithoutFraction } from "@/utils/currencyFormatter.js";
+import Switch from "@/Components/Switch.vue";
 
 const props = defineProps({
     order: Object,
@@ -24,6 +24,7 @@ const paymentMethod = ref("Efectivo");
 const tip_percent = ref("0");
 const otherTip = ref("");
 const user = usePage().props.auth.user;
+const is_courtesy = ref(false);
 
 console.log("order prop in <OrderDetails>: ", props.order);
 
@@ -63,14 +64,68 @@ const createSale = async () => {
             sales: props.order.order_details.map((item) => ({
                 product_id: item.product_id,
                 quantity: item.quantity,
-                unit_price: item.unit_price ?? (item.product ? item.product.price : 0),
-                subtotal: item.total ?? item.quantity * (item.unit_price ?? (item.product ? item.product.price : 0)),
+                unit_price:
+                    item.unit_price ?? (item.product ? item.product.price : 0),
+                subtotal:
+                    item.total ??
+                    item.quantity *
+                        (item.unit_price ??
+                            (item.product ? item.product.price : 0)),
+                is_courtesy: is_courtesy.value ? 1 : 0,
             })),
         });
 
         Swal.fire({
             icon: "success",
             title: "¡Venta creada exitosamente!",
+            showConfirmButton: false,
+            timer: 1500,
+        });
+    }
+};
+
+const createCourtesy = async () => {
+    closeModal();
+    const confirm = await Swal.fire({
+        icon: "info",
+        title: "Estás segur@ de crear una cortesía?",
+        text: "Asegurate primero de haber revisado la orden.",
+        showCancelButton: true,
+        confirmButtonText: "Sí, crear cortesía",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#d33",
+    });
+
+    if (
+        confirm.isConfirmed &&
+        props.order &&
+        props.order.id &&
+        props.order.order_details
+    ) {
+        // Envía todas las ventas en una sola petición
+        await router.post(`/Sales/Create`, {
+            order_id: props.order.id,
+            user_id: user.id,
+            cash_audit_id: null,
+            payment_method: "Cortesía",
+            sales: props.order.order_details.map((item) => ({
+                product_id: item.product_id,
+                quantity: item.quantity,
+                unit_price:
+                    item.unit_price ?? (item.product ? item.product.price : 0),
+                subtotal:
+                    item.total ??
+                    item.quantity *
+                        (item.unit_price ??
+                            (item.product ? item.product.price : 0)),
+                is_courtesy: 1,
+            })),
+        });
+
+        Swal.fire({
+            icon: "success",
+            title: "¡Cortesía creada exitosamente!",
             showConfirmButton: false,
             timer: 1500,
         });
@@ -85,8 +140,26 @@ const PrintTicket = () => {
             cash: props.order.total,
             change: 0,
             user_id: user.name,
-            updated_at: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " " + new Date().getHours() + ":" + new Date().getMinutes(),
-            created_at: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate() + " " + new Date().getHours() + ":" + new Date().getMinutes(),
+            updated_at:
+                new Date().getFullYear() +
+                "-" +
+                (new Date().getMonth() + 1) +
+                "-" +
+                new Date().getDate() +
+                " " +
+                new Date().getHours() +
+                ":" +
+                new Date().getMinutes(),
+            created_at:
+                new Date().getFullYear() +
+                "-" +
+                (new Date().getMonth() + 1) +
+                "-" +
+                new Date().getDate() +
+                " " +
+                new Date().getHours() +
+                ":" +
+                new Date().getMinutes(),
             id: props.order.id,
             user: {
                 id: user.id,
@@ -200,7 +273,7 @@ const PrintTicket = () => {
                     v-if="item.product && item.product.category_id === 2"
                 ></span>
 
-                ${{ formatterWithoutFraction.format(item.unit_price * item.quantity) }} 
+                $ {{ item.unit_price }}
             </div>
         </div>
         <span v-else class="text-gray-400"
@@ -214,109 +287,171 @@ const PrintTicket = () => {
     >
         Editar Orden
     </button>
-    <div
-        class="bg-white p-6 rounded-lg shadow-md flex h-fit justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300 items-center gap-2"
-    >
-        <h3 class="font-bold text-3xl">Total:</h3>
-        <div class="flex items-center gap-4">
-            <span class="font-bold text-2xl 2xl:text-3xl">
-                {{ formatter.format(props.order?.total ? props.order.total : 0) }}</span
-            >
-            <button
-                @click="openModal = true"
-                v-if="props.order?.status === 'En curso'"
-                class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
-            >
-                Cobrar
-            </button>
+    <div class="flex gap-4 w-full">
+        <div
+            class="bg-white p-6 rounded-lg shadow-md flex h-fit w-full justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        >
+            <h3 class="font-bold text-3xl">Total:</h3>
+            <div class="flex items-center gap-4">
+                <span class="font-bold text-2xl 2xl:text-3xl">
+                    $
+                    {{ props.order?.total ? props.order.total : "0.00" }}</span
+                >
+                <button
+                    @click="openModal = true"
+                    v-if="props.order?.status === 'En curso'"
+                    class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
+                >
+                    Cobrar
+                </button>
 
-            <button
-                @click="PrintTicket"
-                v-if="props.order?.status"
-                class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
+                <button
+                    @click="PrintTicket"
+                    v-if="props.order?.status === 'En curso'"
+                    class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
+                >
+                    Imprimir Ticket
+                </button>
+            </div>
+        </div>
+        <div
+            v-if="order?.status === 'En curso'"
+            class="bg-white p-4 rounded-lg shadow-md w-fit hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        >
+            <label
+                class="inline-flex items-center cursor-pointer flex-col gap-1 font-bold"
             >
-                Imprimir Ticket
-            </button>
+                ¿Cortesía?
+                <input
+                    type="checkbox"
+                    class="sr-only peer"
+                    v-model="is_courtesy"
+                    id="is_active"
+                /><Switch />
+            </label>
+        </div>
+    </div>
+
+    <Modal v-model:show="openModal" @close="openModal = false">
+        <div
+            v-if="is_courtesy === true"
+            class="bg-gradient-to-br from-white via-gray-50 to-gray-200 p-4 rounded-2xl shadow-2xl mx-auto"
+        >
+            <h2
+                class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2"
+            >
+                <svg
+                    class="w-7 h-7 text-approveGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
+                    <path d="M12 8v4l3 3"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                Crear Cortesía
+            </h2>
+            <p class="mb-6 text-gray-600 text-base">
+                ¿Estás seguro de
+                <span class="font-semibold text-approveGreen"
+                    >crear cortesía</span
+                >
+                para esta orden?
+            </p>
+            <div class="flex justify-end gap-3 mt-8">
+                <button
+                    @click="openModal = false"
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
+                >
+                    Cancelar
+                </button>
+                <button
+                    @click="createCourtesy"
+                    class="bg-approveGreen hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
+                >
+                    Sí, Crear Cortesía
+                </button>
+            </div>
         </div>
 
-        <Modal v-model:show="openModal" @close="openModal = false">
-            <div
-                class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto"
+        <div
+            v-else
+            class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto"
+        >
+            <h3
+                class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2"
             >
-                <h3
-                    class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2"
+                <svg
+                    class="w-7 h-7 text-approveGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
                 >
-                    <svg
-                        class="w-7 h-7 text-approveGreen"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                    >
-                        <path d="M12 8v4l3 3"></path>
-                        <circle cx="12" cy="12" r="10"></circle>
-                    </svg>
-                    Cobrar Orden
-                </h3>
-                <p class="mb-6 text-gray-600 text-base">
-                    ¿Cuál será el
-                    <span class="font-semibold text-approveGreen"
-                        >método de pago</span
-                    >
-                    para esta orden?
-                </p>
+                    <path d="M12 8v4l3 3"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                </svg>
+                Cobrar Orden
+            </h3>
+            <p class="mb-6 text-gray-600 text-base">
+                ¿Cuál será el
+                <span class="font-semibold text-approveGreen"
+                    >método de pago</span
+                >
+                para esta orden?
+            </p>
+            <select
+                v-model="paymentMethod"
+                class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4"
+            >
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+            </select>
+
+            <div v-if="paymentMethod === 'Tarjeta'" class="mb-4">
+                <label class="block text-gray-700 font-medium mb-2"
+                    >El cliente gusta dejar propina de:</label
+                >
                 <select
-                    v-model="paymentMethod"
-                    class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4"
+                    v-model="tip_percent"
+                    class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-2"
                 >
-                    <option value="Efectivo">Efectivo</option>
-                    <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                    <option value="0">No dejar propina</option>
+                    <option value="5">5%</option>
+                    <option value="10">10%</option>
+                    <option value="15">15%</option>
+                    <option value="20">20%</option>
+                    <option value="otherTip">Otro</option>
                 </select>
-
-                <div v-if="paymentMethod === 'Tarjeta'" class="mb-4">
-                    <label class="block text-gray-700 font-medium mb-2"
-                        >El cliente gusta dejar propina de:</label
+                <div v-if="tip_percent === 'otherTip'" class="mt-2">
+                    <label class="block text-gray-700 font-medium mb-1"
+                        >Ingrese el monto de propina:</label
                     >
-                    <select
-                        v-model="tip_percent"
-                        class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-2"
-                    >
-                        <option value="0">No dejar propina</option>
-                        <option value="5">5%</option>
-                        <option value="10">10%</option>
-                        <option value="15">15%</option>
-                        <option value="20">20%</option>
-                        <option value="otherTip">Otro</option>
-                    </select>
-                    <div v-if="tip_percent === 'otherTip'" class="mt-2">
-                        <label class="block text-gray-700 font-medium mb-1"
-                            >Ingrese el monto de propina:</label
-                        >
-                        <input
-                            v-model="otherTip"
-                            type="number"
-                            min="0"
-                            class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
-                            placeholder="Monto de propina"
-                        />
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3 mt-8">
-                    <button
-                        @click="openModal = false"
-                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        @click="createSale"
-                        class="bg-approveGreen hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
-                    >
-                        Sí, Cobrar
-                    </button>
+                    <input
+                        v-model="otherTip"
+                        type="number"
+                        min="0"
+                        class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
+                        placeholder="Monto de propina"
+                    />
                 </div>
             </div>
-        </Modal>
-    </div>
+
+            <div class="flex justify-end gap-3 mt-8">
+                <button
+                    @click="openModal = false"
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-6 rounded-lg transition"
+                >
+                    Cancelar
+                </button>
+                <button
+                    @click="createSale"
+                    class="bg-approveGreen hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg shadow-lg transition"
+                >
+                    Sí, Cobrar
+                </button>
+            </div>
+        </div>
+    </Modal>
 </template>
