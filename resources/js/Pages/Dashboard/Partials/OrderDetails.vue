@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { ref } from "vue";
 import Modal from "@/Components/Modal.vue";
 import Switch from "@/Components/Switch.vue";
+import { formatter, formatterWithoutFraction } from "@/utils/currencyFormatter";
 
 const props = defineProps({
     order: Object,
@@ -273,7 +274,7 @@ const PrintTicket = () => {
                     v-if="item.product && item.product.category_id === 2"
                 ></span>
 
-                $ {{ item.unit_price }}
+                ${{ formatterWithoutFraction.format(item.unit_price) }}
             </div>
         </div>
         <span v-else class="text-gray-400"
@@ -283,40 +284,35 @@ const PrintTicket = () => {
     <button
         @click="$inertia.get(`/Order/Edit/${order.id}`)"
         v-if="order?.status === 'En curso'"
-        class="bg-orangeYellow hover:bg-yellow-600 transform transition-all duration-300 ease-in-out text-white font-bold py-2 px-4 rounded"
+        class="bg-orangeYellow hover:bg-yellow-600 transform transition-all duration-300 ease-in-out text-white py-2 px-4 rounded uppercase text-sm font-extrabold"
     >
         Editar Orden
     </button>
-    <div class="flex gap-4 w-full">
+    <div class="flex gap-4 w-screen md:w-full flex-col md:flex-row">
         <div
-            class="bg-white p-6 rounded-lg shadow-md flex h-fit w-full justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+            class="bg-white p-6 rounded-lg shadow-md flex h-fit w-full justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300 items-center"
         >
-            <h3 class="font-bold text-3xl">Total:</h3>
+            <h3 class="font-bold text-3xl mr-2">Total:</h3>
             <div class="flex items-center gap-4">
                 <span class="font-bold text-2xl 2xl:text-3xl">
-                    $
-                    {{ props.order?.total ? props.order.total : "0.00" }}</span
+                    {{
+                        formatter.format(
+                            props.order?.total ? props.order.total : 0
+                        )
+                    }}</span
                 >
                 <button
                     @click="openModal = true"
                     v-if="props.order?.status === 'En curso'"
-                    class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
+                    class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg uppercase text-sm font-extrabold"
                 >
                     Cobrar
-                </button>
-
-                <button
-                    @click="PrintTicket"
-                    v-if="props.order?.status"
-                    class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg"
-                >
-                    Imprimir Ticket
                 </button>
             </div>
         </div>
         <div
             v-if="order?.status === 'En curso'"
-            class="bg-white p-4 rounded-lg shadow-md w-fit hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+            class="bg-white p-4 rounded-lg shadow-md w-fit hover:scale-[1.02] transition-all transform ease-in-out duration-300 flex-col text-center"
         >
             <label
                 class="inline-flex items-center cursor-pointer flex-col gap-1 font-bold"
@@ -331,6 +327,13 @@ const PrintTicket = () => {
             </label>
         </div>
     </div>
+    <button
+        @click="PrintTicket"
+        v-if="props.order?.status"
+        class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-2 py-2 uppercase font-extrabold rounded-lg text-sm"
+    >
+        Imprimir Ticket
+    </button>
 
     <Modal v-model:show="openModal" @close="openModal = false">
         <div

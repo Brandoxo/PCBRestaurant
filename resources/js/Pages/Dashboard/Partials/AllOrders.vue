@@ -16,12 +16,15 @@ const deletedOrderIds = ref(
 );
 
 function saveDeletedOrderIds() {
-    localStorage.setItem("deletedOrderIds", JSON.stringify(deletedOrderIds.value));
+    localStorage.setItem(
+        "deletedOrderIds",
+        JSON.stringify(deletedOrderIds.value)
+    );
 }
 
 function getColumns() {
     if (window.innerWidth < 1536) return 1;
-    
+
     return 3;
 }
 
@@ -31,50 +34,56 @@ function updateColumns() {
     }
 }
 
-
 onMounted(() => {
     columns.value = getColumns();
     if (gridRef.value) {
-        grid = GridStack.init({
-            cellHeight: 180,
-            column: columns.value,
-            resizable: {handles: 'none'},
-            removable: true,
-            removeTimeout: 100, 
-        }, gridRef.value);
+        grid = GridStack.init(
+            {
+                cellHeight: 180,
+                column: columns.value,
+                resizable: { handles: "none" },
+                removable: true,
+                removeTimeout: 100,
+            },
+            gridRef.value
+        );
 
-        grid.on('removed', function(event, items) {
-            items.forEach(item => {
-                const orderId = item.el.getAttribute('data-gs-id');
-                const order = props.orders.find(o => o.id.toString() === orderId);
-                if (!deletedOrderIds.value.includes(orderId) && order.status === 'Completada') {
+        grid.on("removed", function (event, items) {
+            items.forEach((item) => {
+                const orderId = item.el.getAttribute("data-gs-id");
+                const order = props.orders.find(
+                    (o) => o.id.toString() === orderId
+                );
+                if (
+                    !deletedOrderIds.value.includes(orderId) &&
+                    order.status === "Completada"
+                ) {
                     deletedOrderIds.value.push(orderId);
                     swal.fire({
-                        title: 'Orden eliminada',
-                        text: 'La orden ha sido eliminada correctamente.',
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar'
+                        title: "Orden eliminada",
+                        text: "La orden ha sido eliminada correctamente.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
                     });
                     saveDeletedOrderIds();
-                }else{
+                } else {
                     swal.fire({
-                        title: 'No se puede eliminar',
+                        title: "No se puede eliminar",
                         text: 'Solo se pueden eliminar las órdenes con estado "Completada".',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
                     }).then(() => {
                         location.reload();
                     });
                 }
             });
         });
-        window.addEventListener('resize', updateColumns);
+        window.addEventListener("resize", updateColumns);
     }
 });
-
 </script>
 <style scoped>
-     .grid-stack {
+.grid-stack {
     width: 100%;
     gap: ;
     display: grid;
@@ -94,7 +103,9 @@ onMounted(() => {
             class="animate-pulse bg-gray-300 2xl:w-56 h-28 rounded-lg grid-stack-item"
         ></div>
         <div
-            v-for="(order, idx) in orders.filter(o => !deletedOrderIds.includes(o.id.toString()))"
+            v-for="(order, idx) in orders.filter(
+                (o) => !deletedOrderIds.includes(o.id.toString())
+            )"
             :key="order.id"
             @click="emit('select', order)"
             class="cursor-pointer overflow-y-auto hover:scale-[1.03] transition-all transform ease-in-out duration-300 grid-stack-item"

@@ -32,7 +32,7 @@ const cancelOrder = async () => {
     try {
         await router.post(
             `/orders/update/${props.order.id}`,
-            { status: "Cancelada",  user_name: user.name },
+            { status: "Cancelada", user_name: user.name },
             {
                 preserveState: true,
                 onSuccess: () => {
@@ -55,16 +55,20 @@ const cancelOrder = async () => {
         class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full m-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
         v-if="order"
     >
-    <div v-if="order.status === 'Cancelada'" class="flex bg-red-100 text-center text-red-600 py-1 rounded-full text-sm font-semibold w-full mt-2 lg:mt-0">
-        <span class="mx-auto">
-             Cancelada por {{ order.cancelled_by ?? "Admin" }}
-         </span>
-     </div>
-    <div v-if="order.status === 'Completada'" class="flex bg-approveGreen/30 text-center text-approveGreen py-1 rounded-full text-sm font-semibold w-full mt-2 lg:mt-0">
-        <span class="mx-auto">
-                Venta Finalizada
-         </span>
-     </div>
+        <div
+            v-if="order.status === 'Cancelada'"
+            class="flex bg-red-100 text-center text-red-600 py-1 rounded-full text-sm font-semibold w-full mt-2 lg:mt-0"
+        >
+            <span class="mx-auto">
+                Cancelada por {{ order.cancelled_by ?? "Admin" }}
+            </span>
+        </div>
+        <div
+            v-if="order.status === 'Completada'"
+            class="flex bg-approveGreen/30 text-center text-approveGreen py-1 rounded-full text-sm font-semibold w-full mt-2 lg:mt-0"
+        >
+            <span class="mx-auto"> Venta Finalizada </span>
+        </div>
         <div class="lg:flex justify-between items-center mx-auto">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
@@ -87,7 +91,7 @@ const cancelOrder = async () => {
                     {{ order.table.number ?? "7" }}
                 </h2>
                 <div class="flex text-sm mt-2">
-                    <p class="text-center text-secondary mr-4">
+                    <p class="text-center text-secondary">
                         {{
                             order.date_time
                                 ? new Date(order.date_time)
@@ -96,7 +100,6 @@ const cancelOrder = async () => {
                                 : "-"
                         }}
                     </p>
-                    
                     <p class="text-center text-secondary">
                         {{
                             order.date_time
