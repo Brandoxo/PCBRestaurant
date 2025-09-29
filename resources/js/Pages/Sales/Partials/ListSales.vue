@@ -135,7 +135,7 @@ function getFilteredSales() {
     if (selectedDate.value) {
         sales = sales.filter((sale) => {
             const d = new Date(sale.date_time);
-            const saleDate =
+            const saleDate  = 
                 d.getFullYear() +
                 "-" +
                 String(d.getMonth() + 1).padStart(2, "0") +
@@ -151,9 +151,12 @@ function getFilteredSales() {
         if (shiftName === "Otro") shiftName = "Fuera de turno";
         sales = sales.filter((sale) => getShift(sale.date_time) === shiftName);
     }
-    if (!sales.is_courtesy) {
-        sales = sales.filter((sale) => sale.is_courtesy === 0);
+
+    if (sales.is_courtesy != null && !sales.is_courtesy) {
+        sales = sales.filter((sale) => sale.is_courtesy === sales.is_courtesy);
     }
+
+    console.log(sales);
     return sales;
 }
 
@@ -238,14 +241,20 @@ const generateCashAudit = async () => {
 
 const PrintCutOffTicket = () => {
     // Logica para obtener los datos de corte de caja
+    const sales = getFilteredSales();
+    if (!sales.length) {
+        alert("No hay ventas para la fecha y turno seleccionados.");
+        console.log(sales);
+        return;
+    }
     const cutOffData = {
         fecha: selectedDate.value,
         turno: selectedShift.value,
-        totalVentas: getTotalAmount(getFilteredSales()),
-        montoFinal: 3500 + getTotalAmount(getFilteredSales()),
+        totalVentas: getTotalAmount(sales),
+        montoFinal: 3500 + getTotalAmount(sales),
         totalPropinas:
-            getTotalTipsIntByOrder(getFilteredSales()) +
-            getTotalTipsPercent(getFilteredSales()),
+            getTotalTipsIntByOrder(sales) +
+            getTotalTipsPercent(sales),
     };
 
     axios
