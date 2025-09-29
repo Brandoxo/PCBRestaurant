@@ -219,9 +219,30 @@ function buildCashAuditData() {
     };
 }
 
+function getFilteredSalesPaymentMethodCash() {
+    let sales = getFilteredSales();
+    sales = sales.filter((sale) => sale.payment_method === "Efectivo");
+    return sales;
+}
+
+function getFilteredSalesPaymentMethodCard() {
+    let sales = getFilteredSales();
+    sales = sales.filter((sale) => sale.payment_method === "Tarjeta");
+    return sales;
+}
+
+function getFilteredSalesCourtesy() {
+    let sales = getFilteredSales();
+    sales = sales.filter((sale) => sale.is_courtesy === 1);
+    return sales;
+}
+
+//console.log("Filtered Sales Payment Method Cash:", getFilteredSalesPaymentMethodCash());
+//console.log("Filtered Sales Payment Method Card:", getFilteredSalesPaymentMethodCard());
+
 const generateCashAudit = async () => {
     const cashAuditData = buildCashAuditData();
-    if (!cashAuditData) {
+    if (!cashAuditData) { 
         alert("No hay ventas para la fecha y turno seleccionados.");
         return;
     }
@@ -255,19 +276,24 @@ const PrintCutOffTicket = () => {
         totalPropinas:
             getTotalTipsIntByOrder(sales) +
             getTotalTipsPercent(sales),
+        totalEfectivo: getTotalAmount(getFilteredSalesPaymentMethodCash()),
+        totalTarjeta: getTotalAmount(getFilteredSalesPaymentMethodCard()),
+        totalCortesias: getTotalAmount(getFilteredSalesCourtesy()),
+
     };
-
+    
+    
     axios
-        .get(route("print.cutOff"), {
-            params: { data: cutOffData },
-        })
-        .then((response) => {
-            if (response.data && response.data.printData) {
-                const printUrl = "print://" + response.data.printData;
-
-                console.log("Print URL:", printUrl);
-                console.log("Raw Cut-Off Data:", response.data);
-
+    .get(route("print.cutOff"), {
+        params: { data: cutOffData },
+    })
+    .then((response) => {
+        if (response.data && response.data.printData) {
+            const printUrl = "print://" + response.data.printData;
+            
+            console.log("Print URL:", printUrl);
+            console.log("Raw Cut-Off Data:", response.data); 
+            
                 window.location.href = printUrl;
             }
         });
