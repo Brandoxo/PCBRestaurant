@@ -166,10 +166,12 @@ function getFirstDate(sales) {
 }
 
 function getTotalAmount(sales) {
-    return sales.reduce(
-        (total, sale) => total + sale.quantity * sale.unit_price,
-        0
-    );
+    return sales
+        .filter((sale) => !sale.is_courtesy)
+        .reduce(
+            (total, sale) => total + sale.quantity * sale.unit_price,
+            0
+        );
 }
 
 function getTotalTipsIntByOrder(sales) {
@@ -221,13 +223,17 @@ function buildCashAuditData() {
 
 function getFilteredSalesPaymentMethodCash() {
     let sales = getFilteredSales();
-    sales = sales.filter((sale) => sale.payment_method === "Efectivo");
+    sales = sales.filter(
+        (sale) => sale.payment_method === "Efectivo" && !sale.is_courtesy
+    );
     return sales;
 }
 
 function getFilteredSalesPaymentMethodCard() {
     let sales = getFilteredSales();
-    sales = sales.filter((sale) => sale.payment_method === "Tarjeta");
+    sales = sales.filter(
+        (sale) => sale.payment_method === "Tarjeta" && !sale.is_courtesy
+    );
     return sales;
 }
 
