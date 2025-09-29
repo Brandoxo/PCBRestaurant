@@ -106,6 +106,9 @@ Route::get('print-cut-off/', function (Request $request) {
     // Convertir las claves numéricas a cadenas de texto 99 a "99.99"
     $cutOffData['totalVentas'] = number_format((float)$cutOffData['totalVentas'], 2, '.', '');
     $cutOffData['montoFinal'] = number_format((float)$cutOffData['montoFinal'], 2, '.', '');
+    $cutOffData['totalPropinas'] = number_format((float)$cutOffData['totalPropinas'], 2, '.', '');
+    $cutOffData['fecha'] = date('Y-m-d', strtotime($cutOffData['fecha']));
+    $cutOffData['turno'] = $cutOffData['turno'] === 'Matutino' ? 'M' : 'V';
     // Convertir a JSON, comprimir y codificar en Base64
     $printData = json_encode($cutOffData);
     $printData = base64_encode(gzdeflate($printData));
