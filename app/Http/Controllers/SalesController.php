@@ -9,12 +9,19 @@ use Carbon\Carbon;
 
 class SalesController extends Controller
 {
-    public function index() {
-        $sales = Sales::with(['product', 'user', 'order'])->get();
-        return Inertia::render('Sales/Index', [
-            'sales' => $sales
-        ]);
-     }
+    public function index(Request $request) {
+    $query = Sales::with(['product', 'user', 'order']);
+
+    if ($request->has('date') && $request->date) {
+        $query->whereDate('date_time', $request->date);
+    }
+
+    $sales = $query->orderBy('date_time', 'desc')->paginate(80);
+
+    return Inertia::render('Sales/Index', [
+        'sales' => $sales,
+    ]);
+}
 
 
 public function store(Request $request) {
@@ -46,6 +53,28 @@ public function store(Request $request) {
     }
 
     return redirect()->route('Sales/Index')->with('success', 'Todas las ventas registradas correctamente.');
+}
+
+public function getSalesForCutOff(Request $request)
+{
+    $date = $request->input('date');
+    $shift = $request->input('shift');
+
+    $query = Sales::with(['product', 'user', 'order']);
+
+    if ($date) {
+        $query->whereDate('date_time', $date);
+    }
+
+    if ($shift) {
+        if ($shift === 'Matutino') {
+            $query->whereTime('date_time', '>=', '07:00:00')->whereTime('date_time', '<', '15:00:00');
+        } elseif ($shift === 'Vespertino') {
+            $query->whereTime('date_time', '>=', '15:00:00')->whereTime('date_time', '<', '23:00:00');
+        }
+    }
+
+    return response()->json($query->get());
 }
 
 }
