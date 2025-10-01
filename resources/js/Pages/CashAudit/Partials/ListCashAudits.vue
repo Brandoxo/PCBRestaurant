@@ -8,9 +8,10 @@ const filteredCashAudits = computed(() => {
     if (!searchQuery.value) {
         return props.cashAudits;
     }
-    return props.cashAudits.filter((audit) =>
-        audit.created_at.includes(searchQuery.value)
-    );
+    return props.cashAudits.filter((audit) => {
+        const auditDate = audit.start_date.slice(0, 10);
+        return auditDate === searchQuery.value;
+    });
 });
 
 const formatDate = (dateString) => {
@@ -45,7 +46,7 @@ const formatDate = (dateString) => {
                 <tr v-for="value in filteredCashAudits" :key="value.id">
                     <td class="border p-2 text-center">{{ value.id }}</td>
                     <td class="border p-2 text-center">
-                        {{ formatDate(value.created_at) }}
+                        {{ formatDate(value.start_date) }}
                     </td>
                     <td class="border p-2 text-center">{{ value.shift }}</td>
                     <!-- <td class="border p-2 text-center">
