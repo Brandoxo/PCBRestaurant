@@ -37,7 +37,7 @@ const submit = () => {
     <GuestLayout>
         <Head title="Iniciar Sesión" />
         <div class="flex items-center justify-center bg-white/90 rounded-lg shadow-lg p-8 border-8 border-gray-200 z-20">
-            <div class="w-full max-w-md bg-white/90 rounded-lg shadow-lg p-8 border border-black z-20">
+            <div class="w-full max-w-md bg-white/90 rounded-lg shadow-lg p-8 border border-green-200 z-20">
                 <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
                     {{ status }}
                 </div>
