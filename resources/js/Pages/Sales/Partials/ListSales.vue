@@ -1,8 +1,10 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
+import { useToast } from 'vue-toastification';
+import Swal from "sweetalert2";
 
 const props = defineProps({ sales: Array });
 const user = usePage().props.auth.user;
@@ -24,7 +26,7 @@ const filteredSales = computed(() => {
             String(d.getMonth() + 1).padStart(2, "0") +
             "-" +
             String(d.getDate()).padStart(2, "0");
-        return saleDate === searchQuery.value;
+            return saleDate === searchQuery.value;
     });
 });
 
@@ -92,8 +94,8 @@ console.log("Sales grouped by day and shift:", salesByDayAndShift.value);
 
 const totalSalesByShift = (shift) => {
     return props.sales
-        .filter((sale) => getShift(sale.date_time) === shift)
-        .reduce((total, sale) => total + sale.quantity * sale.unit_price, 0);
+    .filter((sale) => getShift(sale.date_time) === shift)
+    .reduce((total, sale) => total + sale.quantity * sale.unit_price, 0);
 };
 console.log("Total sales in the morning:", totalSalesByShift(shifts.morning));
 console.log(
@@ -136,8 +138,8 @@ function getFilteredSales() {
         sales = sales.filter((sale) => {
             const d = new Date(sale.date_time);
             const saleDate  = 
-                d.getFullYear() +
-                "-" +
+            d.getFullYear() +
+            "-" +
                 String(d.getMonth() + 1).padStart(2, "0") +
                 "-" +
                 String(d.getDate()).padStart(2, "0");
@@ -167,7 +169,7 @@ function getFirstDate(sales) {
 
 function getTotalAmount(sales) {
     return sales
-        .filter((sale) => !sale.is_courtesy)
+    .filter((sale) => !sale.is_courtesy)
         .reduce(
             (total, sale) => total + sale.quantity * sale.unit_price,
             0
@@ -246,25 +248,50 @@ function getFilteredSalesCourtesy() {
 //console.log("Filtered Sales Payment Method Cash:", getFilteredSalesPaymentMethodCash());
 //console.log("Filtered Sales Payment Method Card:", getFilteredSalesPaymentMethodCard());
 
-const generateCashAudit = async () => {
+
+
+
+async function createCashAudit() {
     const cashAuditData = buildCashAuditData();
-    if (!cashAuditData) { 
+try {
+    const response = await axios.post("/CashAudit", cashAuditData);
+    useToast().success('Corte de caja Generado Exitosamente');
+    closeModal();
+    console.log("Corte de caja guardado:", response.data);
+    alert(
+        `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(2)}`
+    );
+} catch (error) {
+    closeModal();
+    useToast().error('Error al generar el corte de caja');
+    console.error('Error: ', error);
+}
+}
+
+const generateCashAudit = () => {
+    const cashAuditData = buildCashAuditData();
+    if (!cashAuditData) {
         alert("No hay ventas para la fecha y turno seleccionados.");
         return;
     }
-    try {
-        const response = await axios.post("/CashAudit", cashAuditData);
-        console.log("Corte de caja guardado:", response.data);
-        alert(
-            `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(
-                2
-            )}`
-        );
-    } catch (error) {
-        console.error("Error al guardar el corte de caja:", error);
-        alert("Error al generar y guardar el corte de caja.");
-    }
-};
+
+    closeModal();
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, generar corte",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            createCashAudit();
+        }
+    });
+
+}
 
 const PrintCutOffTicket = () => {
     // Logica para obtener los datos de corte de caja
