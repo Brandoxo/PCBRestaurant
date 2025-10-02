@@ -45,8 +45,8 @@ Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, '
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);
 
 //Sales
-Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
-Route::post('/Sales/Create', [\App\Http\Controllers\SalesController::class, 'store'])->name('Sales/Store') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
+Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified']);
+Route::post('/Sales/Create', [\App\Http\Controllers\SalesController::class, 'store'])->name('Sales/Store') ->middleware(['auth', 'verified']);
 Route::get('/Sales-for-cutoff', [\App\Http\Controllers\SalesController::class, 'getSalesForCutOff'])->name('Sales/ForCutOff') ->middleware(['auth', 'verified']);
 
 //Menu
