@@ -45,9 +45,9 @@ Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, '
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);
 
 //Sales
-Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified']);
-Route::post('/Sales/Create', [\App\Http\Controllers\SalesController::class, 'store'])->name('Sales/Store') ->middleware(['auth', 'verified']);
-Route::get('/Sales-for-cutoff', [\App\Http\Controllers\SalesController::class, 'getSalesForCutOff'])->name('Sales/ForCutOff') ->middleware(['auth', 'verified']);
+Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
+Route::post('/Sales/Create', [\App\Http\Controllers\SalesController::class, 'store'])->name('Sales/Store') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
+Route::get('/Sales-for-cutoff', [\App\Http\Controllers\SalesController::class, 'getSalesForCutOff'])->name('Sales/ForCutOff') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
 
 //Menu
 Route::get('/Menu', [\App\Http\Controllers\MenuController::class, 'index'])->name('Menu/Index') ->middleware(['auth', 'verified']);
@@ -67,8 +67,8 @@ Route::put('/Order/Update/{id}', [\App\Http\Controllers\OrderController::class, 
 Route::post('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class, 'addTip'])->name('Order/AddTip');
 
 //CashAudit
-Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified']);
-Route::post('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'store'])->name('CashAudit/Store') ->middleware(['auth', 'verified']);
+Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
+Route::post('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'store'])->name('CashAudit/Store') ->middleware(['auth', 'verified', 'role:Admin|Cajero']);
 
 
 //Config

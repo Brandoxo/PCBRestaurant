@@ -4,22 +4,26 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use App\Models\User;
 
 
 
-$user = User::find(1);
-
-
-$user->assignRole('Admin');
 
 class RolesSeeder extends Seeder
 {
     
     public function run() {
-        Role::create(['name' => 'Admin']);
-        Role::create(['name' => 'Cajero']);
-        Role::create(['name' => 'Mesero']);
-        Role::create(['name' => 'Cocinero']);
+        if (Role::where('name', 'Admin')->exists()) {
+            return; // Los roles ya existen, no hacer nada
+        }
+        $adminRole = Role::create(['name' => 'Admin']);
+        $cashierRole = Role::create(['name' => 'Cajero']);
+        $waiterRole = Role::create(['name' => 'Mesero']);
+        $cookRole = Role::create(['name' => 'Cocinero']);
+
+        Permission::create(['name' => 'manage sales']);
+
+        $adminRole->givePermissionTo('manage sales');
     }
 }
