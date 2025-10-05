@@ -81,7 +81,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php'; 
 
 Route::get('print-ticket/', function (Request $request) {
     $ticketrequest = request()->all()['data'];
