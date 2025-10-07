@@ -14,16 +14,50 @@ class RolesSeeder extends Seeder
 {
     
     public function run() {
-        if (Role::where('name', 'Admin')->exists()) {
-            return; // Los roles ya existen, no hacer nada
+        
+        $roles = [
+            'Admin',
+            'Cajero',
+            'Mesero',
+            'Cocinero',
+        ];
+
+        foreach ($roles as $role) {
+            Role::firstOrCreate(['name' => $role]);
         }
-        $adminRole = Role::create(['name' => 'Admin']);
-        $cashierRole = Role::create(['name' => 'Cajero']);
-        $waiterRole = Role::create(['name' => 'Mesero']);
-        $cookRole = Role::create(['name' => 'Cocinero']);
 
-        Permission::create(['name' => 'manage sales']);
+        // Crear permisos
+        $permissions = [
+            'manage sales',
+            'generate cutoff',
+            'view cutoff',
+            'create products',
+            'edit products',
+            'delete products',
+            'create categories',
+            'edit categories',
+            'delete categories',
+            'create tables',
+            'edit tables',
+            'delete tables',
+            'create orders',
+            'edit orders',
+            'cancel orders',
+            'hide orders',
+            'create sales',
 
-        $adminRole->givePermissionTo('manage sales');
+            'manage users',
+            'manage roles',
+        ];
+
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
+        
+        // Asignar permisos a roles
+        Role::findByName('Admin')->givePermissionTo(Permission::all());
+        Role::findByName('Cajero')->givePermissionTo(['manage sales', 'generate cutoff', 'create orders', 'edit orders', 'cancel orders', 'create sales', 'view cutoff']);
+        Role::findByName('Mesero')->givePermissionTo(['create orders', 'edit orders', 'cancel orders']);
+        Role::findByName('Cocinero')->givePermissionTo(['edit orders']);
     }
 }
