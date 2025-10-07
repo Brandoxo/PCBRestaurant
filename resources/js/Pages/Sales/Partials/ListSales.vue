@@ -3,7 +3,7 @@ import { ref } from "vue";
 import axios from "axios";
 import { usePage, router } from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
-import { useToast } from 'vue-toastification';
+import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 
 const props = defineProps({ sales: Object });
@@ -13,8 +13,12 @@ const selectedDate = ref("");
 const selectedShift = ref("");
 const openModal = ref(false);
 
-const showModal = () => { openModal.value = true; };
-const closeModal = () => { openModal.value = false; };
+const showModal = () => {
+    openModal.value = true;
+};
+const closeModal = () => {
+    openModal.value = false;
+};
 
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat("es-MX", {
@@ -48,7 +52,7 @@ function getFilteredSales() {
     if (selectedDate.value) {
         sales = sales.filter((sale) => {
             const d = new Date(sale.date_time);
-            const saleDate  = 
+            const saleDate =
                 d.getFullYear() +
                 "-" +
                 String(d.getMonth() + 1).padStart(2, "0") +
@@ -75,10 +79,7 @@ function getFirstDate(sales) {
 function getTotalAmount(sales) {
     return sales
         .filter((sale) => !sale.is_courtesy)
-        .reduce(
-            (total, sale) => total + sale.quantity * sale.unit_price,
-            0
-        );
+        .reduce((total, sale) => total + sale.quantity * sale.unit_price, 0);
 }
 
 function getTotalTipsIntByOrder(sales) {
@@ -131,11 +132,11 @@ async function buildCashAuditData() {
         alert("Por favor, selecciona una fecha y un turno.");
         return null;
     }
-    const {data: sales } = await axios.get('/Sales-for-cutoff', {
+    const { data: sales } = await axios.get("/Sales-for-cutoff", {
         params: {
             date: selectedDate.value,
-            shift: selectedShift.value
-        }
+            shift: selectedShift.value,
+        },
     });
     if (!sales.length) return null;
     const firstDate = getFirstDate(sales);
@@ -180,14 +181,16 @@ async function createCashAudit() {
     const cashAuditData = await buildCashAuditData();
     try {
         const response = await axios.post("/CashAudit", cashAuditData);
-        useToast().success('Corte de caja Generado Exitosamente');
+        useToast().success("Corte de caja Generado Exitosamente");
         closeModal();
         alert(
-            `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(2)}`
+            `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(
+                2
+            )}`
         );
     } catch (error) {
         closeModal();
-        useToast().error('Error al generar el corte de caja');
+        useToast().error("Error al generar el corte de caja");
     }
 }
 
@@ -227,8 +230,7 @@ const PrintCutOffTicket = () => {
         totalVentas: getTotalAmount(sales),
         montoFinal: 3500 + getTotalAmount(sales),
         totalPropinas:
-            getTotalTipsIntByOrder(sales) +
-            getTotalTipsPercent(sales),
+            getTotalTipsIntByOrder(sales) + getTotalTipsPercent(sales),
         totalEfectivo: getTotalAmount(getFilteredSalesPaymentMethodCash()),
         totalTarjeta: getTotalAmount(getFilteredSalesPaymentMethodCard()),
         totalCortesias: getTotalAmount(getFilteredSalesCourtesy()),
@@ -248,12 +250,18 @@ const PrintCutOffTicket = () => {
 
 function onDateChange() {
     console.log("Selected date:", selectedDate.value);
-    router.get(route('Sales/Index'), { date: selectedDate.value }, { preserveState: true, replace: true });
+    router.get(
+        route("Sales/Index"),
+        { date: selectedDate.value },
+        { preserveState: true, replace: true }
+    );
 }
 </script>
 
 <template>
-    <div class="bg-white p-4 rounded-2xl">
+    <div
+        class="bg-white p-4 rounded-2xl w-full max-w-96 sm:max-w-[40rem] lg:max-w-full mx-auto"
+    >
         <div class="flex gap-4 justify-between mx-auto">
             <input
                 v-model="selectedDate"
@@ -269,58 +277,98 @@ function onDateChange() {
                 Generar Corte de Caja
             </button>
         </div>
-        <table class="w-full mt-2 border">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="p-4">#</th>
-                    <th class="p-4">Fecha de Creación</th>
-                    <th class="p-4">Orden ID</th>
-                    <th class="p-4">Usuario</th>
-                    <th class="p-4">Producto</th>
-                    <th class="p-4">Subtotal</th>
-                    <th class="p-4">Total</th>
-                    <th class="p-4">Método de Pago</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="value in props.sales.data" :key="value.id">
-                    <td class="border p-2 text-center">{{ value.id }}</td>
-                    <td class="border p-2 text-center">{{ value.date_time }}</td>
-                    <td class="border p-2 text-center">{{ value.order_id }}</td>
-                    <td class="border p-2 text-center">{{ value.user.name }}</td>
-                    <td class="border p-2 text-center">
-                        {{ value.product ? value.product.name : value.product_id }}
-                    </td>
-                    <td class="border p-2 text-center">
-                        {{ formatQuantityPrice(value.quantity, value.unit_price) }}
-                    </td>
-                    <td class="border p-2 text-center">
-                        {{ formatTotal(value.quantity, value.unit_price) }}
-                    </td>
-                    <td class="border p-2 text-center">
-                        {{ value.payment_method }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="overflow-x-auto w-full">
+            <table class="w-full mt-2 border">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-4">#</th>
+                        <th class="p-4">Fecha de Creación</th>
+                        <th class="p-4">Orden ID</th>
+                        <th class="p-4">Usuario</th>
+                        <th class="p-4">Producto</th>
+                        <th class="p-4">Subtotal</th>
+                        <th class="p-4">Total</th>
+                        <th class="p-4">Método de Pago</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="value in props.sales.data" :key="value.id">
+                        <td class="border p-2 text-center">{{ value.id }}</td>
+                        <td class="border p-2 text-center">
+                            {{ value.date_time }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{ value.order_id }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{ value.user.name }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{
+                                value.product
+                                    ? value.product.name
+                                    : value.product_id
+                            }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{
+                                formatQuantityPrice(
+                                    value.quantity,
+                                    value.unit_price
+                                )
+                            }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{ formatTotal(value.quantity, value.unit_price) }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{ value.payment_method }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <!-- Paginación -->
         <div class="mt-4 flex justify-center">
             <template v-for="link in props.sales.links" :key="link.label">
                 <button
                     v-if="link.url"
-                    @click="router.get(link.url, {}, { preserveState: true, replace: true })"
-                    :class="['px-3 py-1 mx-1 rounded', { 'bg-approveGreen text-white': link.active }]"
+                    @click="
+                        router.get(
+                            link.url,
+                            {},
+                            { preserveState: true, replace: true }
+                        )
+                    "
+                    :class="[
+                        'px-3 py-1 mx-1 rounded',
+                        { 'bg-approveGreen text-white': link.active },
+                    ]"
                     v-html="link.label"
                 ></button>
-                <span v-else class="px-3 py-1 mx-1 text-gray-400" v-html="link.label"></span>
+                <span
+                    v-else
+                    class="px-3 py-1 mx-1 text-gray-400"
+                    v-html="link.label"
+                ></span>
             </template>
         </div>
     </div>
 
     <Modal v-model:show="openModal" @close="openModal = false">
-        <div class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto">
-            <h3 class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2">
-                <svg class="w-7 h-7 text-approveGreen" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <div
+            class="p-8 bg-gradient-to-br from-white via-gray-50 to-gray-200 rounded-2xl shadow-2xl mx-auto"
+        >
+            <h3
+                class="text-2xl font-extrabold text-gray-800 mb-2 flex items-center gap-2"
+            >
+                <svg
+                    class="w-7 h-7 text-approveGreen"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                >
                     <path d="M12 8v4l3 3"></path>
                     <circle cx="12" cy="12" r="10"></circle>
                 </svg>
@@ -341,10 +389,15 @@ function onDateChange() {
             </select>
 
             <div
-                v-if="selectedShift === 'Matutino' || selectedShift === 'Vespertino'"
+                v-if="
+                    selectedShift === 'Matutino' ||
+                    selectedShift === 'Vespertino'
+                "
                 class="mb-4"
             >
-                <label class="block text-gray-700 font-medium mb-2">Selecciona la fecha</label>
+                <label class="block text-gray-700 font-medium mb-2"
+                    >Selecciona la fecha</label
+                >
                 <input
                     v-model="selectedDate"
                     type="date"

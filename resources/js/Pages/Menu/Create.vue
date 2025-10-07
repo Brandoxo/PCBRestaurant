@@ -108,16 +108,16 @@ const createProduct = () => {
 <template>
     <AuthenticatedLayout>
         <Head title="Crear Producto" />
-        <div
-            class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6"
-        >
+        <div class="py-24 h-screen mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6">
             <h2 class="text-white mb-4 font-bold text-2xl">
                 Registrar Nueva Producto
             </h2>
-            <div class="bg-white p-6 rounded-2xl shadow-md flex">
+            <div
+                class="bg-white p-6 rounded-2xl shadow-md flex max-w-6xl mx-auto lg:flex-row flex-col"
+            >
                 <form
                     @submit.prevent="createProduct"
-                    class="space-y-2 w-full flex gap-4"
+                    class="space-y-2 flex-1 lg:flex gap-4 self-center"
                 >
                     <div class="text-center">
                         <InputLabel for="image" value="Imagen del Producto" />
@@ -137,86 +137,94 @@ const createProduct = () => {
                             >(Solo archivos PNG o JPG)</span
                         >
                     </div>
-                    <div class="w-1/2 pr-4 border-r self-center">
-                        <InputLabel for="name" value="Nombre del Producto" />
-                        <input
-                            v-model="newProduct.name"
-                            id="name"
-                            type="text"
-                            class="border p-2 rounded-lg mb-4 w-full"
-                        />
-                        <InputError class="mt-2" />
-                        <InputLabel
-                            for="description"
-                            value="Descripción del Producto"
-                        />
-                        <textarea
-                            v-model="newProduct.description"
-                            id="description"
-                            class="border p-2 rounded-lg mb-4 w-full"
-                        ></textarea>
-                        <InputError class="mt-2" />
-                        <InputLabel for="category_id" value="Categoría" />
-                        <select
-                            v-model="newProduct.category_id"
-                            id="category_id"
-                            class="border p-2 rounded-lg mb-4 w-full"
-                        >
-                            <option value="">Seleccionar categoría</option>
-                            <option
-                                v-for="category in props.categories"
-                                :key="category.id"
-                                :value="category.id"
-                            >
-                                {{ category.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="w-1/2 pl-4">
-                        <InputLabel for="price" value="Precio" />
-                        <input
-                            v-model="newProduct.price"
-                            id="price"
-                            type="number"
-                            class="border p-2 rounded-lg mb-4 w-full"
-                        />
-                        <InputError class="mt-2" />
-                        <InputLabel for="cost" value="Costo" />
-                        <input
-                            v-model="newProduct.cost"
-                            id="cost"
-                            type="number"
-                            class="border p-2 rounded-lg mb-4 w-full"
-                        />
-                        <InputError class="mt-2" />
-                        <InputLabel for="tax" value="Impuesto" />
-                        <input
-                            v-model="newProduct.tax"
-                            id="tax"
-                            type="number"
-                            class="border p-2 rounded-lg mb-4 w-full"
-                        />
-                        <InputError class="mt-2" />
-                        <InputError class="mt-2" />
-                        <InputLabel for="is_active" value="Disponible" />
-                        <label class="inline-flex items-center cursor-pointer">
-                            <input
-                                type="checkbox"
-                                class="sr-only peer"
-                                v-model="newProduct.is_active"
-                                id="is_active"
+                    <div class="flex-1 lg:fle mx-auto">
+                        <div class="pr-4 border-r">
+                            <InputLabel
+                                for="name"
+                                value="Nombre del Producto"
                             />
-                            <Switch />
-                        </label>
-                        <InputError class="mt-2" />
+                            <input
+                                v-model="newProduct.name"
+                                id="name"
+                                type="text"
+                                class="border p-2 rounded-lg mb-4 w-full"
+                            />
+                            <InputError class="mt-2" />
+                            <InputLabel
+                                for="description"
+                                value="Descripción del Producto"
+                            />
+                            <textarea
+                                v-model="newProduct.description"
+                                id="description"
+                                class="border p-2 rounded-lg mb-4 w-full"
+                            ></textarea>
+                            <InputError class="mt-2" />
+                        </div>
+                        <div class="pr-4">
+                            <InputLabel for="category_id" value="Categoría" />
+                            <select
+                                v-model="newProduct.category_id"
+                                id="category_id"
+                                class="border p-2 rounded-lg mb-4 w-full"
+                            >
+                                <option value="">Seleccionar categoría</option>
+                                <option
+                                    v-for="category in props.categories"
+                                    :key="category.id"
+                                    :value="category.id"
+                                >
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                            <InputLabel for="price" value="Precio" />
+                            <input
+                                v-model="newProduct.price"
+                                id="price"
+                                type="number"
+                                class="border p-2 rounded-lg mb-4 w-full"
+                            />
+                            <!-- <InputError class="mt-2" />
+                            <InputLabel for="cost" value="Costo" />
+                            <input
+                                v-model="newProduct.cost"
+                                id="cost"
+                                type="number"
+                                class="border p-2 rounded-lg mb-4 w-full"
+                            />
+                            <InputError class="mt-2" /> -->
+
+                            <!-- <InputLabel for="tax" value="Impuesto" />
+                            <input
+                                v-model="newProduct.tax"
+                                id="tax"
+                                type="number"
+                                class="border p-2 rounded-lg mb-4 w-full"
+                            />
+                            <InputError class="mt-2" /> -->
+
+                            <InputLabel for="is_active" value="Disponible" />
+                            <label
+                                class="inline-flex items-center cursor-pointer"
+                            >
+                                <input
+                                    type="checkbox"
+                                    class="sr-only peer"
+                                    v-model="newProduct.is_active"
+                                    id="is_active"
+                                />
+                                <Switch />
+                            </label>
+                            <InputError class="mt-2" />
+                        </div>
                     </div>
-                    <button
-                        type="submit"
-                        class="bg-approveGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg self-end"
-                    >
-                        Guardar Producto
-                    </button>
                 </form>
+                <button
+                    type="submit"
+                    class="bg-approveGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg self-end"
+                >
+                    Guardar Producto
+                </button>
             </div>
             <ReturnButton />
         </div>
