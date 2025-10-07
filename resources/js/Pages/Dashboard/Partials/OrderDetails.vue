@@ -224,7 +224,7 @@ const PrintTicket = () => {
 </script>
 
 <template>
-    <h2 class="text-lg font-semibold mt-2 mb- text-center text-white">
+    <h2 class="text-lg font-semibold mt-2 text-center text-white">
         Detalles de la orden
     </h2>
     <div
@@ -288,7 +288,7 @@ const PrintTicket = () => {
     >
         Editar Orden
     </button>
-    <div class="flex gap-4 w-screen md:w-full flex-col md:flex-row">
+    <div class="flex gap-4 flex-col md:flex-row">
         <div
             class="bg-white p-6 rounded-lg shadow-md flex h-fit w-full justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300 items-center"
         >

@@ -91,7 +91,9 @@ const filteredProducts = computed(() => {
 </script>
 
 <template>
-    <div class="bg-white p-4 rounded-2xl">
+    <div
+        class="bg-white p-4 rounded-2xl w-full max-w-96 sm:max-w-[40rem] lg:max-w-full mx-auto"
+    >
         <form @submit.prevent="searchTable">
             <input
                 v-model="searchQuery"
@@ -100,75 +102,81 @@ const filteredProducts = computed(() => {
                 class="border p-2 rounded-lg w-full mb-4"
             />
         </form>
-        <table class="w-full mt-2 border">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="p-4">Categoría</th>
-                    <th class="p-4 hidden lg:block">Imagen</th>
-                    <th class="p-4">Nombre</th>
-                    <th class="p-4 hidden lg:block">SKU</th>
-                    <th class="p-4">Precio</th>
-                    <!-- <th class="p-4">Impuesto</th> -->
-                    <th class="p-4">Disponible</th>
-                    <th class="p-4 hidden lg:block">Fecha de Creación</th>
-                    <th class="p-4">Fecha de Actualización</th>
-                    <th class="p-4">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="value in filteredProducts" :key="value.id">
-                    <td class="border p-2 text-center">
-                        {{ value.category_id }}
-                    </td>
-                    <td class="border p-2 text-center hidden lg:block">
-                        <img
-                            :src="value.image"
-                            alt="Product Image"
-                            class="w-16 h-16 object-cover mx-auto"
-                        />
-                    </td>
-                    <td class="border p-2 text-center">{{ value.name }}</td>
-                    <td class="border p-2 text-center hidden lg:block">
-                        {{ value.sku.slice(4, 10) }}
-                    </td>
-                    <td class="border p-2 text-center">$ {{ value.price }}</td>
-                    <!-- <td class="border p-2 text-center">{{ value.tax }}</td> -->
-                    <td class="border p-2 text-center">
-                        <StatusBadge
-                            :status="value.is_active ? 'Activo' : 'Inactivo'"
-                        />
-                    </td>
-                    <td class="border p-2 text-center hidden lg:block">
-                        {{ value.created_at.slice(0, 10) }}
-                    </td>
-                    <td class="border p-2 text-center">
-                        {{ value.updated_at.slice(0, 10) }}
-                    </td>
-                    <td class="border p-2 flex gap-2 justify-center">
-                        <button
-                            @click="showModal(value.id)"
-                            class="bg-midBlue hover:bg-strongBlue text-white p-1 rounded"
-                        >
+        <div class="overflow-x-auto w-full">
+            <table class="w-full mt-2 border">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-4">Categoría</th>
+                        <th class="p-4 hidden lg:block">Imagen</th>
+                        <th class="p-4">Nombre</th>
+                        <th class="p-4 hidden lg:block">SKU</th>
+                        <th class="p-4">Precio</th>
+                        <!-- <th class="p-4">Impuesto</th> -->
+                        <th class="p-4">Disponible</th>
+                        <th class="p-4 hidden lg:block">Fecha de Creación</th>
+                        <th class="p-4">Fecha de Actualización</th>
+                        <th class="p-4">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="value in filteredProducts" :key="value.id">
+                        <td class="border p-2 text-center">
+                            {{ value.category_id }}
+                        </td>
+                        <td class="border p-2 text-center hidden lg:block">
                             <img
-                                src="/assets/icons/svg/actions/edit.svg"
-                                alt="Editar"
-                                class="w-6"
+                                :src="value.image"
+                                alt="Product Image"
+                                class="w-16 h-16 object-cover mx-auto"
                             />
-                        </button>
-                        <button
-                            @click="deleteProduct(value.id)"
-                            class="bg-dangerRed hover:bg-red-700 text-white p-1 rounded"
-                        >
-                            <img
-                                src="/assets/icons/svg/actions/delete.svg"
-                                alt="Eliminar"
-                                class="w-6"
+                        </td>
+                        <td class="border p-2 text-center">{{ value.name }}</td>
+                        <td class="border p-2 text-center hidden lg:block">
+                            {{ value.sku.slice(4, 10) }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            $ {{ value.price }}
+                        </td>
+                        <!-- <td class="border p-2 text-center">{{ value.tax }}</td> -->
+                        <td class="border p-2 text-center">
+                            <StatusBadge
+                                :status="
+                                    value.is_active ? 'Activo' : 'Inactivo'
+                                "
                             />
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                        <td class="border p-2 text-center hidden lg:block">
+                            {{ value.created_at.slice(0, 10) }}
+                        </td>
+                        <td class="border p-2 text-center">
+                            {{ value.updated_at.slice(0, 10) }}
+                        </td>
+                        <td class="border p-2 flex gap-2 justify-center">
+                            <button
+                                @click="showModal(value.id)"
+                                class="bg-midBlue hover:bg-strongBlue text-white p-1 rounded"
+                            >
+                                <img
+                                    src="/assets/icons/svg/actions/edit.svg"
+                                    alt="Editar"
+                                    class="w-6"
+                                />
+                            </button>
+                            <button
+                                @click="deleteProduct(value.id)"
+                                class="bg-dangerRed hover:bg-red-700 text-white p-1 rounded"
+                            >
+                                <img
+                                    src="/assets/icons/svg/actions/delete.svg"
+                                    alt="Eliminar"
+                                    class="w-6"
+                                />
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <Modal v-model:show="openModal">
