@@ -73,8 +73,8 @@ const createProduct = () => {
     formData.append("image", newProduct.value.image);
     formData.append("description", newProduct.value.description);
     formData.append("price", newProduct.value.price);
-    formData.append("cost", newProduct.value.cost);
-    formData.append("tax", newProduct.value.tax);
+    formData.append("cost", 0);
+    formData.append("tax", 0);
     formData.append("is_active", newProduct.value.is_active ? 1 : 0);
     if (imageFile.value) {
         formData.append("image", imageFile.value);
@@ -220,7 +220,7 @@ const createProduct = () => {
                     </div>
                 </form>
                 <button
-                    type="submit"
+                    @click="createProduct"
                     class="bg-approveGreen hover:bg-green-700 text-white px-4 py-2 rounded-lg self-end"
                 >
                     Guardar Producto
