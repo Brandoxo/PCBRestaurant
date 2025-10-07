@@ -3,6 +3,7 @@ import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import Swal from "sweetalert2";
 import { router, usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
 
 const user = usePage().props.auth.user;
 
@@ -48,6 +49,11 @@ const cancelOrder = async () => {
         console.error("Error en la solicitud:", error);
     }
 };
+
+const canCancelOrder = computed(() => {
+    return user && user.permissions && user.permissions.includes("cancel orders");
+});
+console.log("User permissions:", user ? user.permissions : "No user");
 </script>
 
 <template>
@@ -110,7 +116,7 @@ const cancelOrder = async () => {
                 </div>
             </div>
             <button
-                v-if="order.status === 'En curso'"
+                v-if="order.status === 'En curso' && canCancelOrder"
                 @click="confirmCancelOrder"
                 class="mt-4 bg-dangerRed/30 p-2 rounded-full text-dangerRed font-bold hover:bg-dangerRed/50 transition"
             >
