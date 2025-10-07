@@ -85,13 +85,22 @@ onMounted(() => {
 <style scoped>
 .grid-stack {
     width: 100%;
-    gap: ;
+    gap: 0.5rem;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(0, 1fr));
 }
 .grid-stack-item {
     padding: 4px;
 }
+
+@media (max-width: 800px) {
+    .grid-stack {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        width: 80%;
+        margin: auto;
+    }
+}
+
 </style>
 
 <template>
