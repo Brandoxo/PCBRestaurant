@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import axios from "axios";
 import { usePage, router } from "@inertiajs/vue3";
 import Modal from "@/Components/Modal.vue";
@@ -8,6 +8,12 @@ import Swal from "sweetalert2";
 
 const props = defineProps({ sales: Object });
 const user = usePage().props.auth.user;
+console.log('user details', user)
+
+
+const canGenerateCutOff = computed(() =>{
+    return user && user.permissions && user.permissions.includes('generate cutoff')
+})
 
 const selectedDate = ref("");
 const selectedShift = ref("");
@@ -271,6 +277,7 @@ function onDateChange() {
                 class="border p-2 rounded-lg w-full"
             />
             <button
+            v-if="canGenerateCutOff"
                 @click="showModal"
                 class="bg-approveGreen hover:bg-green-700 text-white px-4 py-2 lg:w-96 rounded-md uppercase"
             >
