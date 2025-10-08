@@ -4,12 +4,19 @@ import { onMounted, ref, watch } from "vue";
 import { GridStack } from "gridstack";
 import swal from "sweetalert2";
 import "gridstack/dist/gridstack.min.css";
+import { usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
 
 const props = defineProps({ orders: Array });
 const emit = defineEmits(["select"]);
 const columns = ref(getColumns());
 const gridRef = ref(null);
 let grid;
+const user = usePage().props.auth.user
+
+const canHideOrders = computed(() => {
+    return user && user.permissions && user.permissions.includes('hide orders')
+})
 
 const deletedOrderIds = ref(
     JSON.parse(localStorage.getItem("deletedOrderIds") || "[]")
@@ -66,10 +73,29 @@ onMounted(() => {
                         confirmButtonText: "Aceptar",
                     });
                     saveDeletedOrderIds();
-                } else {
+                } else if (order.status === 'Cancelada' && canHideOrders.value){
+                    deletedOrderIds.value.push(orderId);
+                    swal.fire({
+                        title: "Orden Eliminada",
+                        text: "Orden Cancelada eliminada exitosamente.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                    });
+                    saveDeletedOrderIds();
+                } else if (order.status === 'En curso'){
+                    swal.fire({
+                        title: "Orden en curso...",
+                        text: "No es posible eliminar las órdenes en curso.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                    }).then(() => {
+                        location.reload();
+                    })
+                }
+                 else {
                     swal.fire({
                         title: "No se puede eliminar",
-                        text: 'Solo se pueden eliminar las órdenes con estado "Completada".',
+                        text: 'Tus permisos de usuario no permite eliminar Órdenes Canceladas. Solicite a un administrador.',
                         icon: "error",
                         confirmButtonText: "Aceptar",
                     }).then(() => {
