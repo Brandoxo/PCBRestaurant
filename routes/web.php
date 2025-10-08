@@ -67,7 +67,7 @@ Route::put('/Order/Update/{id}', [\App\Http\Controllers\OrderController::class, 
 Route::post('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class, 'addTip'])->name('Order/AddTip');
 
 //CashAudit
-Route::group(['middleware' => ['role:Admin']], function (){
+Route::group(['middleware' => ['role:Admin|Cajero']], function (){
     Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified']);
     Route::post('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'store'])->name('CashAudit/Store') ->middleware(['auth', 'verified']);
 });
