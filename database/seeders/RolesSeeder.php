@@ -56,7 +56,7 @@ class RolesSeeder extends Seeder
         
         // Asignar permisos a roles
         Role::findByName('Admin')->givePermissionTo(Permission::all());
-        Role::findByName('Cajero')->givePermissionTo(['manage sales', 'generate cutoff', 'create orders', 'cancel orders', 'create sales', 'view cutoff']);
+        Role::findByName('Cajero')->givePermissionTo(['manage sales', 'generate cutoff', 'create orders', 'create sales', 'view cutoff']);
         Role::findByName('Mesero')->givePermissionTo(['create orders', 'cancel orders']);
         Role::findByName('Cocinero')->givePermissionTo(['create orders']);
     }
