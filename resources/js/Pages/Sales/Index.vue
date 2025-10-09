@@ -26,7 +26,7 @@ console.log(props.sales);
             <div class="flex justify-between items-center">
                 <h2 class="text-white text-2xl font-bold">Listado de Ventas</h2>
                 <Link :href="route('CashAudit/Index')"
-                v-if="canViewCutOff"
+                
                 class="bg-blue-500 text-white px-4 py-2 rounded">Ver lista de Cortes</Link>
             </div>
 

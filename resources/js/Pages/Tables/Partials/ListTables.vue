@@ -105,7 +105,7 @@ const filteredTables = computed(() => {
                     <th class="p-4">Numero</th>
                     <th class="p-4">Estado</th>
                     <th class="p-4">Capacidad</th>
-                    <th v-if="isAdmin" class="p-4">Acciones</th>
+                    <th  class="p-4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -119,7 +119,7 @@ const filteredTables = computed(() => {
                         {{ value.capacity }} Personas
                     </td>
                     <td
-                        v-if="isAdmin &&
+                        v-if="
                             value.status === 'Libre' ||
                             value.status === 'Reservada'
                         "
