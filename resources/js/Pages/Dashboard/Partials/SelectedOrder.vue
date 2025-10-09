@@ -116,7 +116,7 @@ console.log("User permissions:", user ? user.permissions : "No user");
                 </div>
             </div>
             <button
-                v-if="order.status === 'En curso'"
+                v-if="order.status === 'En curso' && canCancelOrder"
                 @click="confirmCancelOrder"
                 class="mt-4 bg-dangerRed/30 p-2 rounded-full text-dangerRed font-bold hover:bg-dangerRed/50 transition"
             >

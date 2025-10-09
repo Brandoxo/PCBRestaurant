@@ -277,7 +277,7 @@ function onDateChange() {
                 class="border p-2 rounded-lg w-full"
             />
             <button
-            
+            v-if="canGenerateCutOff"
                 @click="showModal"
                 class="bg-approveGreen hover:bg-green-700 text-white px-4 py-2 lg:w-96 rounded-md uppercase"
             >
