@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mesas;
 use Illuminate\Http\Request;
 use App\Models\Orders;
 class DashBoardController extends Controller
@@ -37,6 +38,7 @@ class DashBoardController extends Controller
 
         public function update(Request $request, $id)
     {
+        return response()->json($request->all());
         $order = Orders::findOrFail($id);
         $request->validate([
             'status' => 'required|string',
