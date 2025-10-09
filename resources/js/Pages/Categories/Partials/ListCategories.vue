@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import Modal from "@/Components/Modal.vue";
@@ -12,6 +12,19 @@ const form = ref({ errors: {} });
 const currentCategory = ref({});
 const openModal = ref(false);
 const props = defineProps({ categories: Object });
+const user = usePage().props.auth.user;
+
+const isAdmin = computed(() => {
+    return user && user.value && user.includes('Admin');
+})
+
+const canDeleteCategories = computed(() => {
+    console.log('admin :', user)
+    return user && user.permissions && user.permissions.includes('delete categories');
+})
+const canEditCategories = computed(() => {
+    return user && user.permissions && user.permissions.includes("edit categories")
+})
 
 const showModal = (id) => {
     openModal.value = true;
@@ -99,7 +112,7 @@ const filteredCategories = computed(() => {
                     <th class="p-4">#</th>
                     <th class="p-4">Nombre</th>
                     <th class="p-4">Descripción</th>
-                    <th class="p-4">Acciones</th>
+                    <th v-if="canEditCategories && canDeleteCategories || isAdmin" class="p-4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -109,8 +122,10 @@ const filteredCategories = computed(() => {
                     <td class="border p-2 text-center">
                         {{ value.description }}
                     </td>
-                    <td class="border p-2 flex gap-2 justify-center">
+                    <td 
+                    class="border p-2 flex gap-2 justify-center">
                         <button
+                        v-if="canEditCategories || isAdmin"
                             @click="showModal(value.id)"
                             class="bg-midBlue hover:bg-strongBlue text-white p-1 rounded"
                         >
@@ -121,6 +136,7 @@ const filteredCategories = computed(() => {
                             />
                         </button>
                         <button
+                        v-if="canDeleteCategories || isAdmin"
                             @click="deleteCategory(value.id)"
                             class="bg-dangerRed hover:bg-red-700 text-white p-1 rounded"
                         >

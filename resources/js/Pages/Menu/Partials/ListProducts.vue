@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage} from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import Modal from "@/Components/Modal.vue";
@@ -17,6 +17,10 @@ const handleImageUpdate = (event) => {
     imageFile.value = event.target.files[0];
     console.log("Selected image file:", imageFile.value);
 };
+const user = usePage().props.auth.user;
+const isAdmin = computed(() => {
+    return user && user.roles && user.roles.includes('Admin');
+});
 
 function showModal(id) {
     openModal.value = true;
@@ -115,7 +119,7 @@ const filteredProducts = computed(() => {
                         <th class="p-4">Disponible</th>
                         <th class="p-4 hidden lg:block">Fecha de Creación</th>
                         <th class="p-4">Fecha de Actualización</th>
-                        <th class="p-4">Acciones</th>
+                        <th v-if="isAdmin" class="p-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,7 +155,7 @@ const filteredProducts = computed(() => {
                         <td class="border p-2 text-center">
                             {{ value.updated_at.slice(0, 10) }}
                         </td>
-                        <td class="border p-2 flex gap-2 justify-center">
+                        <td v-if="isAdmin" class="border p-2 flex gap-2 justify-center">
                             <button
                                 @click="showModal(value.id)"
                                 class="bg-midBlue hover:bg-strongBlue text-white p-1 rounded"

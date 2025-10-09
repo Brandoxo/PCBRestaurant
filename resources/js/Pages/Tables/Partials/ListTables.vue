@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 import Modal from "@/Components/Modal.vue";
@@ -15,6 +15,11 @@ const form = ref({ errors: {} });
 const props = defineProps({ mesas: Object });
 const openModal = ref(false);
 const currentTable = ref({});
+const user = usePage().props.auth.user;
+const isAdmin = computed(() => {
+    console.log('DETAILS:', user);
+    return user && user.roles && user.roles.includes('Admin');
+})
 
 const closeModal = () => {
     openModal.value = false;
@@ -100,7 +105,7 @@ const filteredTables = computed(() => {
                     <th class="p-4">Numero</th>
                     <th class="p-4">Estado</th>
                     <th class="p-4">Capacidad</th>
-                    <th class="p-4">Acciones</th>
+                    <th v-if="isAdmin" class="p-4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -114,7 +119,7 @@ const filteredTables = computed(() => {
                         {{ value.capacity }} Personas
                     </td>
                     <td
-                        v-if="
+                        v-if="isAdmin &&
                             value.status === 'Libre' ||
                             value.status === 'Reservada'
                         "
