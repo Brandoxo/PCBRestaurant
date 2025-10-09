@@ -38,7 +38,6 @@ class DashBoardController extends Controller
 
         public function update(Request $request, $id)
     {
-        return response()->json($request->all());
         $order = Orders::findOrFail($id);
         $request->validate([
             'status' => 'required|string',
