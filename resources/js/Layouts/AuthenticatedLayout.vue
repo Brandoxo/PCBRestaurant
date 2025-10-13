@@ -112,6 +112,18 @@ const showingNavigationDropdown = ref(false);
                         </li>
                         <li>
                             <NavLink
+                                :href="route('Users/Index')"
+                                :active="route().current('Users/Index')"
+                                ><img
+                                    src="/assets/icons/svg/menu/users.svg"
+                                    alt="Usuarios"
+                                    class="w-6"
+                                />
+                                Usuarios
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink
                                 :href="route('Config/Index')"
                                 :active="route().current('Config/Index')"
                                 ><img

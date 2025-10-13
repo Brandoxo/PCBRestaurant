@@ -72,6 +72,10 @@ Route::group(['middleware' => ['role:Admin|Cajero']], function (){
     Route::post('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'store'])->name('CashAudit/Store') ->middleware(['auth', 'verified']);
 });
 
+//Users
+Route::group(['middleware' => ['role:Admin']], function (){
+    Route::get('/Users', [\App\Http\Controllers\UserController::class, 'index'])->name('Users/Index') ->middleware(['auth', 'verified']);
+});
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);
