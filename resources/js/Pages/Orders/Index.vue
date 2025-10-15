@@ -36,24 +36,24 @@ function tableSelected(table) {
 <template>
     <AuthenticatedLayout>
         <Head title="Ordenes" />
-        <section
-            class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6 lg:flex justify-center"
-        >
-            <div class="flex flex-col">
-                <TablesAvailables
-                    :selectedTable="selectedTable"
-                    :tables="tables"
-                    @tableSelected="tableSelected"
-                />
-
+        <section class="px-4 p-8 overflow-y-auto scrollbar-hide lg:py-60 lg:h-screen lg:pt-5">
+            <div class="lg:flex lg:space-x-6 lg:items-start lg:justify-center lg:w-full mx-auto">
+            <div class="lg:flex-col lg:mx-auto">
+                
+            <TablesAvailables
+            :selectedTable="selectedTable"
+            :tables="tables"
+            @tableSelected="tableSelected"
+            />
                 <OrderDetails
-                    v-if="selectedTable"
-                    :selectedTable="selectedTable"
-                    :orders="orders"
-                    :currentOrder="currentOrder"
+                v-if="selectedTable"
+                :selectedTable="selectedTable"
+                :orders="orders"
+                :currentOrder="currentOrder"
                 />
+                
+                
             </div>
-
             <MakeOrder
                 :selectedTable="selectedTable"
                 :tables="tables"
@@ -62,6 +62,7 @@ function tableSelected(table) {
                 @closeOptions="handleCloseOrder"
                 @handleOrderSaved="handleOrderSaved"
             />
+            </div>
         </section>
     </AuthenticatedLayout>
 </template>

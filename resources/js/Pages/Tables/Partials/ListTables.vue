@@ -91,13 +91,16 @@ const filteredTables = computed(() => {
 </script>
 
 <template>
-    <div class="bg-white p-4 rounded-2xl">
+    <div
+        class="bg-white p-4 rounded-2xl w-full max-w-96 sm:max-w-[40rem] lg:max-w-full mx-auto"
+    >
         <input
             v-model="searchQuery"
             type="text"
             placeholder="Buscar mesa..."
             class="border p-2 rounded-lg w-full mb-4"
         />
+        <div class="overflow-y-auto lg:py-60 lg:h-screen lg:pt-0 scrollbar-hide">
         <table class="w-full mt-2 border">
             <thead>
                 <tr class="bg-gray-100">
@@ -149,6 +152,7 @@ const filteredTables = computed(() => {
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
 
     <Modal v-model:show="openModal">

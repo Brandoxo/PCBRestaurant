@@ -31,6 +31,7 @@ function saveDeletedOrderIds() {
 
 function getColumns() {
     if (window.innerWidth < 1536) return 1;
+    if (window.innerWidth < 2048) return 2;
 
     return 3;
 }

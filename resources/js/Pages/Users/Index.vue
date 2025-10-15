@@ -24,9 +24,8 @@ console.log('Roles', props.roles);
     <Head title="Usuarios" />
 
     <AuthenticatedLayout>
-        <div class="md:ml-64 items-center py-24 h-screen overflow-y-auto">
-            <div class="mx-auto max-w-7xl space-y-6 px-6 lg:px-8">
-                <h1>Listado de Usuarios</h1>
+        <div class="px-4 p-4">
+            <div class="mx-auto max-w-7xl space-y-6 px-6 lg:px-8 mb-4">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -66,9 +65,9 @@ console.log('Roles', props.roles);
                                     {{ user.email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap ">
-    <div v-for="role in user.roles" :key="role.id" style="display: inline-block;">
+    <div v-for="role in user.roles" :key="role.id" class="grid grid-cols-1 gap-2">
         <select
-            @change="editingUserId = user.id; editingRoleId = role.id; selectedRole.value = $event.target.value"
+            @change="editingUserId = user.id; editingRoleId = role.id; selectedRole.value = $event.target.value; console.log('Rol seleccionado:', selectedRole.value, 'Para el usuario:', user.id)"
         >
             <option disabled selected>{{ role.name }}</option>
             <option
@@ -81,8 +80,8 @@ console.log('Roles', props.roles);
         </select>
         <button
             v-if="editingUserId === user.id && editingRoleId === role.id"
-            class="ml-2 px-2 py-1 bg-blue-500 text-white rounded"
-            @click="alert(`Cambiar rol de ${user.name} a ${selectedRole.value}`); editingUserId = null; editingRoleId = null; selectedRole.value = null;"
+            class="p-2 bg-blue-500 hover:bg-blue-800 transform duration-300 text-white rounded text-sm"
+            @click="editingUserId = null; editingRoleId = null; selectedRole.value = null;"
         >
             Guardar Cambios
         </button>
@@ -95,7 +94,7 @@ console.log('Roles', props.roles);
                                                     <span class="  font-extrabold text-center uppercase p-2 bg-green-300 text-green-600 text-sm rounded-xl">All</span>
                                                 </template>
                                                 <template v-else>
-                                                    <span v-for="permission in role.permissions" :key="permission.id" class=" font-extrabold text-sm  p-2 rounded-xl text-center uppercase bg-green-300 text-green-600 ">{{ permission.name }}</span>
+                                                    <span @change="" v-for="permission in role.permissions" :key="permission.id" class=" font-extrabold text-sm  p-2 rounded-xl text-center uppercase bg-green-300 text-green-600 ">{{ permission.name }}</span>
                                                 </template>
                                             </li>
                                         </ul>

@@ -90,9 +90,9 @@ console.log("User permissions:", user ? user.permissions : "No user");
             </h2>
             <StatusBadge class="" />
         </div>
-        <div class="flex items-center justify-between mt-4">
+        <div class="flex items-center justify-between gap-4 mt-4">
             <div class="flex-col">
-                <h2 class="text-start text-3xl font-bold">
+                <h2 class="text-center text-3xl font-bold">
                     Mesa
                     {{ order.table.number ?? "7" }}
                 </h2>
@@ -118,18 +118,21 @@ console.log("User permissions:", user ? user.permissions : "No user");
             <button
                 v-if="order.status === 'En curso' && canCancelOrder"
                 @click="confirmCancelOrder"
-                class="mt-4 bg-dangerRed/30 p-2 rounded-full text-dangerRed font-bold hover:bg-dangerRed/50 transition"
+                class="mt-4 bg-dangerRed/30 max-w-96 p-2 rounded-md w-full uppercase text-dangerRed tracking-widest font-extrabold hover:bg-dangerRed/50 transition"
             >
-                Cancelar Orden
+                Cancelar
             </button>
-            <button class="flex items-center gap-2">
+            <button class="gap-2 text-center">
                 <img
                     src="assets/icons/svg/links/sheet.svg"
                     alt="Imagen de la orden"
-                    class="w-6"
+                    class="w-6 mx-auto"
                 />
                 <p class="text-center text-midBlue font-bold">
-                    Export #{{ order.id ?? "" }}
+                    Export
+                </p>
+                <p class="text-center text-midBlue font-bold">
+                   #{{ order.id ?? "" }}
                 </p>
             </button>
         </div>

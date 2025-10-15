@@ -106,7 +106,7 @@ const filteredProducts = computed(() => {
                 class="border p-2 rounded-lg w-full mb-4"
             />
         </form>
-        <div class="overflow-x-auto w-full">
+        <div class="overflow-y-auto lg:py-60 lg:h-screen lg:pt-0 scrollbar-hide">
             <table class="w-full mt-2 border">
                 <thead>
                     <tr class="bg-gray-100">

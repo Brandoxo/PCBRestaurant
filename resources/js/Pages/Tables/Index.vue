@@ -15,8 +15,8 @@ const page = usePage();
 <template>
     <AuthenticatedLayout>
         <Head title="Mesas" />
-        <section class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6 ">
-            <div class="flex justify-between items-center">
+        <section class="px-4 p-4 overflow-y-auto mx-auto scrollbar-hide">
+            <div class="flex justify-between items-center mb-4">
                 <h2 class="text-white text-2xl font-bold">Listado de Mesas</h2>
                 <Link :href="route('Tables/Create')" class="bg-softBlue hover:bg-blue-600 text-white px-4 py-2 rounded-lg">+ Nueva Mesa</Link>
             </div>

@@ -284,7 +284,7 @@ function onDateChange() {
                 Generar Corte de Caja
             </button>
         </div>
-        <div class="overflow-x-auto w-full">
+        <div class="overflow-y-auto lg:py-60 lg:h-screen lg:pt-0 lg:pb-0 scrollbar-hide">
             <table class="w-full mt-2 border">
                 <thead>
                     <tr class="bg-gray-100">

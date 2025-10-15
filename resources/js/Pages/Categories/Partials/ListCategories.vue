@@ -97,7 +97,9 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-    <div class="bg-white p-4 rounded-2xl">
+    <div
+        class="bg-white p-4 rounded-2xl w-full max-w-96 sm:max-w-[40rem] lg:max-w-full mx-auto"
+    >
         <form>
             <input
                 v-model="searchQuery"
@@ -106,6 +108,7 @@ const filteredCategories = computed(() => {
                 class="border p-2 rounded-lg w-full mb-4"
             />
         </form>
+    <div class="overflow-y-auto lg:py-60 lg:h-screen lg:pt-0 scrollbar-hide">
         <table class="w-full mt-2 border">
             <thead>
                 <tr class="bg-gray-100">
@@ -150,6 +153,7 @@ const filteredCategories = computed(() => {
                 </tr>
             </tbody>
         </table>
+        </div>
     </div>
 
     <Modal v-model:show="openModal">

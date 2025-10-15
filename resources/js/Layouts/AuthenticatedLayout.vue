@@ -12,22 +12,18 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div class="min-h-screen flex bg-tertiary">
+    <Header></Header>
+    <div class="flex">
+
         <!-- Sidebar -->
         <aside
-            class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full"
+            class="w-64 bg-secondary shadow hidden lg:flex flex-col "
         >
-            <div class="flex items-center bg-white">
-                <Link :href="route('dashboard')">
-                    <ApplicationLogo
-                        class="h-14 my-2 mx-auto"
-                    />
-                </Link>
-            </div>
-            <div class="px-2 h-full flex flex-col">
-                <nav class="flex-1">
+            
+            <div class="px-2 flex flex-col">
+                <nav class="flex-1 ">
                     <ul
-                        class="flex flex-col h-full justify-evenly 2xl:justify-start 2xl:gap-8 2xl:mt-8"
+                        class="flex flex-col h-full justify-evenly 2xl:justify-start gap-8 mt-8"
                     >
                         <li>
                             <NavLink
@@ -139,8 +135,6 @@ const showingNavigationDropdown = ref(false);
             </div>
         </aside>
 
-        <Header></Header>
-
         <!-- Main Content -->
         <div class="flex-1">
             <!-- Page Heading -->
@@ -154,5 +148,5 @@ const showingNavigationDropdown = ref(false);
                 <slot />
             </main>
         </div>
-    </div>
+        </div>
 </template>

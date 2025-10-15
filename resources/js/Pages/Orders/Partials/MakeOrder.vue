@@ -222,7 +222,7 @@ console.log(props);
 <template>
     <div class="w-full px-8" v-if="props.selectedTable">
         <div
-            class="bg-gray-100 p-8 rounded-xl shadow-lg hover:scale-[1.01] transform transition-transform duration-300 ease-in-out"
+            class="bg-gray-100 p-8 rounded-xl shadow-lg hover:scale-[1.01] transform transition-transform duration-300 ease-in-out mt-4 lg:mt-0"
         >
             <p class="text-center">Selecciona una categoría del Menú</p>
 

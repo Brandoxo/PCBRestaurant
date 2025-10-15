@@ -1,8 +1,7 @@
 <script setup>
-import Header from "@/Components/Header.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import ListSales from "./Partials/ListSales.vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link, usePage, Head } from "@inertiajs/vue3";
 import { computed } from "vue";
 
 const props = defineProps({
@@ -19,11 +18,9 @@ console.log(props.sales);
 
 <template>
     <AuthenticatedLayout>
-        <Header title="Ventas" />
-        <section
-            class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6"
-        >
-            <div class="flex justify-between items-center">
+        <Head title="Ventas" />
+        <section class="px-4 p-4 overflow-y-auto mx-auto scrollbar-hide">
+            <div class="flex justify-between items-center mb-4">
                 <h2 class="text-white text-2xl font-bold">Listado de Ventas</h2>
                 <Link :href="route('CashAudit/Index')"
                 v-if="canViewCutOff"
