@@ -1,14 +1,11 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
+import { ref, onMounted, watch, computed } from "vue";
 import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
 import Header from "@/Components/Header.vue";
+import { usePage } from "@inertiajs/vue3";
 
-
+const user = usePage().props.auth.user;
+const isAdmin = computed(() => user && user.roles && user.roles.includes('Admin'));
 const sidebarOpen = ref(false);
 
 function toggleSidebar() {
@@ -60,6 +57,7 @@ watch(sidebarOpen, (val) => {
                     { route: 'Config/Index', icon: 'config', label: 'Configuración', active: route().current('Config/Index') },
                 ]" :key="item.route">
                     <NavLink
+                        v-if="item.route === 'Users/Index' ? isAdmin : true"
                         :href="route(item.route)"
                         :active="item.active"
                         class="flex mx-auto lg:mx-0 items-center  text-base "

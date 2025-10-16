@@ -75,6 +75,7 @@ Route::group(['middleware' => ['role:Admin|Cajero']], function (){
 //Users
 Route::group(['middleware' => ['role:Admin']], function (){
     Route::get('/Users', [\App\Http\Controllers\UserController::class, 'index'])->name('Users/Index') ->middleware(['auth', 'verified']);
+    Route::post('/Role/Update', [\App\Http\Controllers\UserController::class, 'update'])->name('/Role/Update') ->middleware(['auth', 'verified']);
 });
 
 //Config

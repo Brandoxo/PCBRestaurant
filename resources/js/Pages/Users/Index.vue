@@ -1,7 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { useToast } from 'vue-toastification';
 
 const props = defineProps({ users: Array, roles: Array, permissions: Array });
 const me = usePage().props.auth.user;
@@ -18,13 +19,26 @@ console.log('Usuario con roles)', props.users.roles);
 console.log('Permisos de usuarios', userPermissions);
 console.log('Roles', props.roles);
 
+const updateUserRole = (userId, roleName) => {
+    console.log(`Actualizar rol para el usuario ${userId} al rol ${roleName}`);
+    router.post(route('/Role/Update'), { user_id: userId, role: roleName }, {
+        onSuccess: () => {
+            useToast().success('Rol actualizado con éxito');
+            console.log('Rol actualizado con éxito');
+        },
+        onError: (errors) => {
+            console.error('Error al actualizar el rol:', errors);
+        }
+    });
+};
+
 </script>
 
 <template>
     <Head title="Usuarios" />
 
     <AuthenticatedLayout>
-        <div class="px-4 p-4">
+        <div class="px-4 p-4 overflow-y-auto h-screen pt-4 py-60">
             <div class="mx-auto max-w-7xl space-y-6 px-6 lg:px-8 mb-4">
                 <div class="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -81,7 +95,7 @@ console.log('Roles', props.roles);
         <button
             v-if="editingUserId === user.id && editingRoleId === role.id"
             class="p-2 bg-blue-500 hover:bg-blue-800 transform duration-300 text-white rounded text-sm"
-            @click="editingUserId = null; editingRoleId = null; selectedRole.value = null;"
+            @click="updateUserRole(user.id, selectedRole.value)"
         >
             Guardar Cambios
         </button>
