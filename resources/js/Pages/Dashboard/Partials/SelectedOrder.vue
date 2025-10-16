@@ -139,7 +139,7 @@ console.log("User permissions:", user ? user.permissions : "No user");
     </div>
 
     <!-- wait for order details -->
-    <div v-else class="mx-auto w-3/4 bg-white rounded-lg p-4">
+    <div v-else class="mx-auto w-3/4 bg-white rounded-lg p-4 mt-4">
         <div class="flex animate-pulse space-x-4">
             <div class="size-10 rounded-full bg-gray-200"></div>
             <div class="flex-1 space-y-6 py-1">
