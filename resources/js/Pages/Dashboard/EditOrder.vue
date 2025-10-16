@@ -34,7 +34,7 @@ console.log("Current Orderssssss:", currentOrder.value);
     <AuthenticatedLayout>
         <section
             v-if="order.status === 'En curso'"
-            class="p-4 py-6  h-screen overflow-y-auto mx-auto sm:px-6 lg:flex justify-center"
+            class="p-4 py-6 overflow-y-auto mx-auto sm:px-6 lg:flex justify-center"
         >
             <Head title="Editar Orden" />
             <div class="flex flex-col">

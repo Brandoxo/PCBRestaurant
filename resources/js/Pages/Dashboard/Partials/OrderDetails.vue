@@ -228,7 +228,7 @@ const PrintTicket = () => {
         Detalles de la orden
     </h2>
     <div
-        class="bg-white p-6 rounded-lg shadow-md flex overflow-y-auto justify-between max-h-64 h-fit hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        class="bg-white p-6 rounded-lg shadow-md flex overflow-y-auto justify-between max-h-64 hover:scale-[1.02] transition-all transform ease-in-out duration-300"
     >
         <div class="flex flex-col gap-2">
             <template

@@ -58,7 +58,7 @@ console.log("User permissions:", user ? user.permissions : "No user");
 
 <template>
     <div
-        class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full m-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full mt-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
         v-if="order"
     >
         <div
