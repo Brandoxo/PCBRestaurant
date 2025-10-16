@@ -1,0 +1,1 @@
+.grid-stack[data-v-cfc300c2]{width:100%;gap:.5rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(0,1fr))}.grid-stack-item[data-v-cfc300c2]{padding:4px}@media (max-width: 800px){.grid-stack[data-v-cfc300c2]{grid-template-columns:repeat(1,minmax(0,1fr));width:80%;margin:auto}}
