@@ -32,9 +32,10 @@ console.log("Current Orderssssss:", currentOrder.value);
 </script>
 <template>
     <AuthenticatedLayout>
+        <div class="overflow-y-auto scrollbar-hide lg:py-60 lg:h-svh lg:pt-5">
         <section
             v-if="order.status === 'En curso'"
-            class="p-4 py-6 overflow-y-auto mx-auto sm:px-6 lg:flex justify-center"
+            class="px-4 p-8  flex"
         >
             <Head title="Editar Orden" />
             <div class="flex flex-col">
@@ -92,5 +93,6 @@ console.log("Current Orderssssss:", currentOrder.value);
                 :isEdit="true"
             />
         </section>
+        </div>
     </AuthenticatedLayout>
 </template>
