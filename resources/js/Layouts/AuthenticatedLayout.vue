@@ -14,6 +14,10 @@ function toggleSidebar() {
     sidebarOpen.value = !sidebarOpen.value;
     showLabels.value = false;
 }
+onMounted(() => {
+    const saved = localStorage.getItem("sidebarOpen");
+    sidebarOpen.value = saved === "true";
+});
 
 watch(sidebarOpen, (val) => {
     localStorage.setItem("sidebarOpen", val);
@@ -21,7 +25,7 @@ watch(sidebarOpen, (val) => {
     if (val) {
         labelTimer = setTimeout(() => {
             showLabels.value = true;
-        }, 100);
+        }, 200);
     } else {
         showLabels.value = false;
     }
