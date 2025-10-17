@@ -80,7 +80,7 @@ const selectOrder = (order) => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-            <div class="px-4 p-4">
+            <div class="px-4 p-4 overflow-y-auto h-svh">
                 <div
                     class="overflow-hidden bg-white shadow-sm sm:rounded-lg w-fit flex justify-between mx-auto"
                     v-if="isWelcomeVisible && count === 0"
@@ -119,7 +119,7 @@ const selectOrder = (order) => {
                 </div>
                 <div class="hidden lg:flex gap-4">
                     <div
-                        class="mt-4 w-full overflow-y-auto h-[34rem] mx-auto scrollbar-hide 2xl:h-screen"
+                        class="mt-4 w-full overflow-y-auto h-svh mx-auto scrollbar-hide 2xl:h-svh"
                     >
                         <h2
                             class="text-lg font-bold text-white text-center mb-2"
@@ -128,7 +128,7 @@ const selectOrder = (order) => {
                         </h2>
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
-                    <div class="mt-2 w-full flex flex-col gap-4 overflow-y-auto h-full lg:max-h-96 2xl:max-h-full scrollbar-hide">
+                    <div class="mt-2 w-full flex flex-col gap-4 overflow-y-auto h-svh 2xl:max-h-full scrollbar-hide">
                         <SelectedOrder :order="selectedOrder" />
                         <OrderDetails :order="selectedOrder" />
                     </div>

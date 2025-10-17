@@ -47,7 +47,7 @@ watch(sidebarOpen, (val) => {
         </button>
          <aside
             :class="[
-                'bg-secondary shadow hidden lg:flex flex-col transition-all duration-500 ease-in-out',
+                'bg-secondary shadow hidden lg:flex flex-col transition-all duration-500 ease-in-out h-svh',
                 sidebarOpen ? 'w-64' : 'w-20'
             ]"
         >
