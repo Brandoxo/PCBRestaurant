@@ -17,7 +17,7 @@ function toggleSidebar() {
 onMounted(() => {
     const saved = localStorage.getItem("sidebarOpen");
     sidebarOpen.value = saved === "true";
-    showLabels.value = true;
+    showLabels.value = false;
 });
 
 watch(sidebarOpen, (val) => {
