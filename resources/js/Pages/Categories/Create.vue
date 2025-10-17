@@ -38,7 +38,7 @@ const createCategory = () =>{
 
 <template>
   <AuthenticatedLayout>
-  <div class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6 ">
+  <section class="py-60 h-screen overflow-y-auto mx-auto p-6 space-y-6 pt-6">
     <h1 class="text-2xl text-white font-bold mb-4">Registrar Nueva Categoría</h1>
     <div class="bg-white p-6 rounded-2xl">
     <form @submit.prevent="createCategory" class="space-y-2 flex flex-col">
@@ -50,6 +50,6 @@ const createCategory = () =>{
     </form>
     </div>
 <ReturnButton />
-  </div>
+  </section>
   </AuthenticatedLayout>
 </template>

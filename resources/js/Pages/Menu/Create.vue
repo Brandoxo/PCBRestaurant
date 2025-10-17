@@ -108,7 +108,8 @@ const createProduct = () => {
 <template>
     <AuthenticatedLayout>
         <Head title="Crear Producto" />
-        <div class="py-24 h-screen mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6">
+        <section class="py-60 h-screen overflow-y-auto mx-auto p-6 space-y-6 pt-6">
+
             <h2 class="text-white mb-4 font-bold text-2xl">
                 Registrar Nueva Producto
             </h2>
@@ -227,6 +228,6 @@ const createProduct = () => {
                 </button>
             </div>
             <ReturnButton />
-        </div>
+        </section>
     </AuthenticatedLayout>
 </template>

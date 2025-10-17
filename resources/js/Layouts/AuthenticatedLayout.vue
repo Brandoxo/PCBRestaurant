@@ -17,22 +17,19 @@ function toggleSidebar() {
 onMounted(() => {
     const saved = localStorage.getItem("sidebarOpen");
     sidebarOpen.value = saved === "true";
+    showLabels.value = true;
 });
 
 watch(sidebarOpen, (val) => {
     localStorage.setItem("sidebarOpen", val);
-    clearTimeout(labelTimer);
+        clearTimeout(labelTimer);
     if (val) {
         labelTimer = setTimeout(() => {
             showLabels.value = true;
-        }, 200);
+        }, 100);
     } else {
         showLabels.value = false;
     }
-});
-
-onBeforeUnmount(() => {
-    clearTimeout(labelTimer);
 });
 </script>
 
