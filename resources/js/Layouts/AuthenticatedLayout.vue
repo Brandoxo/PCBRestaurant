@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed, onBeforeUnmount } from "vue";
 import NavLink from "@/Components/NavLink.vue";
 import Header from "@/Components/Header.vue";
 import { usePage } from "@inertiajs/vue3";
@@ -7,18 +7,28 @@ import { usePage } from "@inertiajs/vue3";
 const user = usePage().props.auth.user;
 const isAdmin = computed(() => user && user.roles && user.roles.includes('Admin'));
 const sidebarOpen = ref(false);
+const showLabels = ref(false);
+let labelTimer = null;
 
 function toggleSidebar() {
     sidebarOpen.value = !sidebarOpen.value;
+    showLabels.value = false;
 }
-
-onMounted(() => {
-    const saved = localStorage.getItem("sidebarOpen");
-    sidebarOpen.value = saved === "true";
-});
 
 watch(sidebarOpen, (val) => {
     localStorage.setItem("sidebarOpen", val);
+    clearTimeout(labelTimer);
+    if (val) {
+        labelTimer = setTimeout(() => {
+            showLabels.value = true;
+        }, 100);
+    } else {
+        showLabels.value = false;
+    }
+});
+
+onBeforeUnmount(() => {
+    clearTimeout(labelTimer);
 });
 </script>
 
@@ -29,14 +39,14 @@ watch(sidebarOpen, (val) => {
         <!-- Sidebar -->
         <button
             @click="toggleSidebar"
-            :class="['absolute left-64 top-[50%] z-20 bg-secondary text-white py-4 rounded-r hover:bg-secondary-dark lg:block hidden transition-all duration-100 ease-in-out', sidebarOpen ? 'lg:left-64' : 'lg:left-20']"
+            :class="['absolute left-64 top-[50%] z-20 bg-secondary text-white py-4 rounded-r hover:bg-secondary-dark lg:block hidden transition-all duration-500 ease-in-out', sidebarOpen ? 'lg:left-64' : 'lg:left-20']"
         >
             <span v-if="sidebarOpen">⮜</span>
             <span v-else>⮞</span>
         </button>
          <aside
             :class="[
-                'bg-secondary shadow hidden lg:flex flex-col transition-all duration-100 ease-in-out',
+                'bg-secondary shadow hidden lg:flex flex-col transition-all duration-500 ease-in-out',
                 sidebarOpen ? 'w-64' : 'w-20'
             ]"
         >
@@ -67,7 +77,7 @@ watch(sidebarOpen, (val) => {
                             :alt="item.label"
                             class="w-6"
                         />
-                        <span v-if="sidebarOpen" >{{ item.label }}</span>
+                        <span v-if="showLabels" >{{ item.label }}</span>
                     </NavLink>
                 </li>
             </ul>
