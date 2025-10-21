@@ -1,23 +1,24 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import ShiftSchedules from './Partials/ShiftSchedules.vue';
+import Discounts from './Partials/Discounts.vue';
 </script>
 
 <template>
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight ">
                 Configuración
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 bg-white border-b border-gray-200">
-                        Página de configuración
-                    </div>
+        <div class="py-4">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-screen overflow-y-auto py-60 pt-0">
+                <div class=" overflow-hidden shadow-sm sm:rounded-lg gap-6 flex flex-col">
+                    <ShiftSchedules />
+                    <Discounts />
                 </div>
             </div>
         </div>
     </AuthenticatedLayout>
-    </template>
+</template>
