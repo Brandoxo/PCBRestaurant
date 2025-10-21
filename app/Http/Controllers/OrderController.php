@@ -30,7 +30,7 @@ class OrderController extends Controller
 
      public function update(Request $request, $id) {
         $order = Orders::findOrFail($id);
-        $order->mesa_id = $request->table_id;
+        // $order->mesa_id = $request->table_id;
         $order->status = $request->status;
         $order->total = $request->subtotal;
         $order->save();

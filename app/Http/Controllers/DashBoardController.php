@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mesas;
 use Illuminate\Http\Request;
 use App\Models\Orders;
 class DashBoardController extends Controller
 {
     public function index() {
-    $orders = Orders::with(['table', 'orderDetails.product'])->orderBy('date_time', 'desc')->get();
+    $today = date('Y-m-d');
+    $yesterday = date('Y-m-d', strtotime('-1 day'));
+    $orders = Orders::with(['table', 'orderDetails.product'])->whereDate('date_time', $today)->orWhereDate('date_time', $yesterday)->orderBy('date_time', 'desc')->get();
         $totalProducts = \App\Models\Products::count();
         $totalCategories = \App\Models\Categories::count();
         $totalUsers = \App\Models\User::count();

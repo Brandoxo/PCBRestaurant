@@ -38,7 +38,7 @@ const createTable = () => {
 
 <template>
     <AuthenticatedLayout>
-        <div class="py-24 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 lg:ml-64 space-y-6 ">
+        <div class="py-6 h-screen overflow-y-auto mx-auto sm:px-6 lg:px-8 space-y-6 ">
             <h2 class=" text-white mb-4 font-bold text-2xl">Registrar Nueva Mesa</h2>
             <div class="bg-white p-6 rounded-2xl shadow-md">
                 <form @submit.prevent="createTable" class="space-y-2 flex flex-col">
