@@ -80,6 +80,7 @@ Route::group(['middleware' => ['role:Admin']], function (){
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);
+Route::post('/Config/Update-Shift', [\App\Http\Controllers\ConfigController::class, 'updateShift'])->name('config.update-shift')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
