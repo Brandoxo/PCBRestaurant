@@ -36,6 +36,19 @@ const updateUserRole = (userId, roleName) => {
     });
 };
 
+const activateUserRole = (userId, roleName) => {
+    console.log(`Activar rol para el usuario ${userId} al rol ${roleName}`);
+    router.post(route('/Role/Activate'), { user_id: userId, role: roleName }, {
+        onSuccess: () => {
+            useToast().success('Rol activado con éxito');
+            console.log('Rol activado con éxito');
+        },
+        onError: (errors) => {
+            console.error('Error al activar el rol:', errors);
+        }
+    });
+};
+
 </script>
 
 <template>
@@ -78,6 +91,9 @@ const updateUserRole = (userId, roleName) => {
                                     {{ user.email }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap ">
+                                <button v-if="!user.roles.length" @click="activateUserRole(user.id, 'Cocinero')" class="uppercase bg-green-500 hover:bg-green-800 text-white font-bold p-2 flex justify-center rounded">
+                                    Activar Rol
+                                </button>
     <div v-for="role in user.roles" :key="role.id" class="grid grid-cols-1 gap-2">
         <select
             @change="editingUserId = user.id; editingRoleId = role.id; selectedRole.value = $event.target.value; console.log('Rol seleccionado:', selectedRole.value, 'Para el usuario:', user.id)"
