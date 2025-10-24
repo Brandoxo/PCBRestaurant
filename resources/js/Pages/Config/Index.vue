@@ -2,9 +2,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ShiftSchedules from './Partials/ShiftSchedules.vue';
 import Discounts from './Partials/Discounts.vue';
+import CashFloat from './Partials/CashFloat.vue';
 
 const props = defineProps({
     shifts: Array,
+    cashFloats: Array,
 });
 
 
@@ -21,6 +23,7 @@ const props = defineProps({
         <div class="py-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 h-screen overflow-y-auto py-60 pt-0">
                 <div class=" overflow-hidden shadow-sm sm:rounded-lg gap-6 flex flex-col">
+                    <CashFloat :cashFloats="props.cashFloats" />
                     <ShiftSchedules :shifts="props.shifts"/>
                     <Discounts />
                 </div>

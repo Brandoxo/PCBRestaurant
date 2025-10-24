@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Shifts;
+use App\Models\CashFloats;
 
 class ConfigController extends Controller
 {
     public function index()
     {
         $shifts = Shifts::all();
+        $cashFloats = CashFloats::all();
         return inertia('Config/Index', [
-            'shifts' => $shifts
+            'shifts' => $shifts,
+            'cashFloats' => $cashFloats
         ]);
     }
 
