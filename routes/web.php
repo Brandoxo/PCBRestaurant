@@ -80,8 +80,9 @@ Route::group(['middleware' => ['role:Admin']], function (){
 });
 
 //CashFloat
-Route::post('/CashFloat/Create', [\App\Http\Controllers\CashFloatController::class, 'store'])->name('CashFloat/Create') ->middleware(['auth', 'verified']);
 Route::post('/CashFloat/Store', [\App\Http\Controllers\CashFloatController::class, 'store'])->name('CashFloat/Store') ->middleware(['auth', 'verified']);
+Route::post('/CashFloat/Update', [\App\Http\Controllers\CashFloatController::class, 'update'])->name('CashFloat/Update') ->middleware(['auth', 'verified']);
+
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);

@@ -6,19 +6,6 @@ use App\Models\CashFloats;
 
 class CashFloatController extends Controller
 {
-    public function create(Request $request)
-    {
-        $data = $request->validate([
-            'amount' => 'required|numeric',
-            'user_id' => 'nullable|exists:users,id',
-            'type' => 'required|in:open,adjust,close',
-            'notes' => 'nullable|string',
-
-        ]);
-        $data['user_id'] = $request->user()->id ?? null;
-        $cashFloat = CashFloats::create($data);
-        return response()->json($cashFloat, 201);
-    }
 
         public function store(Request $request)
     {
@@ -32,7 +19,25 @@ class CashFloatController extends Controller
         $data['user_id'] = $request->user()->id ?? null;
 
         $cashFloat = CashFloats::create($data);
+        $cashFloat->refresh();
 
-        return response()->json($cashFloat, 201);
+        return redirect()->back()->with('success', 'Fondo de caja guardado correctamente.');
+    }
+
+    public function update(Request $request)
+    {
+        $data = $request->validate([
+            'id' => 'required|exists:cash_floats,id',
+            'amount' => 'required|numeric',
+            'user_id' => 'nullable|exists:users,id',
+            'type' => 'required|in:open,adjust,close',
+            'notes' => 'nullable|string',
+        ]);
+
+        $data['user_id'] = $request->user()->id ?? null;
+
+        $cashFloat = CashFloats::findOrFail($data['id']);
+        $cashFloat->update($data);
+        return redirect()->back()->with('success', 'Fondo de caja actualizado correctamente.');
     }
 };

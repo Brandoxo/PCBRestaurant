@@ -6,10 +6,12 @@ import Modal from "@/Components/Modal.vue";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 
-const props = defineProps({ sales: Object });
+const props = defineProps({ sales: Object, cashFloat: Object });
 const user = usePage().props.auth.user;
 console.log('user details', user)
+console.log('cash float in sales index', props.cashFloat)
 
+const cashFloatAmount = Number(props.cashFloat && props.cashFloat.amount ? props.cashFloat.amount : 0);
 
 const canGenerateCutOff = computed(() =>{
     return user && user.permissions && user.permissions.includes('generate cutoff')
@@ -154,9 +156,9 @@ async function buildCashAuditData() {
         start_date: formatDateToMySQL(firstDate),
         end_date: formatDateToMySQL(firstDate),
         shift: selectedShift.value,
-        initial_amount: 3500,
+        initial_amount: cashFloatAmount,
         total_amount: totalAmount,
-        final_amount: 3500 + totalAmount,
+        final_amount: cashFloatAmount + totalAmount,
         total_tips: totalTipsInt + totalTipsPercent,
     };
 }
@@ -234,7 +236,7 @@ const PrintCutOffTicket = () => {
         fecha: selectedDate.value,
         turno: selectedShift.value,
         totalVentas: getTotalAmount(sales),
-        montoFinal: 3500 + getTotalAmount(sales),
+        montoFinal: cashFloatAmount + getTotalAmount(sales),
         totalPropinas:
             getTotalTipsIntByOrder(sales) + getTotalTipsPercent(sales),
         totalEfectivo: getTotalAmount(getFilteredSalesPaymentMethodCash()),

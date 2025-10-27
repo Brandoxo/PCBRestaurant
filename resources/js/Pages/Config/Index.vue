@@ -3,6 +3,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import ShiftSchedules from './Partials/ShiftSchedules.vue';
 import Discounts from './Partials/Discounts.vue';
 import CashFloat from './Partials/CashFloat.vue';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps({
     shifts: Array,

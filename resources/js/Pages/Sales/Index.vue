@@ -6,6 +6,7 @@ import { computed } from "vue";
 
 const props = defineProps({
     sales: Object,
+    cashFloat: Object
 });
 const user = usePage().props.auth.user
 
@@ -27,7 +28,7 @@ console.log(props.sales);
                 class="bg-blue-500 text-white px-4 py-2 rounded">Ver lista de Cortes</Link>
             </div>
 
-            <ListSales :sales="sales" />
+            <ListSales :sales="sales" :cashFloat="cashFloat" />
         </section>
     </AuthenticatedLayout>
 </template>

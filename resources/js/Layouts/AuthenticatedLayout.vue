@@ -65,7 +65,7 @@ watch(sidebarOpen, (val) => {
                     { route: 'Menu/Index', icon: 'products', label: 'Menú', active: route().current('Menu/Index') || route().current('Menu/Create') },
                     { route: 'Orders/Index', icon: 'orders', label: 'Órdenes', active: route().current('Orders/Index') },
                     { route: 'Users/Index', icon: 'users', label: 'Usuarios', active: route().current('Users/Index') },
-                  //  { route: 'Config/Index', icon: 'config', label: 'Configuración', active: route().current('Config/Index') },
+                    { route: 'Config/Index', icon: 'config', label: 'Configuración', active: route().current('Config/Index') },
                 ]" :key="item.route">
                     <NavLink
                         v-if="item.route === 'Users/Index' ? isAdmin : true"
