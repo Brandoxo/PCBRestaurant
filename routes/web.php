@@ -67,12 +67,25 @@ Route::put('/Order/Update/{id}', [\App\Http\Controllers\OrderController::class, 
 Route::post('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class, 'addTip'])->name('Order/AddTip');
 
 //CashAudit
-Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified']);
-Route::post('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'store'])->name('CashAudit/Store') ->middleware(['auth', 'verified']);
+Route::group(['middleware' => ['role:Admin|Cajero']], function (){
+    Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified']);
+    Route::post('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'store'])->name('CashAudit/Store') ->middleware(['auth', 'verified']);
+});
 
+//Users
+Route::group(['middleware' => ['role:Admin']], function (){
+    Route::get('/Users', [\App\Http\Controllers\UserController::class, 'index'])->name('Users/Index') ->middleware(['auth', 'verified']);
+    Route::post('/Role/Update', [\App\Http\Controllers\UserController::class, 'update'])->name('/Role/Update') ->middleware(['auth', 'verified']);
+    Route::post('/Role/Activate', [\App\Http\Controllers\UserController::class, 'activate'])->name('/Role/Activate') ->middleware(['auth', 'verified']);
+});
+
+//CashFloat
+Route::post('/CashFloat/Create', [\App\Http\Controllers\CashFloatController::class, 'store'])->name('CashFloat/Create') ->middleware(['auth', 'verified']);
+Route::post('/CashFloat/Store', [\App\Http\Controllers\CashFloatController::class, 'store'])->name('CashFloat/Store') ->middleware(['auth', 'verified']);
 
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);
+Route::post('/Config/Update-Shift', [\App\Http\Controllers\ConfigController::class, 'updateShift'])->name('config.update-shift')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -81,7 +94,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php'; 
 
 Route::get('print-ticket/', function (Request $request) {
     $ticketrequest = request()->all()['data'];

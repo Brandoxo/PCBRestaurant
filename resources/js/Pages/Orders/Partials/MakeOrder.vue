@@ -6,6 +6,7 @@ import { useToast } from "vue-toastification";
 import { router } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import ReturnButton from "@/Components/ReturnButton.vue";
+import { usePage } from "@inertiajs/vue3";
 
 const props = defineProps({
     tables: Object,
@@ -13,6 +14,10 @@ const props = defineProps({
     selectedTable: Object,
     currentOrder: Object,
     isEdit: Boolean,
+});
+const user = usePage().props.auth.user;
+const canEditOrder = computed(() => {
+    return user && user.permissions && user.permissions.includes("edit orders");
 });
 
 const searchQuery = ref("");
@@ -217,7 +222,7 @@ console.log(props);
 <template>
     <div class="w-full px-8" v-if="props.selectedTable">
         <div
-            class="bg-gray-100 p-8 rounded-xl shadow-lg hover:scale-[1.01] transform transition-transform duration-300 ease-in-out"
+            class="bg-gray-100 p-8 rounded-xl shadow-lg hover:scale-[1.01] transform transition-transform duration-300 ease-in-out mt-4 lg:mt-0"
         >
             <p class="text-center">Selecciona una categoría del Menú</p>
 
@@ -279,14 +284,14 @@ console.log(props);
                                     class="flex justify-evenly w-full m-4 text-center items-center"
                                 >
                                     <button
-                                        v-if="!isEdit"
+                                        v-if="!isEdit || (isEdit && canEditOrder)"
                                         class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-red-600/80 text-white hover:bg-red-600"
                                         @click="RemoveToOrder(product.id)"
                                     >
                                         -
                                     </button>
                                     <button
-                                        v-if="isEdit"
+                                        v-if="isEdit && !canEditOrder"
                                         disabled
                                         class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-gray-400/80 text-white cursor-not-allowed"
                                     >

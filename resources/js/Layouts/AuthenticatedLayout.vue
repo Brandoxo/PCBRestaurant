@@ -1,143 +1,91 @@
 <script setup>
-import { ref } from "vue";
-import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import Dropdown from "@/Components/Dropdown.vue";
-import DropdownLink from "@/Components/DropdownLink.vue";
+import { ref, onMounted, watch, computed, onBeforeUnmount } from "vue";
 import NavLink from "@/Components/NavLink.vue";
-import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
-import { Link } from "@inertiajs/vue3";
 import Header from "@/Components/Header.vue";
+import { usePage } from "@inertiajs/vue3";
 
-const showingNavigationDropdown = ref(false);
+const user = usePage().props.auth.user;
+const isAdmin = computed(() => user && user.roles && user.roles.includes('Admin'));
+const sidebarOpen = ref(false);
+const showLabels = ref(false);
+let labelTimer = null;
+
+function toggleSidebar() {
+    sidebarOpen.value = !sidebarOpen.value;
+    showLabels.value = false;
+}
+onMounted(() => {
+    const saved = localStorage.getItem("sidebarOpen");
+    sidebarOpen.value = saved === "true";
+    showLabels.value = false;
+});
+
+watch(sidebarOpen, (val) => {
+    localStorage.setItem("sidebarOpen", val);
+        clearTimeout(labelTimer);
+    if (val) {
+        labelTimer = setTimeout(() => {
+            showLabels.value = true;
+        }, 100);
+    } else {
+        showLabels.value = false;
+    }
+});
 </script>
 
 <template>
-    <div class="min-h-screen flex bg-tertiary">
+    <Header></Header>
+    <div class="flex">
+
         <!-- Sidebar -->
-        <aside
-            class="w-64 bg-secondary shadow hidden lg:flex flex-col fixed h-full"
+        <button
+            @click="toggleSidebar"
+            :class="['absolute left-64 top-[50%] z-20 bg-secondary text-white py-4 rounded-r hover:bg-secondary-dark lg:block hidden transition-all duration-500 ease-in-out', sidebarOpen ? 'lg:left-64' : 'lg:left-20']"
         >
-            <div class="flex items-center bg-white">
-                <Link :href="route('dashboard')">
-                    <ApplicationLogo
-                        class="h-14 my-2 mx-auto"
-                    />
-                </Link>
-            </div>
-            <div class="px-2 h-full flex flex-col">
-                <nav class="flex-1">
-                    <ul
-                        class="flex flex-col h-full justify-evenly 2xl:justify-start 2xl:gap-8 2xl:mt-8"
+            <span v-if="sidebarOpen">⮜</span>
+            <span v-else>⮞</span>
+        </button>
+         <aside
+            :class="[
+                'bg-secondary shadow hidden lg:flex flex-col transition-all duration-500 ease-in-out h-svh',
+                sidebarOpen ? 'w-64' : 'w-20'
+            ]"
+        >
+            <ul
+                :class="[
+                    'flex flex-col justify-start mt-6',
+                    sidebarOpen ? 'lg:gap-2 2xl:gap-4' : 'gap-2'
+                ]"
+            >
+                <li v-for="item in [
+                    { route: 'dashboard', icon: 'home', label: 'Dashboard', active: route().current('dashboard') },
+                    { route: 'Tables/Index', icon: 'table', label: 'Mesas', active: route().current('Tables/Index') || route().current('Tables/Create') },
+                    { route: 'Sales/Index', icon: 'sales', label: 'Ventas', active: route().current('Sales/Index') },
+                    { route: 'Categories/Index', icon: 'categories', label: 'Categorías', active: route().current('Categories/Index') || route().current('Categories/Create') },
+                    { route: 'Menu/Index', icon: 'products', label: 'Menú', active: route().current('Menu/Index') || route().current('Menu/Create') },
+                    { route: 'Orders/Index', icon: 'orders', label: 'Órdenes', active: route().current('Orders/Index') },
+                    { route: 'Users/Index', icon: 'users', label: 'Usuarios', active: route().current('Users/Index') },
+                  //  { route: 'Config/Index', icon: 'config', label: 'Configuración', active: route().current('Config/Index') },
+                ]" :key="item.route">
+                    <NavLink
+                        v-if="item.route === 'Users/Index' ? isAdmin : true"
+                        :href="route(item.route)"
+                        :active="item.active"
+                        class="flex mx-auto lg:mx-0 items-center  text-base "
                     >
-                        <li>
-                            <NavLink
-                                :href="route('dashboard')"
-                                :active="route().current('dashboard')"
-                                ><img
-                                    src="/assets/icons/svg/menu/home.svg"
-                                    alt="Inicio"
-                                    class="w-6"
-                                />
-                                Dashboard
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                :href="route('Tables/Index')"
-                                :active="
-                                    route().current('Tables/Index') ||
-                                    route().current('Tables/Create')
-                                "
-                                ><img
-                                    src="/assets/icons/svg/menu/table.svg"
-                                    alt="Inicio"
-                                    class="w-6"
-                                />
-                                Mesas
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                :href="route('Sales/Index')"
-                                :active="route().current('Sales/Index')"
-                                ><img
-                                    src="/assets/icons/svg/menu/sales.svg"
-                                    alt="Ventas"
-                                    class="w-6"
-                                />
-                                Ventas
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                :href="route('Categories/Index')"
-                                :active="
-                                    route().current('Categories/Index') ||
-                                    route().current('Categories/Create')
-                                "
-                                ><img
-                                    src="/assets/icons/svg/menu/categories.svg"
-                                    alt="Categorías"
-                                    class="w-6"
-                                />
-                                Categorías
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                :href="route('Menu/Index')"
-                                :active="
-                                    route().current('Menu/Index') ||
-                                    route().current('Menu/Create')
-                                "
-                                ><img
-                                    src="/assets/icons/svg/menu/products.svg"
-                                    alt="Productos"
-                                    class="w-6"
-                                />
-                                Menú
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                :href="route('Orders/Index')"
-                                :active="route().current('Orders/Index')"
-                                ><img
-                                    src="/assets/icons/svg/menu/orders.svg"
-                                    alt="Órdenes"
-                                    class="w-6"
-                                />
-                                Órdenes
-                            </NavLink>
-                        </li>
-                        <li>
-                            <NavLink
-                                :href="route('Config/Index')"
-                                :active="route().current('Config/Index')"
-                                ><img
-                                    src="/assets/icons/svg/menu/config.svg"
-                                    alt="Configuración"
-                                    class="w-6"
-                                />
-                                Configuración
-                            </NavLink>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+                        <img
+                            :src="`/assets/icons/svg/menu/${item.icon}.svg`"
+                            :alt="item.label"
+                            class="w-6"
+                        />
+                        <span v-if="showLabels" >{{ item.label }}</span>
+                    </NavLink>
+                </li>
+            </ul>
         </aside>
-
-        <Header></Header>
-
+        
         <!-- Main Content -->
         <div class="flex-1">
-            <!-- Page Heading -->
-            <header class="bg-primary shadow" v-if="$slots.header">
-                <div class="mx-auto max-w-7xl ml-64 px-2 py-6 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-            <!-- Page Content -->
             <main>
                 <slot />
             </main>

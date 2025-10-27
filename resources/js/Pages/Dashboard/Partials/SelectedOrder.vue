@@ -3,6 +3,7 @@ import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import Swal from "sweetalert2";
 import { router, usePage } from "@inertiajs/vue3";
+import { computed } from "vue";
 
 const user = usePage().props.auth.user;
 
@@ -48,11 +49,16 @@ const cancelOrder = async () => {
         console.error("Error en la solicitud:", error);
     }
 };
+
+const canCancelOrder = computed(() => {
+    return user && user.permissions && user.permissions.includes("cancel orders");
+});
+console.log("User permissions:", user ? user.permissions : "No user");
 </script>
 
 <template>
     <div
-        class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full m-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        class="bg-white shadow-md rounded-lg p-2 px-4 w-3/4 lg:w-full mt-4 mx-auto hover:scale-[1.02] transition-all transform ease-in-out duration-300"
         v-if="order"
     >
         <div
@@ -84,9 +90,9 @@ const cancelOrder = async () => {
             </h2>
             <StatusBadge class="" />
         </div>
-        <div class="flex items-center justify-between mt-4">
+        <div class="flex items-center justify-between gap-4 mt-4">
             <div class="flex-col">
-                <h2 class="text-start text-3xl font-bold">
+                <h2 class="text-center text-3xl font-bold">
                     Mesa
                     {{ order.table.number ?? "7" }}
                 </h2>
@@ -110,27 +116,30 @@ const cancelOrder = async () => {
                 </div>
             </div>
             <button
-                v-if="order.status === 'En curso'"
+                v-if="order.status === 'En curso' && canCancelOrder"
                 @click="confirmCancelOrder"
-                class="mt-4 bg-dangerRed/30 p-2 rounded-full text-dangerRed font-bold hover:bg-dangerRed/50 transition"
+                class="mt-4 bg-dangerRed/30 max-w-96 p-2 rounded-md w-full uppercase text-dangerRed tracking-widest font-extrabold hover:bg-dangerRed/50 transition"
             >
-                Cancelar Orden
+                Cancelar
             </button>
-            <button class="flex items-center gap-2">
+            <button class="gap-2 text-center">
                 <img
                     src="assets/icons/svg/links/sheet.svg"
                     alt="Imagen de la orden"
-                    class="w-6"
+                    class="w-6 mx-auto"
                 />
                 <p class="text-center text-midBlue font-bold">
-                    Export #{{ order.id ?? "" }}
+                    Export
+                </p>
+                <p class="text-center text-midBlue font-bold">
+                   #{{ order.id ?? "" }}
                 </p>
             </button>
         </div>
     </div>
 
     <!-- wait for order details -->
-    <div v-else class="mx-auto w-3/4 bg-white rounded-lg p-4">
+    <div v-else class="mx-auto w-3/4 bg-white rounded-lg p-4 mt-4">
         <div class="flex animate-pulse space-x-4">
             <div class="size-10 rounded-full bg-gray-200"></div>
             <div class="flex-1 space-y-6 py-1">

@@ -12,10 +12,10 @@ console.log("Total Revenue prop in <TotalRevenue>: ", props.totalRevenue);
 <template>
     <div class="w-full max-w-md mx-auto">
         <div
-            class="bg-white rounded-3xl shadow p-6 flex gap-4 justify-center items-center"
+            class="bg-white rounded-3xl shadow p-6 lg:flex gap-4 justify-center items-center w-full text-center lg:text-start"
         >
             <div
-                class="rounded-full bg-goodYellow/30 flex items-center justify-center w-14 h-14"
+                class="rounded-full bg-goodYellow/30 flex items-center justify-center w-14 h-14 mx-auto lg:mx-0 mb-4 lg:mb-0"
             >
                 <img
                     src="/assets/icons/svg/dash/revenue.svg"
@@ -23,8 +23,8 @@ console.log("Total Revenue prop in <TotalRevenue>: ", props.totalRevenue);
                     class="h-10 w-10"
                 />
             </div>
-            <div class="w-fit">
-                <h2 class="text-xl font-medium">Ingresos Totales</h2>
+            <div class="">
+                <h2 class="text-xl font-medium ">Ingresos Totales</h2>
                 <p class="text-3xl font-bold text-gray-800">
                     <span>$ </span>{{ formatterWithoutFraction.format(totalRevenue ?? 0) }}
                 </p>
