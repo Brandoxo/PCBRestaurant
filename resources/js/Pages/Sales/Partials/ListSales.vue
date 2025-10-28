@@ -6,10 +6,11 @@ import Modal from "@/Components/Modal.vue";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 
-const props = defineProps({ sales: Object, cashFloat: Object });
+const props = defineProps({ sales: Object, cashFloat: Object, shifts: Object });
 const user = usePage().props.auth.user;
 console.log('user details', user)
 console.log('cash float in sales index', props.cashFloat)
+console.log('shifts in ListSales Component', props.shifts)
 
 const cashFloatAmount = Number(props.cashFloat && props.cashFloat.amount ? props.cashFloat.amount : 0);
 
@@ -20,6 +21,7 @@ const canGenerateCutOff = computed(() =>{
 const selectedDate = ref("");
 const selectedShift = ref("");
 const openModal = ref(false);
+const modalSelectedShift = ref("");
 
 const showModal = () => {
     openModal.value = true;
@@ -43,46 +45,114 @@ const formatTotal = (quantity, unitPrice) => {
     return formatCurrency(quantity * unitPrice);
 };
 
-const shifts = {
-    morning: "Mañana",
-    afternoon: "Tarde",
-};
 
-const getShift = (dateTime) => {
-    const hour = new Date(dateTime).getHours();
-    if (hour >= 7 && hour < 15) return shifts.morning;
-    if (hour >= 15 && hour < 23) return shifts.afternoon;
-    return "Fuera de turno";
+const getScheduleForShift = (shiftName) => {
+    const shift = props.shifts.find(s => s.name_shift === shiftName);
+    return shift ? `${shift.start_time} - ${shift.end_time}` : '';
 };
+console.log('Schedule for Matutino:', getScheduleForShift('Matutino'));
+console.log('Schedule for Vespertino:', getScheduleForShift('Vespertino'));
 
-function getFilteredSales() {
-    let sales = props.sales.data;
-    if (selectedDate.value) {
-        sales = sales.filter((sale) => {
-            const d = new Date(sale.date_time);
-            const saleDate =
-                d.getFullYear() +
-                "-" +
-                String(d.getMonth() + 1).padStart(2, "0") +
-                "-" +
-                String(d.getDate()).padStart(2, "0");
-            return saleDate === selectedDate.value;
-        });
+function getFilteredSales(shiftName = modalSelectedShift.value, dateStr = selectedDate.value) {
+    if (!shiftName || !dateStr) return [];
+    console.log('Filtering sales for shift:', shiftName, 'and date:', dateStr);
+    const shiftSchedule = getScheduleForShift(shiftName);
+    if (!shiftSchedule) {
+        console.warn("No schedule for shift:", shiftName);
+        return [];
     }
-    if (selectedShift.value) {
-        let shiftName = selectedShift.value;
-        if (shiftName === "Matutino") shiftName = "Mañana";
-        if (shiftName === "Vespertino") shiftName = "Tarde";
-        if (shiftName === "Otro") shiftName = "Fuera de turno";
-        sales = sales.filter((sale) => getShift(sale.date_time) === shiftName);
-    }
-    return sales;
+
+    const [startStr = "", endStr = ""] = shiftSchedule.split("-").map(s => s.trim());
+    console.log('Shift schedule:', startStr, endStr);
+
+    const parseTime = (timeStr) => {
+        const parts = (timeStr || "0:00").split(":").map(Number);
+        return {
+            hours: Number.isFinite(parts[0]) ? parts[0] : 0,
+            minutes: Number.isFinite(parts[1]) ? parts[1] : 0,
+        };
+    };
+    console.log('Parsed start time:', parseTime(startStr));
+    console.log('Parsed end time:', parseTime(endStr));
+
+    const startTime = parseTime(startStr);
+    const endTime = parseTime(endStr);
+
+    const salesList = Array.isArray(props.sales?.data) ? props.sales.data : [];
+    console.log('Total sales to filter:', salesList.length);
+
+    return salesList.filter((sale) => {
+        const saleDateObj = new Date(sale.date_time);
+        if (isNaN(saleDateObj)) return false;
+
+        const saleDate =
+            saleDateObj.getFullYear() +
+            "-" +
+            String(saleDateObj.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(saleDateObj.getDate()).padStart(2, "0");
+
+        if (saleDate !== dateStr) return false;
+        console.log('Sale date matches selected date:', saleDate);
+
+        const saleHours = saleDateObj.getHours();
+        const saleMinutes = saleDateObj.getMinutes();
+
+        const isAfterStart =
+            saleHours > startTime.hours ||
+            (saleHours === startTime.hours && saleMinutes >= startTime.minutes);
+            console.log('isAfterStart:', isAfterStart);
+        const isBeforeEnd =
+            saleHours < endTime.hours ||
+            (saleHours === endTime.hours && saleMinutes <= endTime.minutes);
+            console.log('isBeforeEnd:', isBeforeEnd);
+
+            console.log('Sales includes:', sale.id, '->', isAfterStart && isBeforeEnd);
+        return isAfterStart && isBeforeEnd;
+    });
 }
 
-function getFirstDate(sales) {
-    if (!sales.length) return null;
-    return new Date(Math.min(...sales.map((sale) => new Date(sale.date_time))));
-}
+
+// const shifts = {
+//     morning: "Mañana",
+//     afternoon: "Tarde",
+// };
+
+// const getShift = (dateTime) => {
+//     const hour = new Date(dateTime).getHours();
+//     if (hour >= 7 && hour < 15) return shifts.morning;
+//     if (hour >= 15 && hour < 23) return shifts.afternoon;
+//     return "Fuera de turno";
+// };
+
+// function getFilteredSales() {
+//     let sales = props.sales.data;
+//     if (selectedDate.value) {
+//         sales = sales.filter((sale) => {
+//             const d = new Date(sale.date_time);
+//             const saleDate =
+//                 d.getFullYear() +
+//                 "-" +
+//                 String(d.getMonth() + 1).padStart(2, "0") +
+//                 "-" +
+//                 String(d.getDate()).padStart(2, "0");
+//             return saleDate === selectedDate.value;
+//         });
+//     }
+//     if (selectedShift.value) {
+//         let shiftName = selectedShift.value;
+//         if (shiftName === "Matutino") shiftName = "Mañana";
+//         if (shiftName === "Vespertino") shiftName = "Tarde";
+//         if (shiftName === "Otro") shiftName = "Fuera de turno";
+//         sales = sales.filter((sale) => getShift(sale.date_time) === shiftName);
+//     }
+//     return sales;
+// }
+
+ function getFirstDate(sales) {
+     if (!sales || !sales.length) return null;
+     return new Date(Math.min(...sales.map((sale) => new Date(sale.date_time))));
+ }
 
 function getTotalAmount(sales) {
     return sales
@@ -118,35 +188,30 @@ function getTotalTipsPercent(sales) {
     }, 0);
 }
 
-function formatDateToMySQL(dateString) {
-    const date = new Date(dateString);
-    return (
-        date.getFullYear() +
-        "-" +
-        String(date.getMonth() + 1).padStart(2, "0") +
-        "-" +
-        String(date.getDate()).padStart(2, "0") +
-        " " +
-        String(date.getHours()).padStart(2, "0") +
-        ":" +
-        String(date.getMinutes()).padStart(2, "0") +
-        ":" +
-        String(date.getSeconds()).padStart(2, "0")
-    );
-}
+ function formatDateToMySQL(dateString) {
+     const date = new Date(dateString);
+     return (
+         date.getFullYear() +
+         "-" +
+         String(date.getMonth() + 1).padStart(2, "0") +
+         "-" +
+         String(date.getDate()).padStart(2, "0") +
+         " " +
+         String(date.getHours()).padStart(2, "0") +
+         ":" +
+         String(date.getMinutes()).padStart(2, "0") +
+         ":" +
+         String(date.getSeconds()).padStart(2, "0")
+     );
+ }
 
 async function buildCashAuditData() {
-    if (!selectedDate.value || !selectedShift.value) {
+    if (!selectedDate.value || !modalSelectedShift.value) {
         alert("Por favor, selecciona una fecha y un turno.");
         return null;
     }
-    const { data: sales } = await axios.get("/Sales-for-cutoff", {
-        params: {
-            date: selectedDate.value,
-            shift: selectedShift.value,
-        },
-    });
-    if (!sales.length) return null;
+    const sales = getFilteredSales();
+    if (!sales || !sales.length) return null;
     const firstDate = getFirstDate(sales);
     const totalAmount = getTotalAmount(sales);
     const totalTipsInt = getTotalTipsIntByOrder(sales);
@@ -155,7 +220,7 @@ async function buildCashAuditData() {
         user_id: user.id,
         start_date: formatDateToMySQL(firstDate),
         end_date: formatDateToMySQL(firstDate),
-        shift: selectedShift.value,
+        shift: modalSelectedShift.value,
         initial_amount: cashFloatAmount,
         total_amount: totalAmount,
         final_amount: cashFloatAmount + totalAmount,
@@ -234,7 +299,7 @@ const PrintCutOffTicket = () => {
     }
     const cutOffData = {
         fecha: selectedDate.value,
-        turno: selectedShift.value,
+        turno: modalSelectedShift.value,
         totalVentas: getTotalAmount(sales),
         montoFinal: cashFloatAmount + getTotalAmount(sales),
         totalPropinas:
@@ -389,18 +454,19 @@ function onDateChange() {
                 para este corte de caja?
             </p>
             <select
-                v-model="selectedShift"
+                v-model="modalSelectedShift"
                 class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4"
             >
                 <option value="" disabled>Seleccione un turno</option>
-                <option value="Matutino">Mañana (7am - 3pm)</option>
-                <option value="Vespertino">Tarde (3pm - 11pm)</option>
+                <option v-for="shift in props.shifts" :key="shift.id" :value="shift.name_shift">
+                    {{ shift.name_shift }} {{ shift.start_time.slice(0, 5) }} - {{ shift.end_time.slice(0, 5) }}
+                </option>
             </select>
 
             <div
                 v-if="
-                    selectedShift === 'Matutino' ||
-                    selectedShift === 'Vespertino'
+                    modalSelectedShift === 'Matutino' ||
+                    modalSelectedShift === 'Vespertino'
                 "
                 class="mb-4"
             >

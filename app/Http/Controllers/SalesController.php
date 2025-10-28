@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use App\Models\CashFloats;
+use App\Models\Shifts;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -13,6 +14,7 @@ class SalesController extends Controller
     public function index(Request $request) {
     $query = Sales::with(['product', 'user', 'order']);
     $cashFloat = CashFloats::where('type', 'open')->first();
+    $shifts = Shifts::all();
 
     if ($request->has('date') && $request->date) {
         $query->whereDate('date_time', $request->date);
@@ -23,6 +25,7 @@ class SalesController extends Controller
     return Inertia::render('Sales/Index', [
         'sales' => $sales,
         'cashFloat' => $cashFloat,
+        'shifts' => $shifts,
     ]);
 }
 
