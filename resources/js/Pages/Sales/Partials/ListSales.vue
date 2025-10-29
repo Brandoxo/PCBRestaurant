@@ -21,7 +21,7 @@ const canGenerateCutOff = computed(() =>{
 const selectedDate = ref("");
 const selectedShift = ref("");
 const openModal = ref(false);
-const modalSelectedShift = ref("");
+const modalSelectedDate = ref("");
 
 const showModal = () => {
     openModal.value = true;
@@ -53,7 +53,7 @@ const getScheduleForShift = (shiftName) => {
 console.log('Schedule for Matutino:', getScheduleForShift('Matutino'));
 console.log('Schedule for Vespertino:', getScheduleForShift('Vespertino'));
 
-function getFilteredSales(shiftName = modalSelectedShift.value, dateStr = selectedDate.value) {
+function getFilteredSales(shiftName = selectedShift.value, dateStr = selectedDate.value) {
     if (!shiftName || !dateStr) return [];
     console.log('Filtering sales for shift:', shiftName, 'and date:', dateStr);
     const shiftSchedule = getScheduleForShift(shiftName);
@@ -206,11 +206,12 @@ function getTotalTipsPercent(sales) {
  }
 
 async function buildCashAuditData() {
-    if (!selectedDate.value || !modalSelectedShift.value) {
+    const dayToUse = modalSelectedDate.value;
+    if (!dayToUse || !selectedShift.value) {
         alert("Por favor, selecciona una fecha y un turno.");
         return null;
     }
-    const sales = getFilteredSales();
+    const sales = getFilteredSales(selectedShift.value, dayToUse);
     if (!sales || !sales.length) return null;
     const firstDate = getFirstDate(sales);
     const totalAmount = getTotalAmount(sales);
@@ -220,7 +221,7 @@ async function buildCashAuditData() {
         user_id: user.id,
         start_date: formatDateToMySQL(firstDate),
         end_date: formatDateToMySQL(firstDate),
-        shift: modalSelectedShift.value,
+        shift: selectedShift.value,
         initial_amount: cashFloatAmount,
         total_amount: totalAmount,
         final_amount: cashFloatAmount + totalAmount,
@@ -228,24 +229,24 @@ async function buildCashAuditData() {
     };
 }
 
-function getFilteredSalesPaymentMethodCash() {
-    let sales = getFilteredSales();
+function getFilteredSalesPaymentMethodCash(shiftName = selectedShift.value, dateStr = modalSelectedDate.value) {
+    let sales = getFilteredSales(shiftName, dateStr);
     sales = sales.filter(
         (sale) => sale.payment_method === "Efectivo" && !sale.is_courtesy
     );
     return sales;
 }
 
-function getFilteredSalesPaymentMethodCard() {
-    let sales = getFilteredSales();
+function getFilteredSalesPaymentMethodCard(shiftName = selectedShift.value, dateStr = modalSelectedDate.value) {
+    let sales = getFilteredSales(shiftName, dateStr);
     sales = sales.filter(
         (sale) => sale.payment_method === "Tarjeta" && !sale.is_courtesy
     );
     return sales;
 }
 
-function getFilteredSalesCourtesy() {
-    let sales = getFilteredSales();
+function getFilteredSalesCourtesy(shiftName = selectedShift.value, dateStr = modalSelectedDate.value) {
+    let sales = getFilteredSales(shiftName, dateStr);
     sales = sales.filter((sale) => sale.is_courtesy === 1);
     return sales;
 }
@@ -292,21 +293,22 @@ const generateCashAudit = async () => {
 };
 
 const PrintCutOffTicket = () => {
-    const sales = getFilteredSales();
+    const dayToUse = modalSelectedDate.value;
+    const sales = getFilteredSales(selectedShift.value, dayToUse);
     if (!sales.length) {
         alert("No hay ventas para la fecha y turno seleccionados.");
         return;
     }
     const cutOffData = {
-        fecha: selectedDate.value,
-        turno: modalSelectedShift.value,
+        fecha: modalSelectedDate.value,
+        turno: selectedShift.value,
         totalVentas: getTotalAmount(sales),
         montoFinal: cashFloatAmount + getTotalAmount(sales),
         totalPropinas:
             getTotalTipsIntByOrder(sales) + getTotalTipsPercent(sales),
-        totalEfectivo: getTotalAmount(getFilteredSalesPaymentMethodCash()),
-        totalTarjeta: getTotalAmount(getFilteredSalesPaymentMethodCard()),
-        totalCortesias: getTotalAmount(getFilteredSalesCourtesy()),
+        totalEfectivo: getTotalAmount(getFilteredSalesPaymentMethodCash(selectedShift.value, dayToUse)),
+        totalTarjeta: getTotalAmount(getFilteredSalesPaymentMethodCard(selectedShift.value, dayToUse)),
+        totalCortesias: getTotalAmount(getFilteredSalesCourtesy(selectedShift.value, dayToUse)),
     };
 
     axios
@@ -454,7 +456,7 @@ function onDateChange() {
                 para este corte de caja?
             </p>
             <select
-                v-model="modalSelectedShift"
+                v-model="selectedShift"
                 class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition mb-4"
             >
                 <option value="" disabled>Seleccione un turno</option>
@@ -465,8 +467,8 @@ function onDateChange() {
 
             <div
                 v-if="
-                    modalSelectedShift === 'Matutino' ||
-                    modalSelectedShift === 'Vespertino'
+                    selectedShift === 'Matutino' ||
+                    selectedShift === 'Vespertino'
                 "
                 class="mb-4"
             >
@@ -474,7 +476,7 @@ function onDateChange() {
                     >Selecciona la fecha</label
                 >
                 <input
-                    v-model="selectedDate"
+                    v-model="modalSelectedDate"
                     type="date"
                     class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
                 />
