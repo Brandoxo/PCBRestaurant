@@ -10,7 +10,8 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-    {
+    {   
+    if (!Schema::hasTable('shifts')) {
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->string('name_shift', 50);
@@ -18,7 +19,7 @@ return new class extends Migration
             $table->time('end_time');
             $table->boolean('is_active')->default(true);
         });
-
+    
         // Insertar turnos por defecto
         DB::table('shifts')->insert([
             [
@@ -35,7 +36,7 @@ return new class extends Migration
             ]
         ]);
     }
-
+}
     public function down(): void
     {
         Schema::dropIfExists('shifts');

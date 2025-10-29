@@ -8,6 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         // Create cash_floats table with default data fields
+    if (!Schema::hasTable('cash_floats')) {
         Schema::create('cash_floats', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
@@ -18,6 +19,7 @@ return new class extends Migration {
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null'); 
         });
+    }
     }
 
     public function down(): void
