@@ -44,6 +44,13 @@ Route::post('/Tables', [\App\Http\Controllers\TableController::class, 'store'])-
 Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, 'update'])->name('Tables/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);
 
+//Rooms
+Route::get('/Rooms', [\App\Http\Controllers\RoomController::class, 'index'])->name('Rooms/Index') ->middleware(['auth', 'verified']);
+Route::get('/Rooms/Create', [\App\Http\Controllers\RoomController::class, 'create'])->name('Rooms/Create') ->middleware(['auth', 'verified']);
+Route::post('/Rooms', [\App\Http\Controllers\RoomController::class, 'store'])->name('Rooms/Store') ->middleware(['auth', 'verified']);
+Route::put('/Rooms/edit/{id}', [\App\Http\Controllers\RoomController::class, 'update'])->name('Rooms/Edit') ->middleware(['auth', 'verified']);
+Route::delete('/Rooms/{id}', [\App\Http\Controllers\RoomController::class, 'destroy'])->name('Rooms/Delete') ->middleware(['auth', 'verified']);
+
 //Sales
 Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified']);
 Route::post('/Sales/Create', [\App\Http\Controllers\SalesController::class, 'store'])->name('Sales/Store') ->middleware(['auth', 'verified']);

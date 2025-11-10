@@ -60,6 +60,7 @@ watch(sidebarOpen, (val) => {
                 <li v-for="item in [
                     { route: 'dashboard', icon: 'home', label: 'Dashboard', active: route().current('dashboard') },
                     { route: 'Tables/Index', icon: 'table', label: 'Mesas', active: route().current('Tables/Index') || route().current('Tables/Create') },
+                    { route: 'Rooms/Index', icon: 'rooms', label: 'Habitaciones', active: route().current('Rooms/Index') || route().current('Rooms/Create') },
                     { route: 'Sales/Index', icon: 'sales', label: 'Ventas', active: route().current('Sales/Index') },
                     { route: 'Categories/Index', icon: 'categories', label: 'Categorías', active: route().current('Categories/Index') || route().current('Categories/Create') },
                     { route: 'Menu/Index', icon: 'products', label: 'Menú', active: route().current('Menu/Index') || route().current('Menu/Create') },
