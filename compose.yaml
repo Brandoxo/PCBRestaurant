@@ -20,24 +20,41 @@ services:
        APP_DEBUG: true
        DB_CONNECTION: mysql
        DB_HOST: db
-       DB_PORT: 3306
-       DB_DATABASE: pcbresronda
-       DB_USERNAME: root
-       DB_PASSWORD: 
+       DB_PORT: ${DB_PORT}
+       DB_DATABASE: ${DB_DATABASE}
+       DB_USERNAME: ${DB_USERNAME}
+       DB_PASSWORD: ${DB_PASSWORD}
+    develop:
+      watch:
+        - path: ./resources
+          action: sync
+          target: /var/www/html/resources
+        - path: ./build
+          action: sync
+          target: /var/www/html/public/build
+         
+    networks:
+      - pcbres_server
       
   db:
       image: mysql:8.0
       restart: always
       environment:
-        MYSQL_DATABASE: pcbresronda
-        MYSQL_ROOT_PASSWORD: bermejo
+        MYSQL_DATABASE: ${DB_DATABASE}
+        MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       volumes:
         - db-data:/var/lib/mysql
       ports:
         - 3306:3306
+      networks:
+        - pcbres_server
 
 volumes:
       db-data:
+
+networks:
+  pcbres_server:
+    driver: bridge
 
 #    db:
 #     image: postgres
