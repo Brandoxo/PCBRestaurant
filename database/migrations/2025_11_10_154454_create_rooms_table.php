@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('prefix')->nullable();
             $table->string('status');
             $table->integer('capacity');
-            $table->integer('service_cost')->default(0);
-            $table->boolean('is_active')->default(false);
             $table->timestamps();
         });
     }

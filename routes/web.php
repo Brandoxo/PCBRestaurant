@@ -94,6 +94,7 @@ Route::post('/CashFloat/Update', [\App\Http\Controllers\CashFloatController::cla
 //Config
 Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);
 Route::post('/Config/Update-Shift', [\App\Http\Controllers\ConfigController::class, 'updateShift'])->name('config.update-shift')->middleware(['auth', 'verified']);
+Route::post('/Config/Update-Room-Service', [\App\Http\Controllers\ConfigController::class, 'updateRoomService'])->name('config.update-room-service')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
