@@ -13,6 +13,7 @@ import { computed, watch } from "vue";
 const form = ref({ errors: {} });
 
 const props = defineProps({ rooms: Object });
+console.log("ROOMS:", props.rooms);
 const openModal = ref(false);
 const currentRoom = ref({});
 const user = usePage().props.auth.user;
@@ -26,37 +27,37 @@ const closeModal = () => {
 };
 
 const showModal = (id) => {
-    const foundTable = props.rooms.data.find((table) => table.id === id);
-    currentRoom.value = foundTable
-        ? { ...foundTable }
+    const foundRoom = props.rooms.find((room) => room.id === id);
+    currentRoom.value = foundRoom
+        ? { ...foundRoom }
         : { id, number: "", status: "", capacity: "" };
     openModal.value = true;
 };
 
-const editTable = (id) => {
+const editRoom = (id) => {
     if (
         currentRoom.value.number ===
-        props.rooms.data.find(
-            (table) =>
-                table.number === currentRoom.value.number && table.id !== id
+        props.rooms.find(
+            (room) =>
+                room.number === currentRoom.value.number && room.id !== id
         )?.number
     ) {
         document.querySelector(".text-red-500").classList.remove("hidden");
         return;
     }
-    router.put(`/Tables/edit/${id}`, currentRoom.value, {
+    router.put(`/Rooms/edit/${id}`, currentRoom.value, {
         onSuccess: () => {
-            useToast().success("Mesa actualizada exitosamente");
+            useToast().success("Habitación actualizada exitosamente");
             openModal.value = false;
         },
         onError: (error) => {
-            useToast().error("Error al actualizar la mesa");
-            console.error("Error al actualizar mesa:", error);
+            useToast().error("Error al actualizar la habitación");
+            console.error("Error al actualizar habitación:", error);
         },
     });
 };
 
-const deleteTable = (id) => {
+const deleteRoom = (id) => {
     Swal.fire({
         title: "¿Estás seguro?",
         text: "¡No podrás revertir esto!",
@@ -64,17 +65,17 @@ const deleteTable = (id) => {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, eliminar mesa",
+        confirmButtonText: "Sí, eliminar habitación",
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            router.delete(`/Tables/${id}`, {
+            router.delete(`/Rooms/${id}`, {
                 onSuccess: () => {
-                    useToast().success("Mesa eliminada exitosamente");
+                    useToast().success("habitación eliminada exitosamente");
                 },
                 onError: (error) => {
-                    useToast().error("Error al eliminar mesa");
-                    console.error("Error al eliminar mesa:", error);
+                    useToast().error("Error al eliminar habitación");
+                    console.error("Error al eliminar habitación:", error);
                 },
             });
         }
@@ -82,10 +83,10 @@ const deleteTable = (id) => {
 };
 
 const searchQuery = ref("");
-const filteredTables = computed(() => {
-    if (!searchQuery.value) return props.rooms.data;
-    return props.rooms.data.filter((table) =>
-        table.number.toString().includes(searchQuery.value)
+const filteredRooms = computed(() => {
+    if (!searchQuery.value) return props.rooms;
+    return props.rooms.filter((room) =>
+        room.number.toString().includes(searchQuery.value)
     );
 });
 </script>
@@ -113,8 +114,9 @@ const filteredTables = computed(() => {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="value in filteredTables" :key="value.id">
+                <tr v-for="value in filteredRooms" :key="value.id">
                     <td class="border p-2 text-center">{{ value.id }}</td>
+                    <td class="border p-2 text-center">{{ value.prefix }}</td>
                     <td class="border p-2 text-center">{{ value.number }}</td>
                     <td class="border p-2 text-center">
                         <StatusBadge :status="value.status" />
@@ -140,7 +142,7 @@ const filteredTables = computed(() => {
                             />
                         </button>
                         <button
-                            @click="deleteTable(value.id)"
+                            @click="deleteRoom(value.id)"
                             class="bg-dangerRed hover:bg-red-700 text-white p-1 rounded"
                         >
                             <img
@@ -163,22 +165,36 @@ const filteredTables = computed(() => {
                 <div>
                     <InputLabel
                         for="number"
-                        value="Número de Mesa"
+                        value="Número de habitación"
                         class="mb-2"
                     ></InputLabel>
                     <input
                         v-model="currentRoom.number"
                         type="text"
-                        placeholder="Numero de Mesa"
+                        placeholder="Numero de habitación"
                         class="border p-2 rounded-lg mb-4 w-full"
                     />
                     <InputError :message="form.errors.number"></InputError>
                     <span class="text-red-500 hidden"
-                        >Este número de mesa ya está en uso.</span
+                        >Este número de habitación ya está en uso.</span
                     >
                 </div>
 
                 <div class="flex justify-between">
+                    <div>
+                        <InputLabel
+                            for="prefix"
+                            value="Prefijo"
+                            class="m-2"
+                        ></InputLabel>
+                        <input
+                            v-model="currentRoom.prefix"
+                            type="text"
+                            placeholder="Prefijo"
+                            class="border p-2 rounded-lg mb-4"
+                        />
+                        <InputError :message="form.errors.prefix"></InputError>
+                    </div>
                     <div>
                         <InputLabel
                             for="status"
@@ -217,7 +233,7 @@ const filteredTables = computed(() => {
                 <div class="flex justify-between">
                     <CancelButton @click="closeModal">Cancelar</CancelButton>
                     <button
-                        @click="editTable(currentRoom.id)"
+                        @click="editRoom(currentRoom.id)"
                         type="button"
                         class="bg-approveGreen hover:bg-green-600 text-white px-4 py-2 rounded-lg self-end"
                     >
