@@ -4,8 +4,18 @@ import NavLink from "@/Components/NavLink.vue";
 import Header from "@/Components/Header.vue";
 import { usePage } from "@inertiajs/vue3";
 
-const user = usePage().props.auth.user;
-const isAdmin = computed(() => user && user.roles && user.roles.includes('Admin'));
+const page = usePage();
+
+const isRoomServiceEnabled = computed(() => {
+    const cfg = page.props.roomServiceConfig ?? [];
+    return cfg.length > 0 && cfg[0].is_active === 1;
+});
+
+const isAdmin = computed(() => {
+    const user = page.props.auth?.user ?? null;
+    return !!(user && user.roles && user.roles.includes('Admin'));
+});
+
 const sidebarOpen = ref(false);
 const showLabels = ref(false);
 let labelTimer = null;
@@ -14,6 +24,13 @@ function toggleSidebar() {
     sidebarOpen.value = !sidebarOpen.value;
     showLabels.value = false;
 }
+
+function showNav(item) {
+    if (item.route === 'Users/Index') return isAdmin.value;
+    if (item.route === 'Rooms/Index') return isRoomServiceEnabled.value;
+    return true;
+}
+
 onMounted(() => {
     const saved = localStorage.getItem("sidebarOpen");
     sidebarOpen.value = saved === "true";
@@ -22,7 +39,7 @@ onMounted(() => {
 
 watch(sidebarOpen, (val) => {
     localStorage.setItem("sidebarOpen", val);
-        clearTimeout(labelTimer);
+    clearTimeout(labelTimer);
     if (val) {
         labelTimer = setTimeout(() => {
             showLabels.value = true;
@@ -57,10 +74,11 @@ watch(sidebarOpen, (val) => {
                     sidebarOpen ? 'lg:gap-2 2xl:gap-4' : 'gap-2'
                 ]"
             >
-                <li v-for="item in [
+                <li
+                v-for="item in [
                     { route: 'dashboard', icon: 'home', label: 'Dashboard', active: route().current('dashboard') },
                     { route: 'Tables/Index', icon: 'table', label: 'Mesas', active: route().current('Tables/Index') || route().current('Tables/Create') },
-                    { route: 'Rooms/Index', icon: 'rooms', label: 'Habitaciones', active: route().current('Rooms/Index') || route().current('Rooms/Create') },
+                    { route: 'Rooms/Index', icon: 'rooms', label: 'Habitaciones', active: route().current('Rooms/Index') || route().current('Rooms/Create')  },
                     { route: 'Sales/Index', icon: 'sales', label: 'Ventas', active: route().current('Sales/Index') },
                     { route: 'Categories/Index', icon: 'categories', label: 'Categorías', active: route().current('Categories/Index') || route().current('Categories/Create') },
                     { route: 'Menu/Index', icon: 'products', label: 'Menú', active: route().current('Menu/Index') || route().current('Menu/Create') },
@@ -69,10 +87,10 @@ watch(sidebarOpen, (val) => {
                     { route: 'Config/Index', icon: 'config', label: 'Configuración', active: route().current('Config/Index') },
                 ]" :key="item.route">
                     <NavLink
-                        v-if="item.route === 'Users/Index' ? isAdmin : true"
+                         v-if="showNav(item)"
                         :href="route(item.route)"
                         :active="item.active"
-                        class="flex mx-auto lg:mx-0 items-center  text-base "
+                        class="flex mx-auto lg:mx-0 items-center  text-base"
                     >
                         <img
                             :src="`/assets/icons/svg/menu/${item.icon}.svg`"
@@ -80,7 +98,7 @@ watch(sidebarOpen, (val) => {
                             class="w-6"
                         />
                         <span v-if="showLabels" >{{ item.label }}</span>
-                    </NavLink>
+                    </NavLink>                    
                 </li>
             </ul>
         </aside>

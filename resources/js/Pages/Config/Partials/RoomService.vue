@@ -9,15 +9,16 @@ const props = defineProps({
     roomServiceConfig: Array,
 });
 
-const is_active = props.roomServiceConfig[0]?.is_active || false;
-const service_cost = props.roomServiceConfig[0]?.service_cost || 0;
-
-const isRoomServiceEnabled = ref(is_active);
-const roomServiceCharge = ref(service_cost);
-
-if (!isRoomServiceEnabled.value) {
-    roomServiceCharge.value = 0;
-}
+const initialIsActive =
+    props.roomServiceConfig.length > 0
+        ? props.roomServiceConfig[0].is_active
+        : false;
+const isRoomServiceEnabled = ref(initialIsActive === 1);
+const roomServiceCharge = ref(
+    props.roomServiceConfig.length > 0
+        ? props.roomServiceConfig[0].service_cost
+        : 0
+);
 
 async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
     try {
@@ -57,7 +58,7 @@ async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
         </div>
 
         <div v-if="isRoomServiceEnabled">
-            <label class="block text-sm font-medium text-gray-700"
+            <label class="text-sm font-medium text-gray-700 flex"
                 >Cargo Adicional por Room Service (%)</label
             >
             <input
@@ -65,19 +66,18 @@ async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
                 min="0"
                 max="100"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-                v-model.number="roomServiceCharge"
+                v-model="roomServiceCharge"
             />
         </div>
         <button
             @click="saveChanges(isRoomServiceEnabled, roomServiceCharge)"
             v-if="
-                isRoomServiceEnabled !==
-                    props.roomServiceConfig[0]?.is_active ||
-                roomServiceCharge !== props.roomServiceConfig[0]?.service_cost
+            isRoomServiceEnabled !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].is_active === 1 : false) ||
+            roomServiceCharge !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].service_cost : 0)
             "
-            class="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            class="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-full self-end  "
         >
             Guardar Cambios
         </button>
-    </div>
+        </div>
 </template>
