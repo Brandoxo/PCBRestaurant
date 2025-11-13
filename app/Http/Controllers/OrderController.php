@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Mesas;
 use App\Models\Orders;
+use App\Models\Rooms;
 use App\Resources\Orders\PostOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,9 +14,11 @@ class OrderController extends Controller
     {
         $orders = Orders::with('table')->get();
         $tables = Mesas::all();
+        $rooms = Rooms::all();
         return inertia('Orders/Index', [
             'orders' => $orders,
-            'tables' => $tables
+            'tables' => $tables,
+            'rooms' => $rooms
         ]);
     }
 

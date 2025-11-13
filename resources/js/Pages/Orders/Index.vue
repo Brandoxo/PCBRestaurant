@@ -9,7 +9,7 @@ import OrderDetails from "./Partials/OrderDetails.vue";
 const { props } = usePage();
 const selectedTable = ref(null);
 const tables = ref(props.tables);
-
+const rooms = ref(props.rooms);
 const orders = ref(props.orders);
 const currentOrder = ref({
     mesa_id: null,
@@ -43,6 +43,7 @@ function tableSelected(table) {
             <TablesAvailables
             :selectedTable="selectedTable"
             :tables="tables"
+            :rooms="rooms"
             @tableSelected="tableSelected"
             />
                 <OrderDetails

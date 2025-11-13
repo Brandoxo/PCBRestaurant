@@ -3,13 +3,9 @@ import { ref, onMounted, watch, computed, onBeforeUnmount } from "vue";
 import NavLink from "@/Components/NavLink.vue";
 import Header from "@/Components/Header.vue";
 import { usePage } from "@inertiajs/vue3";
+import { isRoomServiceEnabled } from "@/utils/isRoomServiceEnabled";
 
 const page = usePage();
-
-const isRoomServiceEnabled = computed(() => {
-    const cfg = page.props.roomServiceConfig ?? [];
-    return cfg.length > 0 && cfg[0].is_active === 1;
-});
 
 const isAdmin = computed(() => {
     const user = page.props.auth?.user ?? null;
