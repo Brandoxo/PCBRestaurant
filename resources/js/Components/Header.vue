@@ -47,14 +47,12 @@ const closeSidebar = () => {
 </script>
 
 <template>
-    <header class="bg-primary shadow-md h-[72px]  flex z-10">
-        <div class="items-center bg-white hidden lg:flex px-6 2xl:px-4 ">
-                <Link :href="route('dashboard')">
-                    <ApplicationLogo
-                        class="h-14 my-2 mx-auto"
-                    />
-                </Link>
-            </div>
+    <header class="bg-primary shadow-md h-[72px] flex z-10">
+        <div class="items-center bg-white hidden lg:flex px-6 2xl:px-2">
+            <Link :href="route('dashboard')">
+                <ApplicationLogo class="h-14 my-2 mx-auto" />
+            </Link>
+        </div>
         <div
             class="flex px-4 items-center mx-auto lg:mx-0 w-full justify-between"
         >
@@ -228,7 +226,9 @@ const closeSidebar = () => {
                                 <li
                                     class="relative hover:bg-salmon/10 hover:text-salmon text-gray-700 border-b border-gray-200 cursor-pointer transition-colors group"
                                 >
-                                    <a class="text-lg font-light block" href="/config"
+                                    <a
+                                        class="text-lg font-light block"
+                                        href="/config"
                                         ><p class="p-4">Configuración</p></a
                                     >
                                 </li>
