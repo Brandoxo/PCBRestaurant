@@ -17,8 +17,11 @@ class RoomController extends Controller
     }
     
     public function store(Request $request){
+        $roomPrefix = $request->prefix;
+        $roomPrefixUp = strtoupper($roomPrefix);
+
         $room = new Rooms();
-        $room->prefix = $request->prefix;
+        $room->prefix = $roomPrefixUp;
         $room->number = $request->number;
         $room->name = $request->name;
         $room->status = $request->status;
