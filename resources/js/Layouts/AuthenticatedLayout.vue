@@ -13,7 +13,7 @@ const isRoomServiceEnabled = computed(() => {
 
 const isAdmin = computed(() => {
     const user = page.props.auth?.user ?? null;
-    return !!(user && user.roles && user.roles.includes('Admin'));
+    return !!(user && user.roles && user.roles.includes("Admin"));
 });
 
 const sidebarOpen = ref(false);
@@ -26,8 +26,8 @@ function toggleSidebar() {
 }
 
 function showNav(item) {
-    if (item.route === 'Users/Index') return isAdmin.value;
-    if (item.route === 'Rooms/Index') return isRoomServiceEnabled.value;
+    if (item.route === "Users/Index") return isAdmin.value;
+    if (item.route === "Rooms/Index") return isRoomServiceEnabled.value;
     return true;
 }
 
@@ -53,56 +53,118 @@ watch(sidebarOpen, (val) => {
 <template>
     <Header></Header>
     <div class="flex">
-
         <!-- Sidebar -->
         <button
             @click="toggleSidebar"
-            :class="['absolute left-64 top-[50%] z-20 bg-secondary text-white py-4 rounded-r hover:bg-secondary-dark lg:block hidden transition-all duration-500 ease-in-out', sidebarOpen ? 'lg:left-64' : 'lg:left-20']"
+            :class="[
+                'absolute left-64 top-[50%] z-20 bg-secondary text-white py-4 rounded-r hover:bg-secondary-dark lg:block hidden transition-all duration-500 ease-in-out',
+                sidebarOpen ? 'md:left-56' : 'md:left-20',
+            ]"
         >
             <span v-if="sidebarOpen">⮜</span>
             <span v-else>⮞</span>
         </button>
-         <aside
+        <aside
             :class="[
                 'bg-secondary shadow hidden lg:flex flex-col transition-all duration-500 ease-in-out h-svh',
-                sidebarOpen ? 'w-64' : 'w-20'
+                sidebarOpen ? 'w-56' : 'w-20 min-w-20',
             ]"
         >
             <ul
                 :class="[
-                    'flex flex-col justify-start mt-6',
-                    sidebarOpen ? 'lg:gap-2 2xl:gap-4' : 'gap-2'
+                    'flex flex-col justify-start ',
+                    sidebarOpen ? 'p-2' : 'p-2',
                 ]"
             >
                 <li
-                v-for="item in [
-                    { route: 'dashboard', icon: 'home', label: 'Dashboard', active: route().current('dashboard') },
-                    { route: 'Tables/Index', icon: 'table', label: 'Mesas', active: route().current('Tables/Index') || route().current('Tables/Create') },
-                    { route: 'Rooms/Index', icon: 'rooms', label: 'Habitaciones', active: route().current('Rooms/Index') || route().current('Rooms/Create')  },
-                    { route: 'Sales/Index', icon: 'sales', label: 'Ventas', active: route().current('Sales/Index') },
-                    { route: 'Categories/Index', icon: 'categories', label: 'Categorías', active: route().current('Categories/Index') || route().current('Categories/Create') },
-                    { route: 'Menu/Index', icon: 'products', label: 'Menú', active: route().current('Menu/Index') || route().current('Menu/Create') },
-                    { route: 'Orders/Index', icon: 'orders', label: 'Órdenes', active: route().current('Orders/Index') },
-                    { route: 'Users/Index', icon: 'users', label: 'Usuarios', active: route().current('Users/Index') },
-                    { route: 'Config/Index', icon: 'config', label: 'Configuración', active: route().current('Config/Index') },
-                ]" :key="item.route">
+                    v-for="item in [
+                        {
+                            route: 'dashboard',
+                            icon: 'home',
+                            label: 'Dashboard',
+                            active: route().current('dashboard'),
+                        },
+                        {
+                            route: 'Tables/Index',
+                            icon: 'table',
+                            label: 'Mesas',
+                            active:
+                                route().current('Tables/Index') ||
+                                route().current('Tables/Create'),
+                        },
+                        {
+                            route: 'Rooms/Index',
+                            icon: 'rooms',
+                            label: 'Habitaciones',
+                            active:
+                                route().current('Rooms/Index') ||
+                                route().current('Rooms/Create'),
+                        },
+                        {
+                            route: 'Sales/Index',
+                            icon: 'sales',
+                            label: 'Ventas',
+                            active: route().current('Sales/Index'),
+                        },
+                        {
+                            route: 'Categories/Index',
+                            icon: 'categories',
+                            label: 'Categorías',
+                            active:
+                                route().current('Categories/Index') ||
+                                route().current('Categories/Create'),
+                        },
+                        {
+                            route: 'Menu/Index',
+                            icon: 'products',
+                            label: 'Menú',
+                            active:
+                                route().current('Menu/Index') ||
+                                route().current('Menu/Create'),
+                        },
+                        {
+                            route: 'Orders/Index',
+                            icon: 'orders',
+                            label: 'Órdenes',
+                            active: route().current('Orders/Index'),
+                        },
+                        {
+                            route: 'Users/Index',
+                            icon: 'users',
+                            label: 'Usuarios',
+                            active: route().current('Users/Index'),
+                        },
+                        {
+                            route: 'Config/Index',
+                            icon: 'config',
+                            label: 'Configuración',
+                            active: route().current('Config/Index'),
+                        },
+                    ]"
+                    :key="item.route"
+                >
                     <NavLink
-                         v-if="showNav(item)"
+                        v-if="showNav(item)"
                         :href="route(item.route)"
                         :active="item.active"
-                        class="flex mx-auto lg:mx-0 items-center  text-base"
+                        class="flex mx-auto items-center text-lg py-1 min-w-16"
                     >
                         <img
                             :src="`/assets/icons/svg/menu/${item.icon}.svg`"
                             :alt="item.label"
-                            class="w-6"
+                            :class="[
+                                'w-7 h-7',
+                                sidebarOpen
+                                    ? 'bg-white rounded-full p-1'
+                                    : 'mx-auto bg-white rounded-full p-1',
+                            ]"
                         />
-                        <span v-if="showLabels" >{{ item.label }}</span>
-                    </NavLink>                    
+                        <span v-if="showLabels">{{ item.label }}</span>
+                    </NavLink>
                 </li>
             </ul>
         </aside>
-        
+
         <!-- Main Content -->
         <div class="flex-1">
             <main>
