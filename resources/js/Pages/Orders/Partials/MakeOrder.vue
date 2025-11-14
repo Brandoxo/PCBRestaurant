@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { computed } from "vue";
 import { useToast } from "vue-toastification";
 import { router } from "@inertiajs/vue3";
@@ -57,7 +57,10 @@ const toast = useToast();
 const saveOrder = () => {
     console.log("Save Order clicked with current order:", props.currentOrder);
     // return toast.info('Guardando orden...');
-    if (!props.currentOrder.mesa_id || props.currentOrder.items.length === 0) {
+    if (
+        (!props.currentOrder.mesa_id && !props.currentOrder.room_id) ||
+        props.currentOrder.items.length === 0
+    ) {
         toast.error("No se puede guardar una orden vacía");
         return;
     } else {
@@ -101,6 +104,7 @@ const confirmSaveOrder = () => {
 
 const resetOrder = () => {
     props.currentOrder.mesa_id = null;
+    props.currentOrder.room_id = null;
     props.currentOrder.items = [];
     console.log("Order reset to empty state:", props.currentOrder);
 };
@@ -132,10 +136,14 @@ const GetProducts = async () => {
         console.error("There was an error fetching the products data!", error);
     }
 };
-    
+
 const AddToOrder = (product, tableId) => {
-    if (!props.currentOrder.mesa_id) {
-        props.currentOrder.mesa_id = tableId;
+    if (!props.currentOrder.mesa_id && !props.currentOrder.room_id) {
+        if (props.selectedTable?.isRoom) {
+            props.currentOrder.room_id = tableId;
+        } else {
+            props.currentOrder.mesa_id = tableId;
+        }
     }
     const existingItem = props.currentOrder.items.find(
         (item) => item.product_id === product.id
@@ -175,12 +183,39 @@ const RemoveToOrder = (productId) => {
 
 onMounted(() => {
     console.log("Selected Table Prop:", props.selectedTable);
-    props.currentOrder.mesa_id = props.selectedTable?.id
-        ? props.selectedTable.id
-        : null;
+    // Inicializar currentOrder según el tipo de selección (mesa o habitación)
+    if (props.selectedTable) {
+        if (props.selectedTable.isRoom) {
+            props.currentOrder.room_id = props.selectedTable.id || null;
+            props.currentOrder.mesa_id = null;
+        } else {
+            props.currentOrder.mesa_id = props.selectedTable.id || null;
+            props.currentOrder.room_id = null;
+        }
+    }
     GetProducts();
     console.log("Component mounted.");
 });
+
+// Actualizar currentOrder cuando cambie la selección de mesa/habitación
+watch(
+    () => props.selectedTable,
+    (newVal) => {
+        console.log("Selected Table changed:", newVal);
+        if (!newVal) {
+            props.currentOrder.mesa_id = null;
+            props.currentOrder.room_id = null;
+            return;
+        }
+        if (newVal.isRoom) {
+            props.currentOrder.room_id = newVal.id || null;
+            props.currentOrder.mesa_id = null;
+        } else {
+            props.currentOrder.mesa_id = newVal.id || null;
+            props.currentOrder.room_id = null;
+        }
+    }
+);
 
 const subtotal = computed(() => {
     return props.currentOrder.items.reduce(
@@ -191,7 +226,12 @@ const subtotal = computed(() => {
 
 const updateOrder = () => {
     const payload = {
-        table_id: props.selectedTable?.number || props.currentOrder.table_id,
+        mesa_id: props.selectedTable?.isRoom
+            ? null
+            : props.selectedTable?.id || props.currentOrder.mesa_id,
+        room_id: props.selectedTable?.isRoom
+            ? props.selectedTable?.id || props.currentOrder.room_id
+            : null,
         status: props.currentOrder.status || "En curso",
         items: props.currentOrder.items,
         subtotal: subtotal.value,
@@ -284,7 +324,9 @@ console.log(props);
                                     class="flex justify-evenly w-full m-4 text-center items-center"
                                 >
                                     <button
-                                        v-if="!isEdit || (isEdit && canEditOrder)"
+                                        v-if="
+                                            !isEdit || (isEdit && canEditOrder)
+                                        "
                                         class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-red-600/80 text-white hover:bg-red-600"
                                         @click="RemoveToOrder(product.id)"
                                     >

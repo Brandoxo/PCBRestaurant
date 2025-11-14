@@ -9,65 +9,77 @@ const emit = defineEmits(["tableSelected"]);
 const props = defineProps({
     tables: Object,
     selectedTable: Object,
-    rooms: Object
+    rooms: Object,
 });
-console.log('Aqui tan las rooms sr', props.rooms)
+console.log("Aqui tan las rooms sr", props.rooms);
 const roomServiceEnabled = isRoomServiceEnabled;
 const { tables, rooms } = toRefs(props);
 
 const combinedList = computed(() => {
-    const t = (tables.value) || {};
-    const r = (rooms.value) || {};
-    
-     const showRooms =
+    const t = tables.value || {};
+    const r = rooms.value || {};
+
+    const showRooms =
         roomServiceEnabled && roomServiceEnabled.value !== undefined
             ? roomServiceEnabled.value
             : !!roomServiceEnabled;
-        
-     const tablesList = Object.keys(t).map((key) => ({
-        id: key,
+
+    const tablesList = Object.keys(t).map((key) => ({
+        // primero spread las propiedades reales del modelo para preservar `id`
+        ...(t[key] || {}),
+        ui_id: `table-${(t[key] && (t[key].id || key)) || key}`,
         isRoom: false,
         // display label para la UI
-        label: (t[key] && t[key].room && t[key].room.name) ? t[key].room.name : 'Mesa',
-        ...t[key],
+        label:
+            t[key] && t[key].room && t[key].room.name
+                ? t[key].room.name
+                : "Mesa",
     }));
 
     const roomsList = showRooms
         ? Object.keys(r).map((key) => ({
-              // prefija id para evitar colisiones con mesas
-              id: `room-${key}`,
+              // preservar propiedades reales del modelo y añadir ui_id
+              ...(r[key] || {}),
+              ui_id: `room-${(r[key] && (r[key].id || key)) || key}`,
               isRoom: true,
               label: r[key].name || `Habitación ${r[key].number || key}`,
               // normaliza propiedades esperadas por la plantilla
-              number: r[key].number || r[key].name || '',
+              number: r[key].number || r[key].name || "",
               capacity: r[key].capacity || 1,
-              status: r[key].status || 'Libre',
-              ...r[key],
+              status: r[key].status || "Libre",
           }))
         : [];
 
     return [...tablesList, ...roomsList];
- });
-console.log('Lista combinada',combinedList.value);
+});
+console.log("Lista combinada", combinedList.value);
 
-
-function openOptions(table) {
-    // Evitar seleccionar una mesa que ya tiene una orden activa
-    if (table.status !== "Libre" && table.status !== "Reservada") {
-        useToast().error("No puedes seleccionar una mesa ocupada.");
+function openOptions(item) {
+    // Evitar seleccionar una mesa o habitación que ya tiene una orden activa
+    const typeLabel = item.isRoom ? "Habitación" : "Mesa";
+    if (item.status !== "Libre" && item.status !== "Reservada") {
+        useToast().error(
+            `No puedes seleccionar una ${
+                item.isRoom ? "habitación" : "mesa"
+            } ocupada.`
+        );
         return;
     }
-    emit("tableSelected", table);
-    window.scrollTo({ top: "0%", behavior: "smooth" });
-    useToast().info(`Seleccionando orden para la ${table.isRoom ? 'Habitación' : 'Mesa'} #${table.number}`);
-    console.log("Tables data:", table);
+    emit("tableSelected", item);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    useToast().info(`Seleccionando orden para la ${typeLabel} #${item.number}`);
+    console.log("Selection data:", item);
 }
 
 const hiddeDiv = (div) => {
     if (!props.selectedTable) {
         return false;
     }
-    return props.selectedTable && props.selectedTable.id !== div.id;
+    const selectedUi =
+        props.selectedTable?.ui_id ||
+        (props.selectedTable?.id ? `table-${props.selectedTable.id}` : null);
+    const divUi = div?.ui_id || (div?.id ? `table-${div.id}` : null);
+    return selectedUi && divUi ? selectedUi !== divUi : false;
 };
 
 onMounted(() => {
@@ -86,13 +98,16 @@ onMounted(() => {
         <div
             v-for="value in combinedList"
             v-show="!hiddeDiv(value)"
-            :key="value.id"
+            :key="value.ui_id || `table-${value.id}`"
             :class="[
                 'bg-white rounded-xl items-center p-4 space-y-2 shadow-lg',
                 value.status !== 'Libre' && value.status !== 'Reservada'
                     ? 'opacity-50 pointer-events-none scale-90'
                     : 'cursor-pointer hover:scale-[1.02] pointer-events-auto',
-                props.selectedTable && props.selectedTable.id === value.id
+                props.selectedTable &&
+                (props.selectedTable.ui_id ||
+                    `table-${props.selectedTable.id}`) ===
+                    (value.ui_id || `table-${value.id}`)
                     ? 'pointer-events-auto'
                     : '',
             ]"
@@ -101,22 +116,31 @@ onMounted(() => {
                 <StatusBadge :status="value.status" />
             </div>
             <div class="flex justify-evenly items-center mb-4 gap-8">
-                <h2 class="text-m uppercase font-black">{{ value.isRoom ? 'Habitación' : 'Mesa' }}</h2>
+                <h2 class="text-m uppercase font-black">
+                    {{ value.isRoom ? "Habitación" : "Mesa" }}
+                </h2>
                 <img
-                    :src="value.isRoom ? '/assets/icons/svg/menu/rooms.svg' : '/assets/icons/svg/menu/table.svg'"
+                    :src="
+                        value.isRoom
+                            ? '/assets/icons/svg/menu/rooms.svg'
+                            : '/assets/icons/svg/menu/table.svg'
+                    "
                     :alt="value.isRoom ? 'Habitación' : 'Mesa'"
                     class="w-16"
                 />
                 <span class="font-extrabold text-xl text-red-900"
-                    >#{{isRoomServiceEnabled ? value.prefix : ''}}-{{ value.number }}</span
+                    >#{{ isRoomServiceEnabled ? value.prefix : "" }}-{{
+                        value.number
+                    }}</span
                 >
             </div>
             <div
-            v-if="!value.isRoom"
-            class="flex justify-center items-center gap-2">
+                v-if="!value.isRoom"
+                class="flex justify-center items-center gap-2"
+            >
                 <img
                     src="/assets/icons/svg/visual/people.svg"
-                    alt="Capacidad" 
+                    alt="Capacidad"
                     class="inline-block w-4 h-4"
                 />
                 <p class="text-center text-gray-500">
