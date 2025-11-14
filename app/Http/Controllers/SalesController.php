@@ -56,6 +56,11 @@ public function store(Request $request) {
             $mesa->status = 'Libre';
             $mesa->save();
         }
+        $room = \App\Models\Rooms::find($order->room_id);
+        if ($room) {
+            $room->status = 'Libre';
+            $room->save();
+        }
     }
 
     return redirect()->route('Sales/Index')->with('success', 'Todas las ventas registradas correctamente.');

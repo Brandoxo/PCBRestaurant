@@ -10,7 +10,7 @@ class DashBoardController extends Controller
     public function index() {
     $today = date('Y-m-d');
     $yesterday = date('Y-m-d', strtotime('-1 day'));
-    $orders = Orders::with(['table', 'orderDetails.product'])->whereDate('date_time', $today)->orWhereDate('date_time', $yesterday)->orderBy('date_time', 'desc')->get();
+    $orders = Orders::with(['table', 'room', 'orderDetails.product'])->whereDate('date_time', $today)->orWhereDate('date_time', $yesterday)->orderBy('date_time', 'desc')->get();
         $totalProducts = \App\Models\Products::count();
         $totalCategories = \App\Models\Categories::count();
         $totalUsers = \App\Models\User::count();
@@ -30,7 +30,7 @@ class DashBoardController extends Controller
     }
 
     public function edit($id) {
-        $order = Orders::with(['table', 'orderDetails.product'])->findOrFail($id);
+        $order = Orders::with(['table', 'room', 'orderDetails.product'])->findOrFail($id);
         $tables = \App\Models\Mesas::all();
         return inertia('Dashboard/EditOrder', [
             'order' => $order,
