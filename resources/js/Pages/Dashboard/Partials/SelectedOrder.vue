@@ -93,8 +93,9 @@ console.log("User permissions:", user ? user.permissions : "No user");
         <div class="flex items-center justify-between gap-4 mt-4">
             <div class="flex-col">
                 <h2 class="text-center text-3xl font-bold">
-                    Mesa
-                    {{ order.table.number ?? "7" }}
+                    {{ order.table?.name ?? order.room?.name ?? 'N/A' }}
+                    <span v-if="order.room">{{ order.room?.prefix }}-{{ order.room?.number }}</span>
+                    <span v-else-if="order.table">{{ order.table?.number }}</span>
                 </h2>
                 <div class="flex text-sm mt-2">
                     <p class="text-center text-secondary">
