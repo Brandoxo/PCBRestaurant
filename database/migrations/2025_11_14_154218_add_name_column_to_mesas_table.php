@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasColumn('mesas', 'name')) {
         Schema::table('mesas', function (Blueprint $table) {
             $table->string('name')->nullable()->after('number')->default('Mesa');
         });
     }
-
+    }
     /**
      * Reverse the migrations.
      */

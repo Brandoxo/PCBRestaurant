@@ -11,6 +11,7 @@ return new class extends Migration
      */
        public function up(): void
     {
+        if (!Schema::hasTable('rooms')) {
         Schema::create('rooms', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('number');
@@ -20,6 +21,7 @@ return new class extends Migration
             $table->integer('capacity');
             $table->timestamps();
         });
+    }
     }
 
     /**

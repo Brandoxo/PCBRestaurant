@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('config_room_service')) {
         Schema::create('config_room_service', function (Blueprint $table) {
             $table->id();
             $table->boolean('is_active')->default(false);
             $table->decimal('service_cost', 8, 2)->default(0);
             $table->timestamps();
         });
+    }
     }
 
     /**
