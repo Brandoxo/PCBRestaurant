@@ -18,7 +18,8 @@ console.log('Current Order in OrderDetails:', props.currentOrder);
         <div v-if="currentOrder && currentOrder.items.length > 0">
             <h4 class="text-xl font-extralight mb-2 text-center text-gray-500">Pedido en curso</h4>
             <div class="flex justify-evenly items-center">
-                <h3 class="text-2xl font-bold mb-4 text-center text-red-900">Mesa #{{ selectedTable.number }}</h3>
+                <h3 class="text-2xl font-bold mb-4 text-center text-red-900">
+                    {{ orders.table?.name ?? orders.room?.name }} #{{ selectedTable.number }}</h3>
                 <h3 class="text-2xl font-bold mb-4 text-center">Orden #{{ currentOrder.id }}</h3>
             </div>
             <h5 class="text-lg font-semibold mb-2">Productos en la orden actual:</h5>
