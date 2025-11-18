@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Mesas;
 use Illuminate\Http\Request;
 use App\Models\Orders;
+use App\Models\ConfigRoomService;
 class DashBoardController extends Controller
 {
     public function index() {
+    $RoomServiceConfig = ConfigRoomService::select('is_active', 'service_cost')->first();
+    view()->share('RoomServiceConfig', $RoomServiceConfig);
     $today = date('Y-m-d');
     $yesterday = date('Y-m-d', strtotime('-1 day'));
     $orders = Orders::with(['table', 'room', 'orderDetails.product'])->whereDate('date_time', $today)->orWhereDate('date_time', $yesterday)->orderBy('date_time', 'desc')->get();
@@ -22,7 +25,8 @@ class DashBoardController extends Controller
             'totalUsers' => $totalUsers,
             'orders' => $orders,
             'totalOrders' => $totalOrders,
-            'sales' => $totalSales
+            'sales' => $totalSales,
+            'RoomServiceConfig' => $RoomServiceConfig
         ]);
 
        

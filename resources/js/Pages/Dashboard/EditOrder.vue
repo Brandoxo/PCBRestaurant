@@ -36,7 +36,7 @@ console.log("Current Orderssssss:", currentOrder.value);
                 <Head title="Editar Orden" />
                 <div class="flex flex-col">
                     <div
-                        class="bg-white rounded-lg animate-pulse pointer-events-none transition-transform duration-300 ease-in-out min-w-80 2xl:w-1/4"
+                        class="bg-white rounded-lg animate-pulse pointer-events-none transition-transform duration-300 ease-in-out w-96 "
                     >
                         <div
                             class="'bg-white rounded-xl items-center p-4 space-y-2 shadow-lg'"

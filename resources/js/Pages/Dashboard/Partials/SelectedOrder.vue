@@ -97,13 +97,13 @@ console.log("User permissions:", user ? user.permissions : "No user");
                     <span v-if="order.room">{{ order.room?.prefix }}-{{ order.room?.number }}</span>
                     <span v-else-if="order.table">{{ order.table?.number }}</span>
                 </h2>
-                <div class="flex text-sm mt-2">
+                <div class="flex text-sm mt-2 gap-2 justify-between">
                     <p class="text-center text-secondary">
                         {{
                             order.date_time
                                 ? new Date(order.date_time)
                                       .toLocaleTimeString()
-                                      .slice(0, -1)
+                                      .slice(0, 5)
                                 : "-"
                         }}
                     </p>

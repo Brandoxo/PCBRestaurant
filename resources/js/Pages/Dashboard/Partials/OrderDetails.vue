@@ -9,6 +9,7 @@ import { formatter, formatterWithoutFraction } from "@/utils/currencyFormatter";
 
 const props = defineProps({
     order: Object,
+    RoomServiceConfig: Object,
 });
 
 const openModal = ref(false);
@@ -31,6 +32,30 @@ console.log("order prop in <OrderDetails>: ", props.order);
 
 const foodCategories = [1, 2, 3, 4, 6, 7, 8, 20];
 const drinkCategories = [5, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19];
+
+const isRoomServiceActive =
+    props.RoomServiceConfig && props.RoomServiceConfig.is_active === 1;
+
+const serviceCostPercent =
+    isRoomServiceActive && props.RoomServiceConfig.service_cost
+        ? props.RoomServiceConfig.service_cost
+        : 0;
+
+
+
+const calculateServiceCost = (total) => {
+    if (isRoomServiceActive) {
+       total = parseFloat(total);
+       const serviceCost = (total * serviceCostPercent) / 100;
+        return total + serviceCost;
+    }
+    return total;
+};
+
+const totalExample = 100;
+console.log(
+    `Service cost for $${totalExample}: $${calculateServiceCost(totalExample)}`
+);
 
 const createSale = async () => {
     closeModal();
@@ -84,6 +109,7 @@ const createSale = async () => {
         });
     }
 };
+
 
 const createCourtesy = async () => {
     closeModal();
@@ -228,7 +254,7 @@ const PrintTicket = () => {
         Detalles de la orden
     </h2>
     <div
-        class="bg-white p-6 rounded-lg shadow-md flex overflow-y-auto justify-between max-h-64 hover:scale-[1.02] transition-all transform ease-in-out duration-300"
+        class="bg-white p-6 rounded-lg shadow-md flex overflow-y-auto justify-between lg:max-h-20 2xl:max-h-64 hover:scale-[1.02] transition-all transform ease-in-out duration-300"
     >
         <div class="flex flex-col gap-2">
             <template
@@ -263,7 +289,7 @@ const PrintTicket = () => {
                 >No hay detalles para esta orden.</span
             >
         </div>
-
+        
         <div
             v-if="order && order.order_details && order.order_details.length"
             class="h-fit overflow-auto flex flex-col gap-2 items-end"
@@ -292,49 +318,61 @@ const PrintTicket = () => {
         <div
             class="bg-white p-6 rounded-lg shadow-md flex h-fit w-full justify-between hover:scale-[1.02] transition-all transform ease-in-out duration-300 items-center"
         >
-            <h3 class="font-bold text-3xl mr-2">Total:</h3>
-            <div class="flex items-center gap-4">
-                <span class="font-bold text-2xl 2xl:text-3xl">
-                    {{
-                        formatter.format(
-                            props.order?.total ? props.order.total : 0
-                        )
-                    }}</span
-                >
-                <button
-                    @click="openModal = true"
-                    v-if="props.order?.status === 'En curso'"
-                    class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg uppercase text-sm font-extrabold"
-                >
-                    Cobrar
-                </button>
+        <h3 class="font-bold text-3xl mr-2">Total:</h3>
+        <div class="flex items-center gap-4">
+            <span 
+            v-if="order?.mesa_id"
+            class="font-bold text-2xl 2xl:text-3xl">
+                {{ formatter.format(order.total) }}
+            </span>
+            <div v-else-if="isRoomServiceActive && order?.room_id" class="flex ">
+                <span class="font-bold text-2xl 2xl:text-3xl text-black">
+                    {{ formatter.format(calculateServiceCost(order.total)) }}
+                </span>
             </div>
+        
+            <button
+            @click="openModal = true"
+            v-if="props.order?.status === 'En curso'"
+            class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-4 py-2 rounded-lg uppercase text-sm font-extrabold"
+            >
+            Cobrar
+        </button>
         </div>
-        <div
-            v-if="order?.status === 'En curso'"
-            class="bg-white p-4 rounded-lg shadow-md  hover:scale-[1.02] transition-all transform ease-in-out duration-300 flex-col text-center"
+    </div>
+<div
+v-if="order?.status === 'En curso'"
+class="bg-white p-4 rounded-lg shadow-md  hover:scale-[1.02] transition-all transform ease-in-out duration-300 flex-col text-center"
         >
             <label
                 class="inline-flex items-center cursor-pointer flex-col gap-1 font-bold"
             >
                 ¿Cortesía?
                 <input
-                    type="checkbox"
-                    class="sr-only peer"
-                    v-model="is_courtesy"
-                    id="is_active"
+                type="checkbox"
+                class="sr-only peer"
+                v-model="is_courtesy"
+                id="is_active"
                 /><Switch />
             </label>
         </div>
     </div>
+            <div v-if="isRoomServiceActive && order?.room_id" class=" bg-white p-2 rounded-lg text-center shadow-md  hover:scale-[1.02] transition-all transform ease-in-out duration-300 text-red-400 font-extrabold">
+
+                <span
+                >(Room Service añadido).
+                </span>
+                <span>
+                    {{ formatter.format(order?.total)  }} + {{ serviceCostPercent | withoutFraction }}%
+                </span>
+        </div>
     <button
-        @click="PrintTicket"
+    @click="PrintTicket"
         v-if="props.order?.status"
         class="bg-approveGreen hover:bg-green-900 transition-all transform duration-300 ease-in-out text-white px-2 py-2 uppercase font-extrabold rounded-lg text-sm"
     >
         Imprimir Ticket
     </button>
-
     <Modal v-model:show="openModal" @close="openModal = false">
         <div
             v-if="is_courtesy === true"
