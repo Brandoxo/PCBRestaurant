@@ -54,6 +54,11 @@ class DashBoardController extends Controller
           if ($order->status === 'Cancelada') {
         $order->cancelled_by = $request->input('user_name');
         $table = method_exists($order, 'table') ? $order->table : \App\Models\Mesas::find($order->table_id);
+        $room = method_exists($order, 'room') ? $order->room : \App\Models\Rooms::find($order->room_id);
+        if ($room) {
+            $room->status = 'Libre';
+            $room->save();
+        }
         if ($table) {
             $table->status = 'Libre';
             $table->save();
