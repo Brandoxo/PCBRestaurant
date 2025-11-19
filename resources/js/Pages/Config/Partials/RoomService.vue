@@ -5,8 +5,6 @@ import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
 import { isAdmin } from "@/utils/isAdmin";
 
-console.log('Is Admin:', isAdmin.value)
-
 const toast = useToast();
 const props = defineProps({
     roomServiceConfig: Array,
@@ -54,7 +52,7 @@ async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
                     class="sr-only peer relative"
                     v-model="isRoomServiceEnabled"
                     id="is_active"
-                    :disabled="!isAdmin.value"
+                    :disabled="!isAdmin()"
                 />
 
                 <Switch v-model="isRoomServiceEnabled" />
@@ -71,13 +69,13 @@ async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
                 max="100"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 v-model="roomServiceCharge"
-                :disabled="!isAdmin.value"
+                :disabled="!isAdmin()"
             />
         </div>
         <button
             @click="saveChanges(isRoomServiceEnabled, roomServiceCharge)"
             v-if="
-            isAdmin &&
+            isAdmin() &&
             isRoomServiceEnabled !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].is_active === 1 : false) ||
             roomServiceCharge !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].service_cost : 0) 
             "
