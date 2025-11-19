@@ -41,8 +41,6 @@ const serviceCostPercent =
         ? props.RoomServiceConfig.service_cost
         : 0;
 
-
-
 const calculateServiceCost = (total) => {
     if (isRoomServiceActive) {
        total = parseFloat(total);

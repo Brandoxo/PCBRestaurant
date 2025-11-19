@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sales;
 use App\Models\CashFloats;
+use App\Models\ConfigRoomService;
 use App\Models\Shifts;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,6 +16,7 @@ class SalesController extends Controller
     $query = Sales::with(['product', 'user', 'order']);
     $cashFloat = CashFloats::where('type', 'open')->first();
     $shifts = Shifts::all();
+    $RoomConfigService = ConfigRoomService::select('is_active', 'service_cost')->first();
 
     if ($request->has('date') && $request->date) {
         $query->whereDate('date_time', $request->date);
@@ -26,6 +28,7 @@ class SalesController extends Controller
         'sales' => $sales,
         'cashFloat' => $cashFloat,
         'shifts' => $shifts,
+        'RoomServiceConfig' => $RoomConfigService,
     ]);
 }
 
