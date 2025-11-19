@@ -98,6 +98,7 @@ const createSale = async () => {
                         (item.unit_price ??
                             (item.product ? item.product.price : 0)),
                 is_courtesy: is_courtesy.value ? 1 : 0,
+                is_room: isRoomServiceActive && props.order.room_id ? 1 : 0,
             })),
         });
 

@@ -44,6 +44,7 @@ public function store(Request $request) {
         $sale->date_time = Carbon::now();
         $sale->payment_method = $request->payment_method;
         $sale->is_courtesy = isset($item['is_courtesy']) ? $item['is_courtesy'] : 0;
+        $sale->is_room = isset($item['is_room']) ? $item['is_room'] : 0;
         $sale->save();
     }
 
