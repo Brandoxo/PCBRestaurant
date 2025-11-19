@@ -8,6 +8,7 @@ import StatusBadge from "@/Components/StatusBadge.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import InputError from "@/Components/InputError.vue";
 import CancelButton from "@/Components/CancelButton.vue";
+import { isAdmin } from "@/utils/isAdmin";
 
 const props = defineProps({ products: Object, categories: Object });
 const openModal = ref(false);
@@ -17,10 +18,7 @@ const handleImageUpdate = (event) => {
     imageFile.value = event.target.files[0];
     console.log("Selected image file:", imageFile.value);
 };
-const user = usePage().props.auth.user;
-const isAdmin = computed(() => {
-    return user && user.roles && user.roles.includes("Admin");
-});
+
 
 function showModal(id) {
     openModal.value = true;
@@ -121,7 +119,7 @@ const filteredProducts = computed(() => {
                         <th class="p-4">Disponible</th>
                         <th class="p-4 hidden lg:block">Fecha de Creación</th>
                         <th class="p-4">Fecha de Actualización</th>
-                        <th v-if="isAdmin" class="p-4">Acciones</th>
+                        <th v-if="isAdmin()" class="p-4">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -158,7 +156,7 @@ const filteredProducts = computed(() => {
                             {{ value.updated_at.slice(0, 10) }}
                         </td>
                         <td
-                            v-if="isAdmin"
+                            v-if="isAdmin()"
                             class="border p-2 flex gap-2 justify-center"
                         >
                             <button

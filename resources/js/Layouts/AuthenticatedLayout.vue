@@ -4,13 +4,9 @@ import NavLink from "@/Components/NavLink.vue";
 import Header from "@/Components/Header.vue";
 import { usePage } from "@inertiajs/vue3";
 import { isRoomServiceEnabled } from "@/utils/isRoomServiceEnabled";
+import { isAdmin } from "@/utils/isAdmin";
 
 const page = usePage();
-
-const isAdmin = computed(() => {
-    const user = page.props.auth?.user ?? null;
-    return !!(user && user.roles && user.roles.includes("Admin"));
-});
 
 const sidebarOpen = ref(false);
 const showLabels = ref(false);
@@ -22,7 +18,7 @@ function toggleSidebar() {
 }
 
 function showNav(item) {
-    if (item.route === "Users/Index") return isAdmin.value;
+    if (item.route === "Users/Index") return isAdmin();
     if (item.route === "Rooms/Index") return isRoomServiceEnabled.value;
     return true;
 }

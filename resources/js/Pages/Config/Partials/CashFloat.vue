@@ -2,15 +2,12 @@
     import { ref, computed } from 'vue';
     import { router, usePage } from '@inertiajs/vue3';
     import { useToast } from 'vue-toastification';
+    import { isAdmin } from '@/utils/isAdmin';
     const props = defineProps({
         users: Array,
         cashFloats: Array,
     });
-    const user = usePage().props.auth.user;
-    console.log('Config page user:', user);
-    const isAdmin = computed(() => {
-    return user && user.roles.includes('Admin');
-});
+
 
     const toast = useToast();
     const cashFloatAmount = ref(props.cashFloats.length ? props.cashFloats[0].amount : 0);
@@ -55,7 +52,7 @@
 </script>
 
 <template>
-    <div class="p-6 bg-white border-b border-gray-200" v-if="isAdmin">
+    <div class="p-6 bg-white border-b border-gray-200" v-if="isAdmin()">
         <h3 class="font-semibold text-lg">Fondo de Caja</h3>
         <p class="mb-6 text-sm text-gray-600">Configura el monto inicial del fondo de caja.</p>
 

@@ -9,6 +9,7 @@ import CancelButton from "@/Components/CancelButton.vue";
 import InputError from "@/Components/InputError.vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import { computed, watch } from "vue";
+import { isAdmin } from "@/utils/isAdmin";
 
 const form = ref({ errors: {} });
 
@@ -16,11 +17,6 @@ const props = defineProps({ rooms: Object });
 console.log("ROOMS:", props.rooms);
 const openModal = ref(false);
 const currentRoom = ref({});
-const user = usePage().props.auth.user;
-const isAdmin = computed(() => {
-    console.log('DETAILS:', user);
-    return user && user.roles && user.roles.includes('Admin');
-})
 
 const closeModal = () => {
     openModal.value = false;
@@ -110,7 +106,7 @@ const filteredRooms = computed(() => {
                     <th class="p-4">Número</th>
                     <th class="p-4">Estado</th>
                     <th class="p-4">Capacidad</th>
-                    <th v-if="isAdmin" class="p-4">Acciones</th>
+                    <th v-if="isAdmin()" class="p-4">Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -125,7 +121,7 @@ const filteredRooms = computed(() => {
                         {{ value.capacity }} Personas
                     </td>
                     <td
-                        v-if="isAdmin &&
+                        v-if="isAdmin() &&
                             value.status === 'Libre' ||
                             value.status === 'Reservada'
                         "

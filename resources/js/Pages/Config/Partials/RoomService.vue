@@ -1,14 +1,9 @@
 <script setup>
 import { computed, ref } from "vue";
 import Switch from "@/Components/Switch.vue";
-import { router, usePage } from "@inertiajs/vue3";
+import { router } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
-
-const page = usePage();
-const isAdmin = computed(() => {
-    const user = page.props.auth?.user ?? null;
-    return !!(user && user.roles && user.roles.includes("Admin"));
-});
+import { isAdmin } from "@/utils/isAdmin";
 
 console.log('Is Admin:', isAdmin.value)
 
