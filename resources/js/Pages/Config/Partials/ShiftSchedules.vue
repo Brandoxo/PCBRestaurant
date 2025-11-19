@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { useToast } from 'vue-toastification';
+import { isAdmin } from '@/utils/isAdmin';
 
 const toast = useToast();
 
@@ -62,6 +63,7 @@ function saveChanges() {
             <div class="flex-col flex">
             <label class="block text-sm font-medium text-gray-700">Hora de Inicio</label>
             <input
+                :disabled="!isAdmin()"
                 type="time"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 v-model="morningShiftStart"
@@ -73,6 +75,7 @@ function saveChanges() {
             <div class="flex flex-col">
             <label class="block text-sm font-medium text-gray-700 ">Hora de Fin</label>
             <input
+                :disabled="!isAdmin()"
                 type="time"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 v-model="morningShiftEnd"
@@ -85,6 +88,7 @@ function saveChanges() {
             <div class="flex flex-col">
             <label class="block text-sm font-medium text-gray-700">Hora de Inicio</label>
             <input
+                :disabled="!isAdmin()"
                 type="time"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 v-model="eveningShiftStart"
@@ -96,6 +100,7 @@ function saveChanges() {
             <div class="flex flex-col">
             <label class="block text-sm font-medium text-gray-700 ">Hora de Fin</label>
             <input
+                :disabled="!isAdmin()"
                 type="time"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 v-model="eveningShiftEnd"
@@ -103,7 +108,8 @@ function saveChanges() {
             </div>
         </div>
 
-        <button v-if="morningShiftStart && morningShiftEnd && eveningShiftStart && eveningShiftEnd"
+        <button v-if="morningShiftStart && morningShiftEnd && eveningShiftStart && eveningShiftEnd && isAdmin()"
+        
             class="px-4 py-2 bg-blue-600 text-white rounded-md self-end"
             @click="saveChanges"
         >
