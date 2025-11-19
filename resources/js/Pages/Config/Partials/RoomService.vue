@@ -1,8 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import Switch from "@/Components/Switch.vue";
-import { router } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 import { useToast } from "vue-toastification";
+
+const page = usePage();
+const isAdmin = computed(() => {
+    const user = page.props.auth?.user ?? null;
+    return !!(user && user.roles && user.roles.includes("Admin"));
+});
+
+console.log('Is Admin:', isAdmin.value)
 
 const toast = useToast();
 const props = defineProps({
@@ -51,6 +59,7 @@ async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
                     class="sr-only peer relative"
                     v-model="isRoomServiceEnabled"
                     id="is_active"
+                    :disabled="!isAdmin.value"
                 />
 
                 <Switch v-model="isRoomServiceEnabled" />
@@ -67,13 +76,15 @@ async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
                 max="100"
                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                 v-model="roomServiceCharge"
+                :disabled="!isAdmin.value"
             />
         </div>
         <button
             @click="saveChanges(isRoomServiceEnabled, roomServiceCharge)"
             v-if="
+            isAdmin &&
             isRoomServiceEnabled !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].is_active === 1 : false) ||
-            roomServiceCharge !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].service_cost : 0)
+            roomServiceCharge !== (props.roomServiceConfig.length > 0 ? props.roomServiceConfig[0].service_cost : 0) 
             "
             class="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 w-full self-end  "
         >
