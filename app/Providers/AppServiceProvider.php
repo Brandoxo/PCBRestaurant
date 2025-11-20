@@ -27,5 +27,9 @@ class AppServiceProvider extends ServiceProvider
         Inertia::share('roomServiceConfig', function (){
             return ConfigRoomService::select('service_cost', 'is_active')->get();
         });
+
+        Inertia::share('version', function () {
+            return config('app.version');
+        });
     }
 }

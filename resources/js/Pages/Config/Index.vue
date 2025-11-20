@@ -4,6 +4,7 @@ import ShiftSchedules from "./Partials/ShiftSchedules.vue";
 import Discounts from "./Partials/Discounts.vue";
 import CashFloat from "./Partials/CashFloat.vue";
 import RoomService from "./Partials/RoomService.vue";
+import VersionInfo from "./Partials/VersionInfo.vue";
 
 const props = defineProps({
     shifts: Array,
@@ -31,6 +32,7 @@ console.log("this is ", props.roomServiceConfig);
                     <ShiftSchedules :shifts="props.shifts" />
                     <Discounts />
                     <RoomService :roomServiceConfig="props.roomServiceConfig" />
+                    <VersionInfo />
                 </div>
             </div>
         </div>
