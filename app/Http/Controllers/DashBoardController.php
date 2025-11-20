@@ -13,7 +13,22 @@ class DashBoardController extends Controller
     view()->share('RoomServiceConfig', $RoomServiceConfig);
     $today = date('Y-m-d');
     $yesterday = date('Y-m-d', strtotime('-1 day'));
-    $orders = Orders::with(['table', 'room', 'orderDetails.product'])->whereDate('date_time', $today)->orWhereDate('date_time', $yesterday)->orderBy('date_time', 'desc')->get();
+    // Include orders from today, yesterday, or with status "En curso"
+    $orders = Orders::with(['table', 'room', 'orderDetails.product'])
+        ->where(function($q) use ($today, $yesterday) {
+            $q->whereDate('date_time', $today)
+              ->orWhereDate('date_time', $yesterday);
+        })
+        ->orWhere(function($q) {
+            // Case-insensitive check for "En curso"
+            $q->whereRaw('LOWER(status) = ?', ['en curso'])
+              ->orWhere('status', 'En curso')
+              ->orWhere('status', 'en curso');
+        })
+        ->orderBy('date_time', 'desc')
+        ->get()
+        ->unique('id') // Ensure unique orders
+        ->values();
         $totalProducts = \App\Models\Products::count();
         $totalCategories = \App\Models\Categories::count();
         $totalUsers = \App\Models\User::count();
@@ -28,9 +43,6 @@ class DashBoardController extends Controller
             'sales' => $totalSales,
             'RoomServiceConfig' => $RoomServiceConfig
         ]);
-
-       
-        
     }
 
     public function edit($id) {
