@@ -197,11 +197,12 @@ function getTotalsFromSales(sales) {
                 sum + (sale.quantity * sale.unit_price) * (serviceCostPercent.value / 100),
             0
         );
+    const totalWithService = baseTotal + serviceTotal;
 
     return {
         baseTotal,
         serviceTotal,
-        totalWithService: baseTotal + serviceTotal,
+        totalWithService: totalWithService,
     };
 }
 
@@ -353,6 +354,7 @@ const PrintCutOffTicket = () => {
     }
 
     const totals = getTotalsFromSales(sales);
+    const totalWithService = totals.totalWithService;
 
     const cashTotals = getTotalsFromSales(
         getFilteredSalesPaymentMethodCash(selectedShift.value, dayToUse)
@@ -379,7 +381,8 @@ const PrintCutOffTicket = () => {
         totalTarjeta: cardTotals.totalWithService,
         totalCortesias: courtesyBase,
     };
-
+    console.clear();
+    console.log("Cut Off Data:", cutOffData.montoFinal);
     axios
         .get(route("print.cutOff"), {
             params: { data: cutOffData },
