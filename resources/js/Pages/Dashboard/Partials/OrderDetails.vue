@@ -193,9 +193,13 @@ const PrintTicket = () => {
                 email: user.email,
                 role: user.role,
             },
-            table: props.order.table ? props.order.table.number : 0,
+            table: props.order.table
+                ? props.order.table.number
+                : props.order.room_id
+                ? props.order.room.prefix + props.order.room.number
+                : 0,
         };
-
+       // console.log("Ticket Data to be sent:", ticketData);
         const ticketItems = props.order.order_details.map((item) => ({
             price: item.unit_price ?? (item.product ? item.product.price : 0),
             quantity: item.quantity,
