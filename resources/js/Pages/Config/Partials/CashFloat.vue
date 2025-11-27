@@ -14,10 +14,10 @@
     const cashFloatId = props.cashFloats.length ? props.cashFloats[0].id : null;
 
     const createCashFloat = () => {
-        console.log('Creando nuevo fondo de caja con monto:', cashFloatAmount.value, 'por el usuario ID:', user.id);
+        console.log('Creando nuevo fondo de caja con monto:', cashFloatAmount.value, 'por el usuario ID:', isAdmin().id);
         router.post('/CashFloat/Store', {
             amount: cashFloatAmount.value,
-            user_id: user.id,
+            user_id: isAdmin().id,
             type: 'open',
         }, {
             onSuccess: () => {
