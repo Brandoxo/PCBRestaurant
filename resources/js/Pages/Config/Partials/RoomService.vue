@@ -23,7 +23,7 @@ const roomServiceCharge = ref(
 
 async function saveChanges(isRoomServiceEnabled, roomServiceCharge) {
     try {
-        await router.post("/Config/Update-Room-Service", {
+        await router.post("/config/update-room-service", {
             is_active: isRoomServiceEnabled,
             service_cost: roomServiceCharge,
         });
