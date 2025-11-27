@@ -34,7 +34,7 @@ watch(
 
 async function updateShift(shiftName, startTime, endTime) {
     try {
-        await router.post('/Config/Update-Shift', {
+        await router.post('/config/update-shift', {
             name_shift: shiftName,
             start_time: startTime,
             end_time: endTime,
