@@ -19,7 +19,6 @@ const canGenerateCutOff = computed(() =>{
 const selectedDate = ref("");
 const selectedShift = ref("");
 const openModal = ref(false);
-const modalSelectedDate = ref("");
 
 const showModal = () => {
     openModal.value = true;
@@ -197,12 +196,11 @@ function getTotalsFromSales(sales) {
                 sum + (sale.quantity * sale.unit_price) * (serviceCostPercent.value / 100),
             0
         );
-    const totalWithService = baseTotal + serviceTotal;
 
     return {
         baseTotal,
         serviceTotal,
-        totalWithService: totalWithService,
+        totalWithService: baseTotal + serviceTotal,
     };
 }
 
@@ -252,7 +250,7 @@ function getTotalTipsPercent(sales) {
  }
 
 async function buildCashAuditData() {
-    const dayToUse = modalSelectedDate.value;
+    const dayToUse = selectedDate.value;
     if (!dayToUse || !selectedShift.value) {
         alert("Por favor, selecciona una fecha y un turno.");
         return null;
@@ -282,7 +280,7 @@ async function buildCashAuditData() {
     };
 }
 
-function getFilteredSalesPaymentMethodCash(shiftName = selectedShift.value, dateStr = modalSelectedDate.value) {
+function getFilteredSalesPaymentMethodCash(shiftName = selectedShift.value, dateStr = selectedDate.value) {
     let sales = getFilteredSales(shiftName, dateStr);
     sales = sales.filter(
         (sale) => sale.payment_method === "Efectivo" && !sale.is_courtesy
@@ -290,7 +288,7 @@ function getFilteredSalesPaymentMethodCash(shiftName = selectedShift.value, date
     return sales;
 }
 
-function getFilteredSalesPaymentMethodCard(shiftName = selectedShift.value, dateStr = modalSelectedDate.value) {
+function getFilteredSalesPaymentMethodCard(shiftName = selectedShift.value, dateStr = selectedDate.value) {
     let sales = getFilteredSales(shiftName, dateStr);
     sales = sales.filter(
         (sale) => sale.payment_method === "Tarjeta" && !sale.is_courtesy
@@ -298,7 +296,7 @@ function getFilteredSalesPaymentMethodCard(shiftName = selectedShift.value, date
     return sales;
 }
 
-function getFilteredSalesCourtesy(shiftName = selectedShift.value, dateStr = modalSelectedDate.value) {
+function getFilteredSalesCourtesy(shiftName = selectedShift.value, dateStr = selectedDate.value) {
     let sales = getFilteredSales(shiftName, dateStr);
     sales = sales.filter((sale) => sale.is_courtesy === 1);
     return sales;
@@ -346,7 +344,7 @@ const generateCashAudit = async () => {
 };
 
 const PrintCutOffTicket = () => {
-    const dayToUse = modalSelectedDate.value;
+    const dayToUse = selectedDate.value;
     const sales = getFilteredSales(selectedShift.value, dayToUse);
     if (!sales.length) {
         alert("No hay ventas para la fecha y turno seleccionados.");
@@ -354,7 +352,6 @@ const PrintCutOffTicket = () => {
     }
 
     const totals = getTotalsFromSales(sales);
-    const totalWithService = totals.totalWithService;
 
     const cashTotals = getTotalsFromSales(
         getFilteredSalesPaymentMethodCash(selectedShift.value, dayToUse)
@@ -370,7 +367,7 @@ const PrintCutOffTicket = () => {
     );
 
     const cutOffData = {
-        fecha: modalSelectedDate.value,
+        fecha: selectedDate.value,
         turno: selectedShift.value,
         totalVentas: totals.baseTotal,
         totalRoomService: totals.serviceTotal,
@@ -381,8 +378,7 @@ const PrintCutOffTicket = () => {
         totalTarjeta: cardTotals.totalWithService,
         totalCortesias: courtesyBase,
     };
-    console.clear();
-    console.log("Cut Off Data:", cutOffData.montoFinal);
+
     axios
         .get(route("print.cutOff"), {
             params: { data: cutOffData },
@@ -549,12 +545,13 @@ function onDateChange() {
                 class="mb-4"
             >
                 <label class="block text-gray-700 font-medium mb-2"
-                    >Selecciona la fecha</label
+                    >Fecha Seleccionada</label
                 >
                 <input
-                    v-model="modalSelectedDate"
+                    v-model="selectedDate"
                     type="date"
                     class="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-approveGreen focus:outline-none transition"
+                    disabled
                 />
             </div>
 
