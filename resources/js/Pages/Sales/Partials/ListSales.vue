@@ -365,6 +365,7 @@ const PrintCutOffTicket = () => {
         (sum, s) => sum + s.quantity * s.unit_price,
         0
     );
+    const totalWithService = totals.totalWithService;
 
     const cutOffData = {
         fecha: selectedDate.value,
