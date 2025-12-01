@@ -5,6 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TablesAvailables from "./Partials/TablesAvailables.vue";
 import MakeOrder from "./Partials/MakeOrder.vue";
 import OrderDetails from "./Partials/OrderDetails.vue";
+import Notes from "./Partials/Notes.vue";
 
 const { props } = usePage();
 const selectedTable = ref(null);
@@ -46,6 +47,7 @@ function tableSelected(table) {
             :rooms="rooms"
             @tableSelected="tableSelected"
             />
+            <Notes :notes="props.notes" />
                 <OrderDetails
                 v-if="selectedTable"
                 :selectedTable="selectedTable"
