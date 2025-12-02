@@ -6,7 +6,7 @@ use App\Models\Mesas;
 use Illuminate\Http\Request;
 use App\Models\Orders;
 use App\Models\ConfigRoomService;
-use App\Models\Notes;
+use App\Models\OrdersNotes as Notes;
 class DashBoardController extends Controller
 {
     public function index() {
@@ -58,7 +58,7 @@ class DashBoardController extends Controller
     }
 
         public function update(Request $request, $id)
-    {
+    {   
         $order = Orders::findOrFail($id);
         $request->validate([
             'status' => 'required|string',
@@ -66,7 +66,16 @@ class DashBoardController extends Controller
 
         $order->status = $request->input('status');
 
+        $orders_notes = Notes::where('order_id', $id)->first();
+        if (! $orders_notes) {
+            $orders_notes = new Notes();
+            $orders_notes->order_id = $id;
+        }
+
+
           if ($order->status === 'Cancelada') {
+        $orders_notes->cancellation_reason = $request->input('cancellation_reason');
+        $orders_notes->save();
         $order->cancelled_by = $request->input('user_name');
         $table = method_exists($order, 'table') ? $order->table : \App\Models\Mesas::find($order->table_id);
         $room = method_exists($order, 'room') ? $order->room : \App\Models\Rooms::find($order->room_id);

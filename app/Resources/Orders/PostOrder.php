@@ -2,7 +2,7 @@
 
 namespace App\Resources\Orders;
 use App\Models\Orders;
-use App\Models\Notes;  
+use App\Models\OrdersNotes as Notes;  
 use Illuminate\Http\Request;
 
 class PostOrder

@@ -15,31 +15,40 @@ console.log("order in:", props.order);
 const confirmCancelOrder = () => {
     Swal.fire({
         title: "¿Estás seguro?",
-        text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, cancelar orden",
         cancelButtonText: "Cancelar",
+        input: 'text',
+        inputLabel: 'Motivo de la cancelación',
+        inputPlaceholder: 'Escribe el motivo aquí...',
+        inputValidator: (value) => {
+            if (!value) {
+                return '¡Necesitas escribir un motivo!';
+            }
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            cancelOrder();
+            const reason = result.value;
+            cancelOrder(reason);
             Swal.fire("¡Cancelada!", "La orden ha sido cancelada.", "success");
         }
     });
 };
 
-const cancelOrder = async () => {
+const cancelOrder = async (reason) => {
     try {
         await router.post(
             `/orders/update/${props.order.id}`,
-            { status: "Cancelada", user_name: user.name },
+            { status: "Cancelada", user_name: user.name, cancellation_reason: reason},
             {
                 preserveState: true,
                 onSuccess: () => {
                     props.order.status = "Cancelada";
                     console.log("Orden cancelada");
+                    props.notes.cancellation_reason = reason;
                 },
                 onError: (errors) => {
                     console.error("Error al cancelar la orden:", errors);
@@ -95,6 +104,7 @@ const saveNote = async (noteId, content) => {
     }   
 
 }
+const labels = [{status: 'En curso', input: 'Notas:'}, {status: 'Cancelada', input: "Motivo:"}, {status: 'Completada', input: 'Notas:'}];  
 
 </script>
 
@@ -131,12 +141,14 @@ const saveNote = async (noteId, content) => {
                 />
             </h2>
             <div v-for="note in filteredNotes" :key="note.id" class="flex items-center gap-2 mt-2 lg:mt-0 2xl:w-3/4">
-                <p class="uppercase font-extrabold text-sm">Notas:</p>
+                <p class="uppercase font-extrabold text-sm">{{ labels.find(label => label.status === order.status)?.input }}</p>
                 <input
                 type="text"
-                v-model="note.content"
+                :value="order.status === 'Cancelada' ? note.cancellation_reason : note.content"
+                @input="note.content = $event.target.value"
                 @blur="saveNote(note.id, note.content)"
                 class="border border-gray-300 rounded-md p-2 w-full bg-yellow-50"
+                :disabled="order.status === 'Cancelada' || order.status === 'Completada'"
                 />
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

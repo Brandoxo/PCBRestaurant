@@ -13,12 +13,13 @@ return new class extends Migration
     
     public function up(): void
     {   
-        if(!Schema::hasTable('notes')) {
-        Schema::create('notes', function (Blueprint $table) {
+        if(!Schema::hasTable('orders_notes')) {
+        Schema::create('orders_notes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
-            $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->integer('order_id');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->text('content')->nullable();
+            $table->text('cancellation_reason')->nullable();
             $table->timestamps();
         });
     }}

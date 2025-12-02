@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Notes;
+use App\Models\OrdersNotes as Notes;
 
-class NoteController extends Controller
+class OrderNotesController extends Controller
 {
     public function index()
     {
