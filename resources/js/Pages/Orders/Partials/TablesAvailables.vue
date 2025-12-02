@@ -1,11 +1,12 @@
 <script setup>
-import { computed, onMounted, ref, toRefs } from "vue";
+import { computed, onMounted, ref, toRefs, watch } from "vue";
+import Notes from "./Notes.vue";
 import GenerateOrderButton from "@/Components/GenerateOrderButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import { useToast } from "vue-toastification";
 import { isRoomServiceEnabled } from "@/utils/isRoomServiceEnabled";
 
-const emit = defineEmits(["tableSelected"]);
+const emit = defineEmits(["tableSelected", "update:notes"]);
 const props = defineProps({
     tables: Object,
     selectedTable: Object,
@@ -14,6 +15,11 @@ const props = defineProps({
 console.log("Aqui tan las rooms sr", props.rooms);
 const roomServiceEnabled = isRoomServiceEnabled;
 const { tables, rooms } = toRefs(props);
+// --- ADDED ---
+const localNotes = ref(props.notes ?? "");
+watch(localNotes, (val) => {
+    emit("update:notes", val);
+});
 
 const combinedList = computed(() => {
     const t = tables.value || {};
@@ -91,7 +97,7 @@ onMounted(() => {
     <div
         :class="[
             props.selectedTable
-                ? 'animate-pulse pointer-events-none transition-transform duration-300 ease-in-out min-w-80 2xl:w-1/4'
+                ? 'animate-pulse transition-transform duration-300 ease-in-out min-w-80 2xl:w-1/4'
                 : 'grid sm:grid-cols-2  lg:grid-cols-3 2xl:grid-cols-4 gap-6 2xl:gap-10 overflow-y-auto scrollbar-hide scroll-smooth w-full',
         ]"
     >
@@ -161,4 +167,5 @@ onMounted(() => {
             </GenerateOrderButton>
         </div>
     </div>
+    <Notes v-if="props.selectedTable" v-model:notes="localNotes" />
 </template>

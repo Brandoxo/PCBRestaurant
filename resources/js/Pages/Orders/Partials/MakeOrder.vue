@@ -14,6 +14,7 @@ const props = defineProps({
     selectedTable: Object,
     currentOrder: Object,
     isEdit: Boolean,
+    localNotes: String,
 });
 const user = usePage().props.auth.user;
 const canEditOrder = computed(() => {
@@ -57,6 +58,9 @@ const toast = useToast();
 const saveOrder = () => {
     console.log("Save Order clicked with current order:", props.currentOrder);
     // return toast.info('Guardando orden...');
+    watch(() => {
+        props.currentOrder.notes = props.localNotes ?? null;
+    });
     if (
         (!props.currentOrder.mesa_id && !props.currentOrder.room_id) ||
         props.currentOrder.items.length === 0
@@ -235,6 +239,7 @@ const updateOrder = () => {
         status: props.currentOrder.status || "En curso",
         items: props.currentOrder.items,
         subtotal: subtotal.value,
+        notes: props.localNotes ?? null,
     };
     router.put(`/Order/Update/${props.currentOrder.id}`, payload, {
         onSuccess: (response) => {
