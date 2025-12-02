@@ -21,12 +21,41 @@ const confirmCancelOrder = () => {
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, cancelar orden",
         cancelButtonText: "Cancelar",
-        input: 'text',
+        input: 'select',
         inputLabel: 'Motivo de la cancelación',
-        inputPlaceholder: 'Escribe el motivo aquí...',
+        inputOptions: {
+            'Cliente pidió cancelar': 'Cliente pidió cancelar',
+            'Cliente cambió de opinión': 'Cliente cambió de opinión',
+            'Cliente se retiró': 'Cliente se retiró',
+            'Problema de inventario': 'Problema de inventario',
+            'Error en el pedido': 'Error en el pedido',
+            'Otro': 'Otro'
+        },
         inputValidator: (value) => {
+            if (value === 'Otro') {
+                return Swal.fire({
+                    title: 'Por favor, ingresa el motivo de la cancelación:',
+                    input: 'text',
+                    inputPlaceholder: 'Escribe el motivo aquí...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Enviar',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: (inputValue) => {
+                        if (!inputValue) {
+                            Swal.showValidationMessage('¡Necesitas ingresar un motivo!');
+                        }
+                        return inputValue;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const reason = result.value;
+                        cancelOrder(reason);
+                        Swal.fire("¡Cancelada!", "La orden ha sido cancelada.", "success");
+                    }
+                });
+            } else
             if (!value) {
-                return '¡Necesitas escribir un motivo!';
+                return '¡Necesitas seleccionar un motivo!';
             }
         }
     }).then((result) => {
