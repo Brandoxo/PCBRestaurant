@@ -46,9 +46,9 @@ const createTable = () => {
             <h2 class=" text-white mb-4 font-bold text-2xl">Registrar Nueva Habitación</h2>
             <div class="bg-white p-6 rounded-2xl shadow-md">
                 <form @submit.prevent="createTable" class="space-y-2 flex flex-col">
-                        <InputLabel class="block text-sm font-medium text-black mb-2" value="Prefijo" />
+                        <InputLabel class="block text-sm font-medium text-black mb-2" value="Prefijo" example="Ejemplo: A" />
                         <input type="text" class="border p-2 rounded-lg mb-4" v-model="newRoom.prefix" />   
-                        <InputLabel class="block text-sm font-medium text-black mb-2" value="Número de habitación" />
+                        <InputLabel class="block text-sm font-medium text-black mb-2" value="Número de habitación" example="Ejemplo: 101" />
                         <input type="number" class="border p-2 rounded-lg mb-4" v-model="newRoom.number" />
                         <span class="text-red-500 hidden">El número de habitación ya está en uso.</span>
 
