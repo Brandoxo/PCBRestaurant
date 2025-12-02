@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreignId('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->text('content')->nullable();
             $table->timestamps();
         });
