@@ -115,12 +115,20 @@ watch(
 
 const saveNote = async (noteId, content) => {
     try {
+        Swal.fire({
+            title: 'Guardando nota...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         await router.put(
             `/Notes/Update/${noteId}`,
             { content: content },
             {
                 preserveState: true,
                 onSuccess: () => {
+                    Swal.close();
                     console.log("Nota guardada");
                 },
                 onError: (errors) => {
@@ -175,7 +183,7 @@ const labels = [{status: 'En curso', input: 'Notas:'}, {status: 'Cancelada', inp
                 type="text"
                 :value="order.status === 'Cancelada' ? note.cancellation_reason : note.content"
                 @input="note.content = $event.target.value"
-                @blur="saveNote(note.id, note.content)"
+                @keyup.enter="saveNote(note.id, note.content)"
                 class="border border-gray-300 rounded-md p-2 w-full bg-yellow-50"
                 :disabled="order.status === 'Cancelada' || order.status === 'Completada'"
                 />
