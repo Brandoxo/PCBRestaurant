@@ -191,7 +191,7 @@ const saveNote = async (noteId, content) => {
             <button
                 v-if="order.status === 'En curso' && canCancelOrder"
                 @click="confirmCancelOrder"
-                class="mt-4 bg-dangerRed/30 max-w-96 p-2 rounded-md w-full uppercase text-dangerRed tracking-widest font-extrabold hover:bg-dangerRed/50 transition"
+                class="py-4 bg-dangerRed/30 max-w-96 p-2 rounded-md w-1/2 uppercase text-dangerRed tracking-widest font-extrabold hover:bg-dangerRed/50 transition"
             >
                 Cancelar
             </button>
