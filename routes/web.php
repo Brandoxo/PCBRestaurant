@@ -76,6 +76,7 @@ Route::post('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class,
 //Notes
 Route::get('/Notes', [\App\Http\Controllers\NoteController::class, 'index'])->name('Notes/Index') ->middleware(['auth', 'verified']);
 Route::post('/Notes', [\App\Http\Controllers\NoteController::class, 'store'])->name('Notes/Store') ->middleware(['auth', 'verified']);
+Route::put('/Notes/Update/{id}', [\App\Http\Controllers\NoteController::class, 'update'])->name('Notes/Update') ->middleware(['auth', 'verified']);
 
 //CashAudit
 Route::group(['middleware' => ['role:Admin|Cajero']], function (){

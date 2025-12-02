@@ -18,7 +18,9 @@ const props = defineProps({
     sales: Array,
     orders: Array,
     RoomServiceConfig: Object,
+    notes: Array,
 });
+console.log('Notes prop in <Dashboard>: ', props.notes);
 
 console.log("Sales prop in <Dashboard>: ", props.sales);
 
@@ -130,7 +132,7 @@ const selectOrder = (order) => {
                         <AllOrders :orders="allOrders" @select="selectOrder" />
                     </div>
                     <div class="mt-2 w-full flex flex-col gap-4 overflow-y-auto h-svh 2xl:max-h-full scrollbar-hide">
-                        <SelectedOrder :order="selectedOrder" />
+                        <SelectedOrder :order="selectedOrder" :notes="notes" />
                         <OrderDetails :order="selectedOrder" :RoomServiceConfig="RoomServiceConfig" />
                     </div>
                 </div>

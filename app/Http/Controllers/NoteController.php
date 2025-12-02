@@ -26,4 +26,16 @@ class NoteController extends Controller
 
         return redirect()->back()->with('success', 'Note added successfully!');
     }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string|max:255',
+        ]);
+        $note = Notes::findOrFail($id);
+        $note->content = $request->input('content');
+        $note->save();
+
+        return redirect()->back()->with('success', 'Note updated successfully!');
+    }
 }

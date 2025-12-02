@@ -3,12 +3,13 @@ import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import Swal from "sweetalert2";
 import { router, usePage } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 const user = usePage().props.auth.user;
 
-const props = defineProps({ order: Object });
+const props = defineProps({ order: Object, notes: Array });
 
+console.log("notes in SelectedOrder:", props.notes);
 console.log("order in:", props.order);
 
 const confirmCancelOrder = () => {
@@ -56,6 +57,45 @@ const canCancelOrder = computed(() => {
     );
 });
 console.log("User permissions:", user ? user.permissions : "No user");
+
+const filteredNotes = computed(() => {
+    if (!props.order || !props.notes) return [];
+    return props.notes.filter(
+        (note) => note.order_id === props.order.id   
+    );
+});
+console.log("Filtered notes:", filteredNotes.value);
+
+const noteContents = ref([]);
+watch(
+    filteredNotes,
+    (newNotes) => {
+        noteContents.value = newNotes.map((note) => note.content);
+    }, 
+    { immediate: true }
+);
+
+const saveNote = async (noteId, content) => {
+    try {
+        await router.put(
+            `/Notes/Update/${noteId}`,
+            { content: content },
+            {
+                preserveState: true,
+                onSuccess: () => {
+                    console.log("Nota guardada");
+                },
+                onError: (errors) => {
+                    console.error("Error al guardar la nota:", errors);
+                },
+            }
+        );
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+    }   
+
+}
+
 </script>
 
 <template>
@@ -77,7 +117,7 @@ console.log("User permissions:", user ? user.permissions : "No user");
         >
             <span class="mx-auto"> Venta Finalizada </span>
         </div>
-        <div class="lg:flex justify-between items-center mx-auto">
+        <div class="lg:flex justify-between items-center">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
                 <span class="font-extrabold"
@@ -90,7 +130,29 @@ console.log("User permissions:", user ? user.permissions : "No user");
                     class="inline w-6 ml-2 cursor-pointer"
                 />
             </h2>
-            <StatusBadge class="" />
+            <div v-for="note in filteredNotes" :key="note.id" class="flex items-center gap-2 mt-2 lg:mt-0 2xl:w-3/4">
+                <p class="uppercase font-extrabold text-sm">Notas:</p>
+                <input
+                type="text"
+                v-model="note.content"
+                @blur="saveNote(note.id, note.content)"
+                class="border border-gray-300 rounded-md p-2 w-full bg-yellow-50"
+                />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 inline text-black"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h5m-1.5-10l4 4m0 0l4-4m-4 4V3"
+                    />
+                </svg>
+            </div>
         </div>
         <div class="flex items-center justify-between gap-4 mt-4">
             <div class="flex-col">

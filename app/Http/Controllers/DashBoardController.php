@@ -6,9 +6,11 @@ use App\Models\Mesas;
 use Illuminate\Http\Request;
 use App\Models\Orders;
 use App\Models\ConfigRoomService;
+use App\Models\Notes;
 class DashBoardController extends Controller
 {
     public function index() {
+    $notes = Notes::all();
     $RoomServiceConfig = ConfigRoomService::select('is_active', 'service_cost')->first();
     view()->share('RoomServiceConfig', $RoomServiceConfig);
     $today = date('Y-m-d');
@@ -41,7 +43,8 @@ class DashBoardController extends Controller
             'orders' => $orders,
             'totalOrders' => $totalOrders,
             'sales' => $totalSales,
-            'RoomServiceConfig' => $RoomServiceConfig
+            'RoomServiceConfig' => $RoomServiceConfig,
+            'notes' => $notes,
         ]);
     }
 
