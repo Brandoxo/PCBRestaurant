@@ -143,3 +143,16 @@ Route::get('print-cut-off/', function (Request $request) {
 
     return response()->json(['printData' => $printData, 'rawData' => $cutOffData]);
 })->name('print.cutOff');
+
+Route::get('api/orders', function(Request $request) {
+    $sales = new App\Models\Sales;
+    // Obtener todas las ordenes de ventas agrupadas por order_id
+    $salesData = $sales::with(['product', 'user', 'order'])->orderBy('date_time', 'desc')->limit(25)->get();
+    $orders = new App\Models\Orders;
+    $ordersData = $orders::with('orderDetails')->orderBy('date_time', 'desc')->limit(25)->get();
+    return response()->json([
+        'message' => 'Orders fetched successfully',
+        'orders' => $ordersData,
+        'data' => $salesData,
+    ]);
+})->name('api.orders');
