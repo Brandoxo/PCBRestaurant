@@ -149,10 +149,33 @@ Route::get('api/orders', function(Request $request) {
     // Obtener todas las ordenes de ventas agrupadas por order_id
     $salesData = $sales::with(['product', 'user', 'order'])->orderBy('date_time', 'desc')->limit(25)->get();
     $orders = new App\Models\Orders;
-    $ordersData = $orders::with('orderDetails')->orderBy('date_time', 'desc')->limit(25)->get();
+    $ordersData = $orders::with(['room', 'orderDetails.product', 'orderDetails.product.category'])->orderBy('date_time', 'desc')->limit(25)->get();
     return response()->json([
         'message' => 'Orders fetched successfully',
         'orders' => $ordersData,
         'data' => $salesData,
     ]);
 })->name('api.orders');
+
+Route::get('api/orders/{ticket_id}', function(Request $request, $ticket_id) {
+    $sales = new App\Models\Sales;
+    // Obtener todas las ordenes de ventas agrupadas por order_id
+    //$salesData = $sales::with(['product', 'user', 'order'])->orderBy('date_time', 'desc')->limit(25)
+    //->where('id', $ticket_id)->first();
+    $orders = new App\Models\Orders;
+    $ordersData = $orders::with(['room', 'orderDetails.product', 'orderDetails.product.category'])->where('id', $ticket_id)->get();
+
+    if ($ordersData->isEmpty()) {
+        return response()->json([
+            'message' => 'No orders found for the given ticket ID ' . $ticket_id,
+            'order' => null,
+        ], 404);
+    }
+    else{
+        return response()->json([
+            'message' => 'Orders fetched successfully',
+            'order' => $ordersData,
+        ]);
+    }
+
+})->name('api.orders.byTicketId');
