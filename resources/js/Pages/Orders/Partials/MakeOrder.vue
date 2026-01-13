@@ -223,8 +223,22 @@ const printRestaurantOrder = () => {
     watch(() => {
         props.currentOrder.notes = props.localNotes ?? null;
     });
-    const payload = restaurantOrder(props.currentOrder, props.selectedTable);
-    router.post("/print.order", payload, {
+    const businessInfo = {
+        name: "Hotel Ronda Minerva",
+        address: "Av. Adolfo López Mateos Sur 265, Jardines del Bosque, 44520 Guadalajara, Jal.",
+        phone: "33 3121 4700",
+        };
+    const ticketData = {
+        table: (props.selectedTable?.prefix || '') + (props.selectedTable?.number || ''),
+        notes: props.currentOrder.notes ?? '',
+    }
+    const ticketItems = restaurantOrder(props.currentOrder, props.selectedTable);
+    console.log("Printing Restaurant Order with data:", {
+        businessInfo,
+        ticketData,
+        ticketItems
+    });
+    router.post("/print.order", { businessInfo, ticketData, ticketItems }, {
         onSuccess: (response) => {
             console.log(
                 "Order created and sent to kitchen successfully:",
