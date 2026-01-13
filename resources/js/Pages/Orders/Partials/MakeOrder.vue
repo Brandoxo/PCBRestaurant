@@ -7,6 +7,7 @@ import { router } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import ReturnButton from "@/Components/ReturnButton.vue";
 import { usePage } from "@inertiajs/vue3";
+import { restaurantOrder } from "@/utils/restaurantOrder";
 
 const props = defineProps({
     tables: Object,
@@ -218,6 +219,29 @@ const subtotal = computed(() => {
     );
 });
 
+const printRestaurantOrder = () => {
+    watch(() => {
+        props.currentOrder.notes = props.localNotes ?? null;
+    });
+    const payload = restaurantOrder(props.currentOrder, props.selectedTable);
+    router.post("/print.order", payload, {
+        onSuccess: (response) => {
+            console.log(
+                "Order created and sent to kitchen successfully:",
+                response.props.order
+            );
+        },
+        onError: (error) => {
+            toast.error("Error al crear la orden");
+            console.error("Error creating order:", error);
+        },
+        finally: () => {
+            toast.info("Create order request completed.");
+            console.log("Create order request completed.");
+        },
+    });
+};
+
 const updateOrder = () => {
     const payload = {
         mesa_id: props.selectedTable?.isRoom
@@ -373,7 +397,7 @@ console.log(props);
                 <button
                     v-if="!isEdit"
                     class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
-                    @click="saveOrder"
+                    @click="printRestaurantOrder()"
                 >
                     Guardar orden
                 </button>

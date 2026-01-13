@@ -12,6 +12,7 @@ const props = defineProps({
 });
 
 const selectedTable = ref({
+    prefix: props.order.table?.prefix ?? props.order.room?.prefix,
     number: props.order.table?.number ?? props.order.room?.number,
     mesa_id: props.order.table?.id ?? props.order.room?.id,
 });
