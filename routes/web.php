@@ -128,6 +128,23 @@ Route::get('print-ticket/', function (Request $request) {
     return response()->json(['printData' => $printData]);
 })->name('print.ticket');
 
+Route::post('print-order/', function (Request $request) {
+    $ticketrequest = request()->all()['data'];
+    
+    // Convertir todos los datos a JSON string
+    $ticketData = json_encode($ticketrequest['ticketData']);
+    $ticketItems = json_encode($ticketrequest['ticketItems']); // Corregido: convertir a JSON string
+    $businessInfo = json_encode($ticketrequest['businessInfo']);
+
+    // Concatenar las cadenas JSON con las barras
+    $printData = $ticketData . "|" . $ticketItems . "|" . $businessInfo;
+    
+    // Comprimir y codificar en Base64
+    $printData = base64_encode(gzdeflate($printData));
+    // Devolver la respuesta al cliente
+    return response()->json(['printData' => $printData]);
+})->name('print.order');
+
 Route::get('print-cut-off/', function (Request $request) {
     // Obtener los datos del request
     $cutOffData = request()->all()['data'];

@@ -78,6 +78,7 @@ const saveOrder = () => {
         });
         router.post("/Orders", props.currentOrder, props.currentTable, {
             onSuccess: (response) => {
+                printRestaurantOrder();
                 toast.success("Orden guardada exitosamente");
                 emit("handleOrderSaved", response.props.order);
                 console.log("Order saved successfully:", response.props.order);
@@ -238,25 +239,44 @@ const printRestaurantOrder = () => {
         ticketData,
         ticketItems
     });
-    router.post("/print.order", { businessInfo, ticketData, ticketItems }, {
-        onSuccess: (response) => {
-            console.log(
-                "Order created and sent to kitchen successfully:",
-                response.props.order
-            );
-        },
-        onError: (error) => {
-            toast.error("Error al crear la orden");
-            console.error("Error creating order:", error);
-        },
-        finally: () => {
-            toast.info("Create order request completed.");
-            console.log("Create order request completed.");
-        },
-    });
+            axios
+            .post("/print-order", {
+                data: {
+                    ticketData: ticketData,
+                    ticketItems: ticketItems, // Envía el array directamente
+                    businessInfo: businessInfo,
+                },
+            })
+            .then((response) => {
+                // Verifica que la respuesta contenga la URL
+                if (response.data && response.data.printData) {
+                    const printUrl = "print://" + response.data.printData;
+                    console.clear();
+                    console.log(printUrl);
+
+                    console.log("Print URL:", printUrl);
+                    console.log("Ticket Data:", ticketData);
+                    console.log("Ticket Items:", ticketItems);
+                    console.log("Buisness info:", businessInfo);
+                    //Imprime el ticket
+                    window.location.href = printUrl;
+                    console.log(
+                        "Ticket data sent successfully:",
+                        response.data
+                    );
+                } else {
+                    console.error("No print data received from server.");
+                    console.log(response);
+                    
+                }
+            })
+            .catch((error) => {
+                console.error("Error sending ticket data:", error);
+            });
 };
 
 const updateOrder = () => {
+
     const payload = {
         mesa_id: props.selectedTable?.isRoom
             ? null
@@ -271,6 +291,7 @@ const updateOrder = () => {
     };
     router.put(`/Order/Update/${props.currentOrder.id}`, payload, {
         onSuccess: (response) => {
+            printRestaurantOrder();
             console.log("Payload subtotal sent:", payload.subtotal);
             toast.success("Orden actualizada exitosamente");
             emit("handleOrderUpdated", response.props.order);
@@ -411,7 +432,7 @@ console.log(props);
                 <button
                     v-if="!isEdit"
                     class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
-                    @click="printRestaurantOrder()"
+                    @click="saveOrder()"
                 >
                     Guardar orden
                 </button>
