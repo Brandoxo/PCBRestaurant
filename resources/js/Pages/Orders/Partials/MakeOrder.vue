@@ -56,7 +56,7 @@ function closeOptions() {
 
 const toast = useToast();
 
-const saveOrder = () => {
+const saveOrder = async () => {
     console.log("Save Order clicked with current order:", props.currentOrder);
     // return toast.info('Guardando orden...');
     watch(() => {
@@ -76,9 +76,9 @@ const saveOrder = () => {
             }, 
             timer: 2000,
         });
+        await printRestaurantOrder();
         router.post("/Orders", props.currentOrder, props.currentTable, {
             onSuccess: (response) => {
-                printRestaurantOrder();
                 toast.success("Orden guardada exitosamente");
                 emit("handleOrderSaved", response.props.order);
                 console.log("Order saved successfully:", response.props.order);
@@ -220,9 +220,9 @@ const subtotal = computed(() => {
     );
 });
 
-const printRestaurantOrder = () => {
+const printRestaurantOrder = async () => {
     watch(() => {
-        props.currentOrder.notes = props.localNotes ?? null;
+        props.currentOrder.notes = props.localNotes ?? ' n/a';
     });
     const businessInfo = {
         name: "Hotel Ronda Minerva",
@@ -231,7 +231,7 @@ const printRestaurantOrder = () => {
         };
     const ticketData = {
         table: (props.selectedTable?.prefix || '') + (props.selectedTable?.number || ''),
-        notes: props.currentOrder.notes ?? '',
+        notes: props.currentOrder.notes === '' ? ' n/a' : props.currentOrder.notes,
     }
     const ticketItems = restaurantOrder(props.currentOrder, props.selectedTable);
     console.log("Printing Restaurant Order with data:", {
@@ -239,7 +239,7 @@ const printRestaurantOrder = () => {
         ticketData,
         ticketItems
     });
-            axios
+    return await axios
             .post("/print-order", {
                 data: {
                     ticketData: ticketData,
@@ -432,7 +432,7 @@ console.log(props);
                 <button
                     v-if="!isEdit"
                     class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
-                    @click="saveOrder()"
+                    @click="async () => await saveOrder()"
                 >
                     Guardar orden
                 </button>
