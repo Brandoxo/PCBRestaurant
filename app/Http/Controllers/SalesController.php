@@ -22,7 +22,7 @@ class SalesController extends Controller
         $query->whereDate('date_time', $request->date);
     }
 
-    $sales = $query->orderBy('date_time', 'desc')->paginate(80);
+    $sales = $query->orderBy('date_time', 'desc')->paginate(300);
 
     return Inertia::render('Sales/Index', [
         'sales' => $sales,
