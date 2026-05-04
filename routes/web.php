@@ -44,6 +44,13 @@ Route::post('/Tables', [\App\Http\Controllers\TableController::class, 'store'])-
 Route::put('/Tables/edit/{id}', [\App\Http\Controllers\TableController::class, 'update'])->name('Tables/Edit') ->middleware(['auth', 'verified']);
 Route::delete('/Tables/{id}', [\App\Http\Controllers\TableController::class, 'destroy'])->name('Tables/Delete') ->middleware(['auth', 'verified']);
 
+//Rooms
+Route::get('/Rooms', [\App\Http\Controllers\RoomController::class, 'index'])->name('Rooms/Index') ->middleware(['auth', 'verified']);
+Route::get('/Rooms/Create', [\App\Http\Controllers\RoomController::class, 'create'])->name('Rooms/Create') ->middleware(['auth', 'verified']);
+Route::post('/Rooms', [\App\Http\Controllers\RoomController::class, 'store'])->name('Rooms/Store') ->middleware(['auth', 'verified']);
+Route::put('/Rooms/edit/{id}', [\App\Http\Controllers\RoomController::class, 'update'])->name('Rooms/Edit') ->middleware(['auth', 'verified']);
+Route::delete('/Rooms/{id}', [\App\Http\Controllers\RoomController::class, 'destroy'])->name('Rooms/Delete') ->middleware(['auth', 'verified']);
+
 //Sales
 Route::get('/Sales', [\App\Http\Controllers\SalesController::class, 'index'])->name('Sales/Index') ->middleware(['auth', 'verified']);
 Route::post('/Sales/Create', [\App\Http\Controllers\SalesController::class, 'store'])->name('Sales/Store') ->middleware(['auth', 'verified']);
@@ -66,6 +73,11 @@ Route::put('/Order/Update/{id}', [\App\Http\Controllers\OrderController::class, 
 
 Route::post('/Order/AddTip/{id}', [\App\Http\Controllers\OrderController::class, 'addTip'])->name('Order/AddTip');
 
+//Notes
+Route::get('/Notes', [\App\Http\Controllers\OrderNotesController::class, 'index'])->name('Notes/Index') ->middleware(['auth', 'verified']);
+Route::post('/Notes', [\App\Http\Controllers\OrderNotesController::class, 'store'])->name('Notes/Store') ->middleware(['auth', 'verified']);
+Route::put('/Notes/Update/{id}', [\App\Http\Controllers\OrderNotesController::class, 'update'])->name('Notes/Update') ->middleware(['auth', 'verified']);
+
 //CashAudit
 Route::group(['middleware' => ['role:Admin|Cajero']], function (){
     Route::get('/CashAudit', [\App\Http\Controllers\CashAuditController::class, 'index'])->name('CashAudit/Index') ->middleware(['auth', 'verified']);
@@ -76,10 +88,18 @@ Route::group(['middleware' => ['role:Admin|Cajero']], function (){
 Route::group(['middleware' => ['role:Admin']], function (){
     Route::get('/Users', [\App\Http\Controllers\UserController::class, 'index'])->name('Users/Index') ->middleware(['auth', 'verified']);
     Route::post('/Role/Update', [\App\Http\Controllers\UserController::class, 'update'])->name('/Role/Update') ->middleware(['auth', 'verified']);
+    Route::post('/Role/Activate', [\App\Http\Controllers\UserController::class, 'activate'])->name('/Role/Activate') ->middleware(['auth', 'verified']);
 });
 
+//CashFloat
+Route::post('/CashFloat/Store', [\App\Http\Controllers\CashFloatController::class, 'store'])->name('CashFloat/Store') ->middleware(['auth', 'verified']);
+Route::post('/CashFloat/Update', [\App\Http\Controllers\CashFloatController::class, 'update'])->name('CashFloat/Update') ->middleware(['auth', 'verified']);
+
+
 //Config
-Route::get('/Config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);
+Route::get('/config', [\App\Http\Controllers\ConfigController::class, 'index'])->name('Config/Index') ->middleware(['auth', 'verified']);
+Route::post('/config/update-shift', [\App\Http\Controllers\ConfigController::class, 'updateShift'])->name('config.update-shift')->middleware(['auth', 'verified']);
+Route::post('/config/update-room-service', [\App\Http\Controllers\ConfigController::class, 'updateRoomService'])->name('config.update-room-service')->middleware(['auth', 'verified']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -88,7 +108,7 @@ Route::middleware('auth')->group(function () {
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php'; 
 
 Route::get('print-ticket/', function (Request $request) {
     $ticketrequest = request()->all()['data'];
@@ -108,6 +128,23 @@ Route::get('print-ticket/', function (Request $request) {
     return response()->json(['printData' => $printData]);
 })->name('print.ticket');
 
+Route::post('print-order/', function (Request $request) {
+    $ticketrequest = request()->all()['data'];
+    
+    // Convertir todos los datos a JSON string
+    $ticketData = json_encode($ticketrequest['ticketData']);
+    $ticketItems = json_encode($ticketrequest['ticketItems']); // Corregido: convertir a JSON string
+    $businessInfo = json_encode($ticketrequest['businessInfo']);
+
+    // Concatenar las cadenas JSON con las barras
+    $printData = $ticketData . "|" . $ticketItems . "|" . $businessInfo;
+    
+    // Comprimir y codificar en Base64
+    $printData = base64_encode(gzdeflate($printData));
+    // Devolver la respuesta al cliente
+    return response()->json(['printData' => $printData]);
+})->name('print.order');
+
 Route::get('print-cut-off/', function (Request $request) {
     // Obtener los datos del request
     $cutOffData = request()->all()['data'];
@@ -123,3 +160,18 @@ Route::get('print-cut-off/', function (Request $request) {
 
     return response()->json(['printData' => $printData, 'rawData' => $cutOffData]);
 })->name('print.cutOff');
+
+Route::get('api/orders', function(Request $request) {
+    $sales = new App\Models\Sales;
+    // Obtener todas las ordenes de ventas agrupadas por order_id
+    $salesData = $sales::with(['product', 'user', 'order'])->orderBy('date_time', 'desc')->limit(25)->get();
+    $orders = new App\Models\Orders;
+    $ordersData = $orders::with(['room', 'orderDetails.product', 'orderDetails.product.category'])->orderBy('date_time', 'desc')->limit(25)->get();
+    return response()->json([
+        'message' => 'Orders fetched successfully',
+        'orders' => $ordersData,
+        'data' => $salesData,
+    ]);
+})->name('api.orders');
+
+Route::get('api/orders/{ticket_id}', [\App\Http\Controllers\Sales\SalesOrderController::class, 'getOrderById'])->name('api.orders.byTicketId');

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasColumn('sales', 'is_courtesy')) {
         Schema::table('sales', function (Blueprint $table) {
             $table->boolean('is_courtesy')->default(false)->after('payment_method');
         });
+    }
     }
 
     /**

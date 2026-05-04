@@ -1,1 +1,0 @@
-import{_ as o}from"./_plugin-vue_export-helper-DlAUqK2U.js";import{g as s,o as t}from"./app-Dlg-KHGa.js";const c={},e={src:"assets/images/logoBg.png",alt:"Logo",class:"w-auto px-8"};function r(a,n){return t(),s("img",e)}const p=o(c,[["render",r]]);export{p as A};

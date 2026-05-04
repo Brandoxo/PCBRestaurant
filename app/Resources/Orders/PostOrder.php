@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Resources\Orders;
-use App\Models\Orders;  
+use App\Models\Orders;
+use App\Models\OrdersNotes as Notes;  
 use Illuminate\Http\Request;
 
 class PostOrder
@@ -11,16 +12,27 @@ class PostOrder
 
         $order = Orders::create([
             'mesa_id' => $request->input('mesa_id'),
+            'room_id' => $request->input('room_id'),
             'date_time' => now(),
             'status' => 'En curso',
-            'total' => array_reduce($request->input('items'), fn($sum, $item) => $sum + ($item['quantity'] * $item['price']), 0)
+            'total' => array_reduce($request->input('items'), fn($sum, $item) => $sum + ($item['quantity'] * $item['price']), 0),
         ]);
+            Notes::create([
+                'order_id' => $order->id,
+                'content' => $request->input('notes'),
+            ]);
 
         if($order){
             $mesa = \App\Models\Mesas::find($request->input('mesa_id'));
             if ($mesa) {
                 $mesa->status = 'Ocupada';
                 $mesa->save();
+            }else {
+                $room = \App\Models\Rooms::find($request->input('room_id'));
+                if ($room) {
+                    $room->status = 'Ocupada';
+                    $room->save();
+                }
             }
 
             error_log('Order created successfully with ID: ' . $order->id);

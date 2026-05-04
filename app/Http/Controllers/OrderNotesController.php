@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\OrdersNotes as Notes;
+
+class OrderNotesController extends Controller
+{
+    public function index()
+    {
+        $notes = Notes::all();
+        return view('Dashboard/Index', compact('notes'));
+        
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'content' => 'required|string|max:255',
+        ]);
+
+        $note = new Notes();
+        $note->content = $request->input('content');
+        $note->save();
+
+        return redirect()->back()->with('success', 'Note added successfully!');
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string|max:255',
+        ]);
+        $note = Notes::findOrFail($id);
+        $note->content = $request->input('content');
+        $note->save();
+
+        return redirect()->back()->with('success', 'Note updated successfully!');
+    }
+}

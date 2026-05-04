@@ -1,12 +1,13 @@
 <script setup>
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { computed } from "vue";
 import { useToast } from "vue-toastification";
 import { router } from "@inertiajs/vue3";
 import Swal from "sweetalert2";
 import ReturnButton from "@/Components/ReturnButton.vue";
 import { usePage } from "@inertiajs/vue3";
+import { restaurantOrder } from "@/utils/restaurantOrder";
 
 const props = defineProps({
     tables: Object,
@@ -14,6 +15,7 @@ const props = defineProps({
     selectedTable: Object,
     currentOrder: Object,
     isEdit: Boolean,
+    localNotes: String,
 });
 const user = usePage().props.auth.user;
 const canEditOrder = computed(() => {
@@ -54,13 +56,27 @@ function closeOptions() {
 
 const toast = useToast();
 
-const saveOrder = () => {
+const saveOrder = async () => {
     console.log("Save Order clicked with current order:", props.currentOrder);
     // return toast.info('Guardando orden...');
-    if (!props.currentOrder.mesa_id || props.currentOrder.items.length === 0) {
+    watch(() => {
+        props.currentOrder.notes = props.localNotes ?? null;
+    });
+    if (
+        (!props.currentOrder.mesa_id && !props.currentOrder.room_id) ||
+        props.currentOrder.items.length === 0
+    ) {
         toast.error("No se puede guardar una orden vacía");
         return;
     } else {
+        Swal.fire({
+            title: "Guardando orden...",
+            didOpen: () => {
+                Swal.showLoading();
+            }, 
+            timer: 2000,
+        });
+        await printRestaurantOrder();
         router.post("/Orders", props.currentOrder, props.currentTable, {
             onSuccess: (response) => {
                 toast.success("Orden guardada exitosamente");
@@ -81,26 +97,10 @@ const saveOrder = () => {
     console.log("Order saved and reset to empty state:", props.currentOrder);
 };
 
-const confirmSaveOrder = () => {
-    Swal.fire({
-        title: "¿Estás seguro?",
-        text: "¡No podrás revertir esto!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Sí, Generar orden",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            saveOrder();
-            Swal.fire("¡Generada!", "La orden ha sido generada.", "success");
-        }
-    });
-};
 
 const resetOrder = () => {
     props.currentOrder.mesa_id = null;
+    props.currentOrder.room_id = null;
     props.currentOrder.items = [];
     console.log("Order reset to empty state:", props.currentOrder);
 };
@@ -132,10 +132,14 @@ const GetProducts = async () => {
         console.error("There was an error fetching the products data!", error);
     }
 };
-    
+
 const AddToOrder = (product, tableId) => {
-    if (!props.currentOrder.mesa_id) {
-        props.currentOrder.mesa_id = tableId;
+    if (!props.currentOrder.mesa_id && !props.currentOrder.room_id) {
+        if (props.selectedTable?.isRoom) {
+            props.currentOrder.room_id = tableId;
+        } else {
+            props.currentOrder.mesa_id = tableId;
+        }
     }
     const existingItem = props.currentOrder.items.find(
         (item) => item.product_id === product.id
@@ -175,12 +179,39 @@ const RemoveToOrder = (productId) => {
 
 onMounted(() => {
     console.log("Selected Table Prop:", props.selectedTable);
-    props.currentOrder.mesa_id = props.selectedTable?.id
-        ? props.selectedTable.id
-        : null;
+    // Inicializar currentOrder según el tipo de selección (mesa o habitación)
+    if (props.selectedTable) {
+        if (props.selectedTable.isRoom) {
+            props.currentOrder.room_id = props.selectedTable.id || null;
+            props.currentOrder.mesa_id = null;
+        } else {
+            props.currentOrder.mesa_id = props.selectedTable.id || null;
+            props.currentOrder.room_id = null;
+        }
+    }
     GetProducts();
     console.log("Component mounted.");
 });
+
+// Actualizar currentOrder cuando cambie la selección de mesa/habitación
+watch(
+    () => props.selectedTable,
+    (newVal) => {
+        console.log("Selected Table changed:", newVal);
+        if (!newVal) {
+            props.currentOrder.mesa_id = null;
+            props.currentOrder.room_id = null;
+            return;
+        }
+        if (newVal.isRoom) {
+            props.currentOrder.room_id = newVal.id || null;
+            props.currentOrder.mesa_id = null;
+        } else {
+            props.currentOrder.mesa_id = newVal.id || null;
+            props.currentOrder.room_id = null;
+        }
+    }
+);
 
 const subtotal = computed(() => {
     return props.currentOrder.items.reduce(
@@ -189,15 +220,78 @@ const subtotal = computed(() => {
     );
 });
 
+const printRestaurantOrder = async () => {
+    watch(() => {
+        props.currentOrder.notes = props.localNotes ?? ' n/a';
+    });
+    const businessInfo = {
+        name: "Hotel Ronda Minerva",
+        address: "Av. Adolfo López Mateos Sur 265, Jardines del Bosque, 44520 Guadalajara, Jal.",
+        phone: "33 3121 4700",
+        };
+    const ticketData = {
+        table: (props.selectedTable?.prefix || '') + (props.selectedTable?.number || ''),
+        notes: props.currentOrder.notes === '' ? ' n/a' : props.currentOrder.notes,
+    }
+    const ticketItems = restaurantOrder(props.currentOrder, props.selectedTable);
+    console.log("Printing Restaurant Order with data:", {
+        businessInfo,
+        ticketData,
+        ticketItems
+    });
+    return await axios
+            .post("/print-order", {
+                data: {
+                    ticketData: ticketData,
+                    ticketItems: ticketItems, // Envía el array directamente
+                    businessInfo: businessInfo,
+                },
+            })
+            .then((response) => {
+                // Verifica que la respuesta contenga la URL
+                if (response.data && response.data.printData) {
+                    const printUrl = "print://" + response.data.printData;
+                    console.clear();
+                    console.log(printUrl);
+
+                    console.log("Print URL:", printUrl);
+                    console.log("Ticket Data:", ticketData);
+                    console.log("Ticket Items:", ticketItems);
+                    console.log("Buisness info:", businessInfo);
+                    //Imprime el ticket
+                    window.location.href = printUrl;
+                    console.log(
+                        "Ticket data sent successfully:",
+                        response.data
+                    );
+                } else {
+                    console.error("No print data received from server.");
+                    console.log(response);
+                    
+                }
+            })
+            .catch((error) => {
+                console.error("Error sending ticket data:", error);
+            });
+};
+
 const updateOrder = () => {
+
     const payload = {
-        table_id: props.selectedTable?.number || props.currentOrder.table_id,
+        mesa_id: props.selectedTable?.isRoom
+            ? null
+            : props.selectedTable?.id || props.currentOrder.mesa_id,
+        room_id: props.selectedTable?.isRoom
+            ? props.selectedTable?.id || props.currentOrder.room_id
+            : null,
         status: props.currentOrder.status || "En curso",
         items: props.currentOrder.items,
         subtotal: subtotal.value,
+        notes: props.localNotes ?? null,
     };
     router.put(`/Order/Update/${props.currentOrder.id}`, payload, {
         onSuccess: (response) => {
+            printRestaurantOrder();
             console.log("Payload subtotal sent:", payload.subtotal);
             toast.success("Orden actualizada exitosamente");
             emit("handleOrderUpdated", response.props.order);
@@ -284,7 +378,9 @@ console.log(props);
                                     class="flex justify-evenly w-full m-4 text-center items-center"
                                 >
                                     <button
-                                        v-if="!isEdit || (isEdit && canEditOrder)"
+                                        v-if="
+                                            !isEdit || (isEdit && canEditOrder)
+                                        "
                                         class="text-sm rounded-md px-4 py-1 uppercase font-extrabold bg-red-600/80 text-white hover:bg-red-600"
                                         @click="RemoveToOrder(product.id)"
                                     >
@@ -336,7 +432,7 @@ console.log(props);
                 <button
                     v-if="!isEdit"
                     class="mt-4 px-10 py-2 bg-softBlue hover:bg-blue-800 transition-all transform duration-300 ease-in-out text-white rounded-lg"
-                    @click="confirmSaveOrder"
+                    @click="async () => await saveOrder()"
                 >
                     Guardar orden
                 </button>

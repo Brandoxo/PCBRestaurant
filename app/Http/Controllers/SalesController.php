@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sales;
+use App\Models\CashFloats;
+use App\Models\ConfigRoomService;
+use App\Models\Shifts;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -11,15 +14,21 @@ class SalesController extends Controller
 {
     public function index(Request $request) {
     $query = Sales::with(['product', 'user', 'order']);
+    $cashFloat = CashFloats::where('type', 'open')->first();
+    $shifts = Shifts::all();
+    $RoomConfigService = ConfigRoomService::select('is_active', 'service_cost')->first();
 
     if ($request->has('date') && $request->date) {
         $query->whereDate('date_time', $request->date);
     }
 
-    $sales = $query->orderBy('date_time', 'desc')->paginate(80);
+    $sales = $query->orderBy('date_time', 'desc')->paginate(300);
 
     return Inertia::render('Sales/Index', [
         'sales' => $sales,
+        'cashFloat' => $cashFloat,
+        'shifts' => $shifts,
+        'RoomServiceConfig' => $RoomConfigService,
     ]);
 }
 
@@ -38,6 +47,7 @@ public function store(Request $request) {
         $sale->date_time = Carbon::now();
         $sale->payment_method = $request->payment_method;
         $sale->is_courtesy = isset($item['is_courtesy']) ? $item['is_courtesy'] : 0;
+        $sale->is_room = isset($item['is_room']) ? $item['is_room'] : 0;
         $sale->save();
     }
 
@@ -49,6 +59,11 @@ public function store(Request $request) {
         if ($mesa) {
             $mesa->status = 'Libre';
             $mesa->save();
+        }
+        $room = \App\Models\Rooms::find($order->room_id);
+        if ($room) {
+            $room->status = 'Libre';
+            $room->save();
         }
     }
 

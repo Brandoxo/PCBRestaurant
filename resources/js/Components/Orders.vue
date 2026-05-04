@@ -24,7 +24,9 @@ console.log("order:", props.order.order_details);
             <StatusBadge :status="order.status" />
         </div>
         <h2 class="text-center text-3xl font-bold">
-            Mesa {{ order.table.number ?? "-" }}
+            {{ order.table?.name ?? order.room?.name ?? 'N/A' }}
+            <span v-if="order.room">{{ order.room?.prefix }}-{{ order.room?.number }}</span>
+            <span v-else-if="order.table">{{ order.table?.number }}</span>
         </h2>
         <div class="flex justify-center items-center text-sm mt-2 gap-2">
             <p class="text-center text-secondary">

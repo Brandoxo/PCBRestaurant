@@ -3,42 +3,81 @@ import DangerButton from "@/Components/DangerButton.vue";
 import StatusBadge from "@/Components/StatusBadge.vue";
 import Swal from "sweetalert2";
 import { router, usePage } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 
 const user = usePage().props.auth.user;
 
-const props = defineProps({ order: Object });
+const props = defineProps({ order: Object, notes: Array });
 
+console.log("notes in SelectedOrder:", props.notes);
 console.log("order in:", props.order);
 
 const confirmCancelOrder = () => {
     Swal.fire({
         title: "¿Estás seguro?",
-        text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Sí, cancelar orden",
         cancelButtonText: "Cancelar",
+        input: 'select',
+        inputLabel: 'Motivo de la cancelación',
+        inputOptions: {
+            'Cliente pidió cancelar': 'Cliente pidió cancelar',
+            'Cliente cambió de opinión': 'Cliente cambió de opinión',
+            'Cliente se retiró': 'Cliente se retiró',
+            'Problema de inventario': 'Problema de inventario',
+            'Error en el pedido': 'Error en el pedido',
+            'Otro': 'Otro'
+        },
+        inputValidator: (value) => {
+            if (value === 'Otro') {
+                return Swal.fire({
+                    title: 'Por favor, ingresa el motivo de la cancelación:',
+                    input: 'text',
+                    inputPlaceholder: 'Escribe el motivo aquí...',
+                    showCancelButton: true,
+                    confirmButtonText: 'Enviar',
+                    cancelButtonText: 'Cancelar',
+                    preConfirm: (inputValue) => {
+                        if (!inputValue) {
+                            Swal.showValidationMessage('¡Necesitas ingresar un motivo!');
+                        }
+                        return inputValue;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const reason = result.value;
+                        cancelOrder(reason);
+                        Swal.fire("¡Cancelada!", "La orden ha sido cancelada.", "success");
+                    }
+                });
+            } else
+            if (!value) {
+                return '¡Necesitas seleccionar un motivo!';
+            }
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-            cancelOrder();
+            const reason = result.value;
+            cancelOrder(reason);
             Swal.fire("¡Cancelada!", "La orden ha sido cancelada.", "success");
         }
     });
 };
 
-const cancelOrder = async () => {
+const cancelOrder = async (reason) => {
     try {
         await router.post(
             `/orders/update/${props.order.id}`,
-            { status: "Cancelada", user_name: user.name },
+            { status: "Cancelada", user_name: user.name, cancellation_reason: reason},
             {
                 preserveState: true,
                 onSuccess: () => {
                     props.order.status = "Cancelada";
                     console.log("Orden cancelada");
+                    props.notes.cancellation_reason = reason;
                 },
                 onError: (errors) => {
                     console.error("Error al cancelar la orden:", errors);
@@ -51,9 +90,59 @@ const cancelOrder = async () => {
 };
 
 const canCancelOrder = computed(() => {
-    return user && user.permissions && user.permissions.includes("cancel orders");
+    return (
+        user && user.permissions && user.permissions.includes("cancel orders")
+    );
 });
 console.log("User permissions:", user ? user.permissions : "No user");
+
+const filteredNotes = computed(() => {
+    if (!props.order || !props.notes) return [];
+    return props.notes.filter(
+        (note) => note.order_id === props.order.id   
+    );
+});
+console.log("Filtered notes:", filteredNotes.value);
+
+const noteContents = ref([]);
+watch(
+    filteredNotes,
+    (newNotes) => {
+        noteContents.value = newNotes.map((note) => note.content);
+    }, 
+    { immediate: true }
+);
+
+const saveNote = async (noteId, content) => {
+    try {
+        Swal.fire({
+            title: 'Guardando nota...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        await router.put(
+            `/Notes/Update/${noteId}`,
+            { content: content },
+            {
+                preserveState: true,
+                onSuccess: () => {
+                    Swal.close();
+                    console.log("Nota guardada");
+                },
+                onError: (errors) => {
+                    console.error("Error al guardar la nota:", errors);
+                },
+            }
+        );
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+    }   
+
+}
+const labels = [{status: 'En curso', input: 'Notas:'}, {status: 'Cancelada', input: "Motivo:"}, {status: 'Completada', input: 'Notas:'}];  
+
 </script>
 
 <template>
@@ -75,7 +164,7 @@ console.log("User permissions:", user ? user.permissions : "No user");
         >
             <span class="mx-auto"> Venta Finalizada </span>
         </div>
-        <div class="lg:flex justify-between items-center mx-auto">
+        <div class="lg:flex justify-between items-center">
             <h2 class="md:text-lg lg:text-xl">
                 Orden
                 <span class="font-extrabold"
@@ -88,21 +177,54 @@ console.log("User permissions:", user ? user.permissions : "No user");
                     class="inline w-6 ml-2 cursor-pointer"
                 />
             </h2>
-            <StatusBadge class="" />
+            <div v-for="note in filteredNotes" :key="note.id" class="flex items-center gap-2 mt-2 lg:mt-0 2xl:w-3/4">
+                <p class="uppercase font-extrabold text-sm">{{ labels.find(label => label.status === order.status)?.input }}</p>
+                <input
+                type="text"
+                :value="order.status === 'Cancelada' ? note.cancellation_reason : note.content"
+                @input="note.content = $event.target.value"
+                @keyup.enter="saveNote(note.id, note.content)"
+                class="border border-gray-300 rounded-md p-2 w-full bg-yellow-50"
+                :disabled="order.status === 'Cancelada' || order.status === 'Completada'"
+                />
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-6 w-6 inline text-black"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h5m-1.5-10l4 4m0 0l4-4m-4 4V3"
+                    />
+                </svg>
+            </div>
         </div>
         <div class="flex items-center justify-between gap-4 mt-4">
             <div class="flex-col">
                 <h2 class="text-center text-3xl font-bold">
-                    Mesa
-                    {{ order.table.number ?? "7" }}
+                    {{
+                        order.table?.name ??
+                        order.room?.name.slice(0, 3) + "." ??
+                        "N/A"
+                    }}
+                    <span v-if="order.room"
+                        >{{ order.room?.prefix }}-{{ order.room?.number }}</span
+                    >
+                    <span v-else-if="order.table">{{
+                        order.table?.number
+                    }}</span>
                 </h2>
-                <div class="flex text-sm mt-2">
+                <div class="flex text-sm mt-2 gap-2 justify-between">
                     <p class="text-center text-secondary">
                         {{
                             order.date_time
                                 ? new Date(order.date_time)
                                       .toLocaleTimeString()
-                                      .slice(0, -1)
+                                      .slice(0, 5)
                                 : "-"
                         }}
                     </p>
@@ -118,7 +240,7 @@ console.log("User permissions:", user ? user.permissions : "No user");
             <button
                 v-if="order.status === 'En curso' && canCancelOrder"
                 @click="confirmCancelOrder"
-                class="mt-4 bg-dangerRed/30 max-w-96 p-2 rounded-md w-full uppercase text-dangerRed tracking-widest font-extrabold hover:bg-dangerRed/50 transition"
+                class="py-4 bg-dangerRed/30 max-w-96 p-2 rounded-md w-1/2 uppercase text-dangerRed tracking-widest font-extrabold hover:bg-dangerRed/50 transition"
             >
                 Cancelar
             </button>
@@ -128,11 +250,9 @@ console.log("User permissions:", user ? user.permissions : "No user");
                     alt="Imagen de la orden"
                     class="w-6 mx-auto"
                 />
+                <p class="text-center text-midBlue font-bold">Export</p>
                 <p class="text-center text-midBlue font-bold">
-                    Export
-                </p>
-                <p class="text-center text-midBlue font-bold">
-                   #{{ order.id ?? "" }}
+                    #{{ order.id ?? "" }}
                 </p>
             </button>
         </div>

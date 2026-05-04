@@ -5,12 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Mesas;
 use Illuminate\Http\Request;
 use App\Models\Orders;
+use App\Models\ConfigRoomService;
+use App\Models\OrdersNotes as Notes;
 class DashBoardController extends Controller
 {
     public function index() {
+    $notes = Notes::all();
+    $RoomServiceConfig = ConfigRoomService::select('is_active', 'service_cost')->first();
+    view()->share('RoomServiceConfig', $RoomServiceConfig);
     $today = date('Y-m-d');
     $yesterday = date('Y-m-d', strtotime('-1 day'));
-    $orders = Orders::with(['table', 'orderDetails.product'])->whereDate('date_time', $today)->orWhereDate('date_time', $yesterday)->orderBy('date_time', 'desc')->get();
+    // Include orders from today, yesterday, or with status "En curso"
+    $orders = Orders::with(['table', 'room', 'orderDetails.product'])
+        ->where(function($q) use ($today, $yesterday) {
+            $q->whereDate('date_time', $today)
+              ->orWhereDate('date_time', $yesterday);
+        })
+        ->orWhere(function($q) {
+            // Case-insensitive check for "En curso"
+            $q->whereRaw('LOWER(status) = ?', ['en curso'])
+              ->orWhere('status', 'En curso')
+              ->orWhere('status', 'en curso');
+        })
+        ->orderBy('date_time', 'desc')
+        ->get()
+        ->unique('id') // Ensure unique orders
+        ->values();
         $totalProducts = \App\Models\Products::count();
         $totalCategories = \App\Models\Categories::count();
         $totalUsers = \App\Models\User::count();
@@ -22,15 +42,14 @@ class DashBoardController extends Controller
             'totalUsers' => $totalUsers,
             'orders' => $orders,
             'totalOrders' => $totalOrders,
-            'sales' => $totalSales
+            'sales' => $totalSales,
+            'RoomServiceConfig' => $RoomServiceConfig,
+            'notes' => $notes,
         ]);
-
-       
-        
     }
 
     public function edit($id) {
-        $order = Orders::with(['table', 'orderDetails.product'])->findOrFail($id);
+        $order = Orders::with(['table', 'room', 'orderDetails.product'])->findOrFail($id);
         $tables = \App\Models\Mesas::all();
         return inertia('Dashboard/EditOrder', [
             'order' => $order,
@@ -39,7 +58,7 @@ class DashBoardController extends Controller
     }
 
         public function update(Request $request, $id)
-    {
+    {   
         $order = Orders::findOrFail($id);
         $request->validate([
             'status' => 'required|string',
@@ -47,9 +66,23 @@ class DashBoardController extends Controller
 
         $order->status = $request->input('status');
 
+        $orders_notes = Notes::where('order_id', $id)->first();
+        if (! $orders_notes) {
+            $orders_notes = new Notes();
+            $orders_notes->order_id = $id;
+        }
+
+
           if ($order->status === 'Cancelada') {
+        $orders_notes->cancellation_reason = $request->input('cancellation_reason');
+        $orders_notes->save();
         $order->cancelled_by = $request->input('user_name');
         $table = method_exists($order, 'table') ? $order->table : \App\Models\Mesas::find($order->table_id);
+        $room = method_exists($order, 'room') ? $order->room : \App\Models\Rooms::find($order->room_id);
+        if ($room) {
+            $room->status = 'Libre';
+            $room->save();
+        }
         if ($table) {
             $table->status = 'Libre';
             $table->save();

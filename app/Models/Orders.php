@@ -8,6 +8,7 @@ class Orders extends Model
 {
     protected $fillable = ['id',
                             'mesa_id',
+                            'room_id',
                             'date_time',
                             'status',
                             'total',
@@ -18,6 +19,10 @@ class Orders extends Model
 
     public function table(){
         return $this->belongsTo(Mesas::class, 'mesa_id');
+    }
+
+    public function room(){
+        return $this->belongsTo(Rooms::class, 'room_id');
     }
 
     public function orderDetails()
