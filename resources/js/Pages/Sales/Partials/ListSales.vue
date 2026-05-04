@@ -232,6 +232,34 @@ function getTotalTipsPercent(sales) {
     }, 0);
 }
 
+function getTotalTipsCard(sales){
+    const orderIds = new Set();
+    let total = 0;
+    sales.forEach((sale) => {
+        if (
+            sale.payment_method === "Tarjeta"
+        ) {
+            total += getTotalTipsIntByOrder([sale]) + getTotalTipsPercent([sale]);
+            orderIds.add(sale.order.id);
+        }
+    });
+    return total;
+}
+
+function getTotalTipsCash(sales){
+    const orderIds = new Set();
+    let total = 0;
+    sales.forEach((sale) => {
+        if (
+            sale.payment_method === "Efectivo"
+        ) {
+            total += getTotalTipsIntByOrder([sale]) + getTotalTipsPercent([sale]);
+            orderIds.add(sale.order.id);
+        }
+    });
+    return total;
+}
+
  function formatDateToMySQL(dateString) {
      const date = new Date(dateString);
      return (
@@ -266,6 +294,8 @@ async function buildCashAuditData() {
 
     const totalTipsInt = getTotalTipsIntByOrder(sales);
     const totalTipsPercent = getTotalTipsPercent(sales);
+    const totalTipsCard = getTotalTipsCard(sales);
+    const totalTipsCash = getTotalTipsCash(sales);
     return {
         user_id: user.id,
         start_date: formatDateToMySQL(firstDate),
@@ -276,6 +306,8 @@ async function buildCashAuditData() {
         total_service: totalService,
         total_with_service: totalWithService,
         final_amount: cashFloatAmount + totalWithService,
+        tips_card: totalTipsCard,
+        tips_cash: totalTipsCash,
         total_tips: totalTipsInt + totalTipsPercent,
     };
 }
@@ -325,7 +357,7 @@ const generateCashAudit = async () => {
         alert("No hay ventas para la fecha y turno seleccionados.");
         return;
     }
-
+    console.log("Cash Audit Data:", cashAuditData);
     closeModal();
     Swal.fire({
         title: "¿Estás seguro?",

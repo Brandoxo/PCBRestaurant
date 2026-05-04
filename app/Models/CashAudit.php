@@ -14,6 +14,8 @@ class CashAudit extends Model
         'end_date',
         'shift',
         'initial_amount',
+        'tips_card',
+        'tips_cash',
         'total_amount',
         'final_amount',
         'total_tips',
