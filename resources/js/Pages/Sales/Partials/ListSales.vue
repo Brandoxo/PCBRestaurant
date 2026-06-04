@@ -1,4 +1,4 @@
-Ser<script setup>
+<script setup>
 import { ref, computed } from "vue";
 import axios from "axios";
 import { usePage, router } from "@inertiajs/vue3";
@@ -6,314 +6,210 @@ import Modal from "@/Components/Modal.vue";
 import { useToast } from "vue-toastification";
 import Swal from "sweetalert2";
 
-const props = defineProps({ sales: Object, cashFloat: Object, shifts: Object, roomServiceConfig: Object });
-const user = usePage().props.auth.user;
-console.log('User Permissions:', user.permissions);
-console.log('Room Service Config:', props.roomServiceConfig);
-const cashFloatAmount = Number(props.cashFloat && props.cashFloat.amount ? props.cashFloat.amount : 0);
+const props = defineProps({
+    sales: Object,
+    cashFloat: Object,
+    shifts: Object,
+    // Arrives as a collection (array) from the backend via ->get()
+    roomServiceConfig: Array,
+});
 
-const canGenerateCutOff = computed(() =>{
-    return user && user.permissions && user.permissions.includes('generate cutoff')
-})
+const user = usePage().props.auth.user;
+const cashFloatAmount = Number(props.cashFloat?.amount ?? 0);
+
+const canGenerateCutOff = computed(() =>
+    user?.permissions?.includes("generate cutoff") ?? false
+);
 
 const selectedDate = ref("");
 const selectedShift = ref("");
 const openModal = ref(false);
 
-const showModal = () => {
-    openModal.value = true;
-};
-const closeModal = () => {
-    openModal.value = false;
-};
+const showModal = () => { openModal.value = true; };
+const closeModal = () => { openModal.value = false; };
 
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("es-MX", {
-        style: "currency",
-        currency: "MXN",
-    }).format(amount);
-};
+// ─── Formatting ──────────────────────────────────────────────────────────────
 
-const formatQuantityPrice = (quantity, unitPrice) => {
-    return `${quantity} x ${formatCurrency(unitPrice)}`;
-};
+const formatCurrency = (amount) =>
+    new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN" }).format(amount);
 
-const formatTotal = (quantity, unitPrice) => {
-    return formatCurrency(quantity * unitPrice);
-};
+const formatQuantityPrice = (quantity, unitPrice) =>
+    `${quantity} x ${formatCurrency(unitPrice)}`;
 
+const formatTotal = (quantity, unitPrice) => formatCurrency(quantity * unitPrice);
 
-const getScheduleForShift = (shiftName) => {
-    const shift = props.shifts.find(s => s.name_shift === shiftName);
-    return shift ? `${shift.start_time} - ${shift.end_time}` : '';
-};
-console.log('Schedule for Matutino:', getScheduleForShift('Matutino'));
-console.log('Schedule for Vespertino:', getScheduleForShift('Vespertino'));
+// ─── Room Service ─────────────────────────────────────────────────────────────
 
-function getFilteredSales(shiftName = selectedShift.value, dateStr = selectedDate.value) {
-    if (!shiftName || !dateStr) return [];
-    console.log('Filtering sales for shift:', shiftName, 'and date:', dateStr);
-    const shiftSchedule = getScheduleForShift(shiftName);
-    if (!shiftSchedule) {
-        console.warn("No schedule for shift:", shiftName);
-        return [];
-    }
+const isRoomServiceActive = computed(() =>
+    Array.isArray(props.roomServiceConfig) &&
+    props.roomServiceConfig.length > 0 &&
+    !!props.roomServiceConfig[0].is_active
+);
 
-    const [startStr = "", endStr = ""] = shiftSchedule.split("-").map(s => s.trim());
-    console.log('Shift schedule:', startStr, endStr);
+const serviceCostPercent = computed(() =>
+    isRoomServiceActive.value ? (props.roomServiceConfig[0].service_cost ?? 0) : 0
+);
 
-    const parseTime = (timeStr) => {
-        const parts = (timeStr || "0:00").split(":").map(Number);
-        return {
-            hours: Number.isFinite(parts[0]) ? parts[0] : 0,
-            minutes: Number.isFinite(parts[1]) ? parts[1] : 0,
-        };
-    };
-    console.log('Parsed start time:', parseTime(startStr));
-    console.log('Parsed end time:', parseTime(endStr));
-
-    const startTime = parseTime(startStr);
-    const endTime = parseTime(endStr);
-
-    const salesList = Array.isArray(props.sales?.data) ? props.sales.data : [];
-    console.log('Total sales to filter:', salesList.length);
-
-    return salesList.filter((sale) => {
-        const saleDateObj = new Date(sale.date_time);
-        if (isNaN(saleDateObj)) return false;
-
-        const saleDate =
-            saleDateObj.getFullYear() +
-            "-" +
-            String(saleDateObj.getMonth() + 1).padStart(2, "0") +
-            "-" +
-            String(saleDateObj.getDate()).padStart(2, "0");
-
-        if (saleDate !== dateStr) return false;
-        console.log('Sale date matches selected date:', saleDate);
-
-        const saleHours = saleDateObj.getHours();
-        const saleMinutes = saleDateObj.getMinutes();
-
-        const isAfterStart =
-            saleHours > startTime.hours ||
-            (saleHours === startTime.hours && saleMinutes >= startTime.minutes);
-            console.log('isAfterStart:', isAfterStart);
-        const isBeforeEnd =
-            saleHours < endTime.hours ||
-            (saleHours === endTime.hours && saleMinutes <= endTime.minutes);
-            console.log('isBeforeEnd:', isBeforeEnd);
-
-            console.log('Sales includes:', sale.id, '->', isAfterStart && isBeforeEnd);
-        return isAfterStart && isBeforeEnd;
-    });
-}
-
-
-// const shifts = {
-//     morning: "Mañana",
-//     afternoon: "Tarde",
-// };
-
-// const getShift = (dateTime) => {
-//     const hour = new Date(dateTime).getHours();
-//     if (hour >= 7 && hour < 15) return shifts.morning;
-//     if (hour >= 15 && hour < 23) return shifts.afternoon;
-//     return "Fuera de turno";
-// };
-
-// function getFilteredSales() {
-//     let sales = props.sales.data;
-//     if (selectedDate.value) {
-//         sales = sales.filter((sale) => {
-//             const d = new Date(sale.date_time);
-//             const saleDate =
-//                 d.getFullYear() +
-//                 "-" +
-//                 String(d.getMonth() + 1).padStart(2, "0") +
-//                 "-" +
-//                 String(d.getDate()).padStart(2, "0");
-//             return saleDate === selectedDate.value;
-//         });
-//     }
-//     if (selectedShift.value) {
-//         let shiftName = selectedShift.value;
-//         if (shiftName === "Matutino") shiftName = "Mañana";
-//         if (shiftName === "Vespertino") shiftName = "Tarde";
-//         if (shiftName === "Otro") shiftName = "Fuera de turno";
-//         sales = sales.filter((sale) => getShift(sale.date_time) === shiftName);
-//     }
-//     return sales;
-// }
-
-function getFirstDate(sales) {
-    if (!sales || !sales.length) return null;
-    return new Date(Math.min(...sales.map((sale) => new Date(sale.date_time))));
-}
-
-/* 
-
-function getTotalAmount(sales) {
-    return sales
-    .filter((sale) => !sale.is_courtesy)
-    .reduce((total, sale) => total + sale.quantity * sale.unit_price, 0);
-}
-
-*/
-
-const isRoomServiceActive = computed(() => {
-    return (
-        props.roomServiceConfig &&
-        props.roomServiceConfig.length > 0 &&
-        props.roomServiceConfig[0].is_active
-    );
-});
-
-const serviceCostPercent = computed(() => {
-    if (isRoomServiceActive.value && props.roomServiceConfig.length > 0) {
-        return props.roomServiceConfig[0].service_cost || 0;
-    }
-    return 0;
-});
-
-function getServiceCostForSale(sale){
-    if (!isRoomServiceActive.value) return 0;
-
-    if (!sale.is_room)  return 0;
-    const base = sale.quantity * sale.unit_price;
-    return (base * serviceCostPercent.value) / 100;
-}
+// ─── Total Calculation ────────────────────────────────────────────────────────
 
 function getTotalsFromSales(sales) {
-    const baseTotal = (sales || [])
-        .filter((sale) => !sale.is_courtesy)
-        .reduce((sum, sale) => sum + sale.quantity * sale.unit_price, 0);
+    const nonCourtesy = (sales ?? []).filter((s) => !s.is_courtesy);
 
-    const serviceTotal = (sales || [])
-        .filter((sale) => !sale.is_courtesy && sale.is_room)
+    const baseTotal = nonCourtesy.reduce(
+        (sum, s) => sum + s.quantity * s.unit_price,
+        0
+    );
+
+    const serviceTotal = nonCourtesy
+        .filter((s) => s.is_room)
         .reduce(
-            (sum, sale) =>
-                sum + (sale.quantity * sale.unit_price) * (serviceCostPercent.value / 100),
+            (sum, s) => sum + s.quantity * s.unit_price * (serviceCostPercent.value / 100),
             0
         );
 
-    return {
-        baseTotal,
-        serviceTotal,
-        totalWithService: baseTotal + serviceTotal,
-    };
+    return { baseTotal, serviceTotal, totalWithService: baseTotal + serviceTotal };
 }
 
-function getTotalTipsIntByOrder(sales) {
-    const orderIds = new Set();
-    let total = 0;
-    sales.forEach((sale) => {
+/**
+ * Fixed tip (order.tip): flat amount per ORDER. Deduplicated by order ID to avoid
+ * counting it once per sale line item instead of once per order.
+ */
+function getTipsFixed(sales) {
+    const seen = new Set();
+    return (sales ?? []).reduce((total, sale) => {
         if (
             sale.order &&
-            !orderIds.has(sale.order.id) &&
-            sale.order.tip !== null &&
-            sale.order.tip !== undefined &&
+            !seen.has(sale.order.id) &&
+            sale.order.tip != null &&
             sale.order.tip !== ""
         ) {
-            total += parseFloat(sale.order.tip);
-            orderIds.add(sale.order.id);
+            seen.add(sale.order.id);
+            return total + parseFloat(sale.order.tip);
         }
-    });
-    return total;
-}
-
-function getTotalTipsPercent(sales) {
-    return sales.reduce((sum, sale) => {
-        const tipPercent =
-            sale.order && sale.order.tip_percent
-                ? parseFloat(sale.order.tip_percent)
-                : 0;
-        return sum + sale.quantity * sale.unit_price * (tipPercent / 100);
+        return total;
     }, 0);
 }
 
- function formatDateToMySQL(dateString) {
-     const date = new Date(dateString);
-     return (
-         date.getFullYear() +
-         "-" +
-         String(date.getMonth() + 1).padStart(2, "0") +
-         "-" +
-         String(date.getDate()).padStart(2, "0") +
-         " " +
-         String(date.getHours()).padStart(2, "0") +
-         ":" +
-         String(date.getMinutes()).padStart(2, "0") +
-         ":" +
-         String(date.getSeconds()).padStart(2, "0")
-     );
- }
+/**
+ * Percentage tip (order.tip_percent): applied per line item, which is mathematically
+ * equivalent to applying it once to the order total (sum of parts = whole).
+ * No per-order deduplication required.
+ */
+function getTipsPercent(sales) {
+    return (sales ?? []).reduce((sum, sale) => {
+        const pct = sale.order?.tip_percent ? parseFloat(sale.order.tip_percent) : 0;
+        return sum + sale.quantity * sale.unit_price * (pct / 100);
+    }, 0);
+}
+
+function getTotalTips(sales) {
+    return getTipsFixed(sales) + getTipsPercent(sales);
+}
+
+/**
+ * BUG FIX: the previous implementation called getTipsFixed([single_sale]) in a forEach,
+ * which bypassed order-ID deduplication and counted order.tip once per sale item
+ * instead of once per order — inflating tips by N× (N = items in the order).
+ *
+ * Correct approach: filter by payment method first, then delegate to the functions
+ * that already handle deduplication correctly on the full filtered array.
+ */
+function getTotalTipsCard(sales) {
+    const cardSales = (sales ?? []).filter((s) => s.payment_method === "Tarjeta");
+    return getTotalTips(cardSales);
+}
+
+function getTotalTipsCash(sales) {
+    const cashSales = (sales ?? []).filter((s) => s.payment_method === "Efectivo");
+    return getTotalTips(cashSales);
+}
+
+// ─── Date Helpers ─────────────────────────────────────────────────────────────
+
+function parseMySQLDate(str) {
+    return new Date((str ?? "").replace(" ", "T"));
+}
+
+function getFirstDate(sales) {
+    if (!sales?.length) return null;
+    return new Date(Math.min(...sales.map((s) => parseMySQLDate(s.date_time).getTime())));
+}
+
+function getLastDate(sales) {
+    if (!sales?.length) return null;
+    return new Date(Math.max(...sales.map((s) => parseMySQLDate(s.date_time).getTime())));
+}
+
+function formatDateToMySQL(date) {
+    return (
+        [
+            date.getFullYear(),
+            String(date.getMonth() + 1).padStart(2, "0"),
+            String(date.getDate()).padStart(2, "0"),
+        ].join("-") +
+        " " +
+        [
+            String(date.getHours()).padStart(2, "0"),
+            String(date.getMinutes()).padStart(2, "0"),
+            String(date.getSeconds()).padStart(2, "0"),
+        ].join(":")
+    );
+}
+
+// ─── Backend Sales Fetch ──────────────────────────────────────────────────────
+
+async function fetchSalesForCutOff(shiftName, dateStr) {
+    const response = await axios.get(route("Sales/ForCutOff"), {
+        params: { date: dateStr, shift: shiftName },
+    });
+    return Array.isArray(response.data) ? response.data : [];
+}
+
+// ─── Cash Audit Build ─────────────────────────────────────────────────────────
 
 async function buildCashAuditData() {
-    const dayToUse = selectedDate.value;
-    if (!dayToUse || !selectedShift.value) {
+    if (!selectedDate.value || !selectedShift.value) {
         alert("Por favor, selecciona una fecha y un turno.");
         return null;
     }
-    const sales = getFilteredSales(selectedShift.value, dayToUse);
-    if (!sales || !sales.length) return null;
+
+    const sales = await fetchSalesForCutOff(selectedShift.value, selectedDate.value);
+    if (!sales.length) return null;
+
     const firstDate = getFirstDate(sales);
-    const totals = getTotalsFromSales(sales);
-    const totalAmount = totals.baseTotal;
-    const totalService = totals.serviceTotal;
-    const totalWithService = totals.totalWithService;
+    const lastDate  = getLastDate(sales);
+    const totals    = getTotalsFromSales(sales);
 
-
-    const totalTipsInt = getTotalTipsIntByOrder(sales);
-    const totalTipsPercent = getTotalTipsPercent(sales);
     return {
-        user_id: user.id,
-        start_date: formatDateToMySQL(firstDate),
-        end_date: formatDateToMySQL(firstDate),
-        shift: selectedShift.value,
-        initial_amount: cashFloatAmount,
-        total_amount: totalAmount,
-        total_service: totalService,
-        total_with_service: totalWithService,
-        final_amount: cashFloatAmount + totalWithService,
-        total_tips: totalTipsInt + totalTipsPercent,
+        user_id:            user.id,
+        start_date:         formatDateToMySQL(firstDate),
+        end_date:           formatDateToMySQL(lastDate),
+        shift:              selectedShift.value,
+        initial_amount:     cashFloatAmount,
+        total_amount:       totals.baseTotal,
+        total_service:      totals.serviceTotal,
+        total_with_service: totals.totalWithService,
+        final_amount:       cashFloatAmount + totals.totalWithService,
+        tips_card:          getTotalTipsCard(sales),
+        tips_cash:          getTotalTipsCash(sales),
+        total_tips:         getTotalTips(sales),
     };
 }
 
-function getFilteredSalesPaymentMethodCash(shiftName = selectedShift.value, dateStr = selectedDate.value) {
-    let sales = getFilteredSales(shiftName, dateStr);
-    sales = sales.filter(
-        (sale) => sale.payment_method === "Efectivo" && !sale.is_courtesy
-    );
-    return sales;
-}
-
-function getFilteredSalesPaymentMethodCard(shiftName = selectedShift.value, dateStr = selectedDate.value) {
-    let sales = getFilteredSales(shiftName, dateStr);
-    sales = sales.filter(
-        (sale) => sale.payment_method === "Tarjeta" && !sale.is_courtesy
-    );
-    return sales;
-}
-
-function getFilteredSalesCourtesy(shiftName = selectedShift.value, dateStr = selectedDate.value) {
-    let sales = getFilteredSales(shiftName, dateStr);
-    sales = sales.filter((sale) => sale.is_courtesy === 1);
-    return sales;
-}
+// ─── Actions ──────────────────────────────────────────────────────────────────
 
 async function createCashAudit() {
     const cashAuditData = await buildCashAuditData();
+    if (!cashAuditData) return;
+
     try {
-        const response = await axios.post("/CashAudit", cashAuditData);
-        useToast().success("Corte de caja Generado Exitosamente");
+        await axios.post("/CashAudit", cashAuditData);
+        useToast().success("Corte de caja generado exitosamente");
         closeModal();
         alert(
-            `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(
-                2
-            )}`
+            `Corte de caja generado y guardado exitosamente.\nPropinas: $${cashAuditData.total_tips.toFixed(2)}`
         );
-    } catch (error) {
+    } catch {
         closeModal();
         useToast().error("Error al generar el corte de caja");
     }
@@ -337,63 +233,57 @@ const generateCashAudit = async () => {
         confirmButtonText: "Sí, generar corte",
         cancelButtonText: "Cancelar",
     }).then((result) => {
-        if (result.isConfirmed) {
-            createCashAudit();
-        }
+        if (result.isConfirmed) createCashAudit();
     });
 };
 
-const PrintCutOffTicket = () => {
-    const dayToUse = selectedDate.value;
-    const sales = getFilteredSales(selectedShift.value, dayToUse);
+const PrintCutOffTicket = async () => {
+    if (!selectedDate.value || !selectedShift.value) {
+        alert("Por favor, selecciona una fecha y un turno.");
+        return;
+    }
+
+    const sales = await fetchSalesForCutOff(selectedShift.value, selectedDate.value);
     if (!sales.length) {
         alert("No hay ventas para la fecha y turno seleccionados.");
         return;
     }
 
-    const totals = getTotalsFromSales(sales);
-
+    const totals     = getTotalsFromSales(sales);
     const cashTotals = getTotalsFromSales(
-        getFilteredSalesPaymentMethodCash(selectedShift.value, dayToUse)
+        sales.filter((s) => s.payment_method === "Efectivo" && !s.is_courtesy)
     );
     const cardTotals = getTotalsFromSales(
-        getFilteredSalesPaymentMethodCard(selectedShift.value, dayToUse)
+        sales.filter((s) => s.payment_method === "Tarjeta" && !s.is_courtesy)
     );
-
-    const courtesySales = getFilteredSalesCourtesy(selectedShift.value, dayToUse);
-    const courtesyBase = (courtesySales || []).reduce(
-        (sum, s) => sum + s.quantity * s.unit_price,
-        0
-    );
-    const totalWithService = totals.totalWithService;
+    const courtesyBase = sales
+        .filter((s) => s.is_courtesy == 1)
+        .reduce((sum, s) => sum + s.quantity * s.unit_price, 0);
 
     const cutOffData = {
-        fecha: selectedDate.value,
-        turno: selectedShift.value,
-        totalVentas: totals.baseTotal,
+        fecha:            selectedDate.value,
+        turno:            selectedShift.value,
+        totalVentas:      totals.baseTotal,
         totalRoomService: totals.serviceTotal,
-        montoFinal: cashFloatAmount + totalWithService,
-        totalPropinas:
-            getTotalTipsIntByOrder(sales) + getTotalTipsPercent(sales),
-        totalEfectivo: cashTotals.totalWithService,
-        totalTarjeta: cardTotals.totalWithService,
-        totalCortesias: courtesyBase,
+        montoFinal:       cashFloatAmount + totals.totalWithService,
+        totalPropinas:    getTotalTips(sales),
+        totalEfectivo:    cashTotals.totalWithService,
+        totalTarjeta:     cardTotals.totalWithService,
+        totalCortesias:   courtesyBase,
     };
+     console.log("CutOffData para impresión:", cutOffData);
 
-    axios
-        .get(route("print.cutOff"), {
-            params: { data: cutOffData },
-        })
-        .then((response) => {
-            if (response.data && response.data.printData) {
-                const printUrl = "print://" + response.data.printData;
-                window.location.href = printUrl;
-            }
-        });
+    try {
+        const response = await axios.get(route("print.cutOff"), { params: { data: cutOffData } });
+        if (response.data?.printData) {
+            window.location.href = "print://" + response.data.printData;
+        }
+    } catch {
+        useToast().error("Error al imprimir el corte de caja");
+    }
 };
 
 function onDateChange() {
-    console.log("Selected date:", selectedDate.value);
     router.get(
         route("Sales/Index"),
         { date: selectedDate.value },
@@ -404,9 +294,10 @@ function onDateChange() {
 
 <template>
     <div
-        class="bg-white p-4 rounded-2xl w-full max-w-96 sm:max-w-[40rem] lg:max-w-full mx-auto"
+        class="bg-white p-4 rounded-2xl w-full max-w-96 sm:max-w-[40rem] lg:max-w-full
+               lg:flex lg:flex-col lg:h-[calc(100vh-10rem)]"
     >
-        <div class="flex gap-4 justify-between mx-auto">
+        <div class="flex gap-4 justify-between flex-shrink-0">
             <input
                 v-model="selectedDate"
                 @change="onDateChange"
@@ -422,7 +313,7 @@ function onDateChange() {
                 Generar Corte de Caja
             </button>
         </div>
-        <div class="overflow-y-auto lg:py-60 lg:h-screen lg:pt-0 lg:pb-0 scrollbar-hide">
+        <div class="overflow-y-auto mt-2 scrollbar-hide lg:flex-1 lg:min-h-0">
             <table class="w-full mt-2 border">
                 <thead>
                     <tr class="bg-gray-100">
@@ -478,7 +369,7 @@ function onDateChange() {
             </table>
         </div>
         <!-- Paginación -->
-        <div class="mt-4 flex justify-center">
+        <div class="mt-4 flex justify-center flex-shrink-0">
             <template v-for="link in props.sales.links" :key="link.label">
                 <button
                     v-if="link.url"
@@ -538,13 +429,7 @@ function onDateChange() {
                 </option>
             </select>
 
-            <div
-                v-if="
-                    selectedShift === 'Matutino' ||
-                    selectedShift === 'Vespertino'
-                "
-                class="mb-4"
-            >
+            <div v-if="selectedShift" class="mb-4">
                 <label class="block text-gray-700 font-medium mb-2"
                     >Fecha Seleccionada</label
                 >

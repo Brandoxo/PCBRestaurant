@@ -453,7 +453,7 @@ class="bg-white p-4 rounded-lg shadow-md  hover:scale-[1.02] transition-all tran
                 <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
             </select>
 
-            <div v-if="paymentMethod === 'Tarjeta'" class="mb-4">
+            <div class="mb-4">
                 <label class="block text-gray-700 font-medium mb-2"
                     >El cliente gusta dejar propina de:</label
                 >
