@@ -22,7 +22,6 @@ return new class extends Migration
             $table->decimal('cost', 12)->default(0);
             $table->decimal('tax_rate', 5)->default(0);
             $table->boolean('is_active')->default(true);
-            $table->softDeletes();
             $table->timestamps();
         });
     }
