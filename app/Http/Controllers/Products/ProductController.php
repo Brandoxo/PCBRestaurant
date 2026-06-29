@@ -10,6 +10,6 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return GetProducts::GroupedByCategoryWithPagination(200);
+        return GetProducts::GroupedByCategoryWithPagination(300);
     }
 }
