@@ -19,7 +19,7 @@ const handleImageChange = (event) => {
 const newProduct = ref({
     category_id: "",
     name: "",
-    sku: "PRDCT00" + "-" + (props.products.length + 1),
+    sku: "PRDCT00" + "-" + (getNextSkuNumber(props.products)),
     image: getDefaultImageByCategory(""),
     description: "",
     price: "",
@@ -29,6 +29,20 @@ const newProduct = ref({
     created_at: "",
     updated_at: "",
 });
+
+function getNextSkuNumber(products) {
+    const used = new Set();
+    const prefix = "PRDCT00-";
+    for (const p of products) {
+        if (p.sku && p.sku.startsWith(prefix)) {
+            const num = parseInt(p.sku.slice(prefix.length), 10);
+            if (!isNaN(num)) used.add(num);
+        }
+    }
+    let next = 1;
+    while (used.has(next)) next++;
+    return next;
+}
 
 function getDefaultImageByCategory(categoryId) {
     // Busca la categoría por ID
@@ -86,7 +100,7 @@ const createProduct = () => {
             newProduct.value = {
                 category_id: "",
                 name: "",
-                sku: "PRDCT00" + "-" + (props.products.length + 1),
+                sku: "PRDCT00" + "-" + (getNextSkuNumber(props.products)),
                 image: "",
                 description: "",
                 price: "",

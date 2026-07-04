@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Products;
 use App\Models\Categories; 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class MenuController extends Controller
 {
@@ -21,7 +22,7 @@ class MenuController extends Controller
 
     public function create()
     {   
-        $products = Products::all();
+        $products = Products::withTrashed()->get();
         $categories = Categories::all();
         return Inertia::render('Menu/Create', [
             'products' => $products,
@@ -34,7 +35,10 @@ class MenuController extends Controller
         $request->validate([
             'category_id' => 'required',
             'name' => 'required',
-            'sku' => 'required',
+            'sku' => [
+                'required',
+                Rule::unique('products', 'sku')->whereNull('deleted_at'),
+            ],
             'description' => 'required',
             'price' => 'required',
             'cost' => 'required',
@@ -64,7 +68,10 @@ class MenuController extends Controller
         $request->validate([
             'category_id' => 'required',
             'name' => 'required',
-            'sku' => 'required',
+            'sku' => [
+                'required',
+                Rule::unique('products', 'sku')->ignore($id)->whereNull('deleted_at'),
+            ],
             'description' => 'required',
             'price' => 'required',
             'cost' => 'required',
