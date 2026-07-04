@@ -8,6 +8,7 @@ import ListProducts from "./Partials/ListProducts.vue";
 const props = defineProps({ products: Object, categories: Object });
 
 console.log(props.categories)
+console.log('todos los products', props.products)
 </script>
 
 <template>
